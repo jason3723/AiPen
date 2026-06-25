@@ -1,3 +1,4 @@
+mod ai;
 mod db;
 mod diff;
 mod version;
