@@ -51,6 +51,9 @@ pub async fn init_db(db_path: &str) -> Result<Pool<Sqlite>, DbError> {
         .connect(db_path)
         .await?;
 
+    // 启用外键约束
+    sqlx::query("PRAGMA foreign_keys = ON").execute(&pool).await?;
+
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS documents (
             id          TEXT PRIMARY KEY,
