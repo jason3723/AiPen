@@ -5,6 +5,7 @@ mod diff;
 mod version;
 
 use std::sync::Mutex;
+use tauri::Manager;
 
 pub struct AppState {
     pub db: sqlx::SqlitePool,
@@ -36,28 +37,31 @@ fn load_config_from_db(pool: &sqlx::SqlitePool) -> ai::AIConfig {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // 使用 tokio runtime 初始化数据库
-    let rt = tokio::runtime::Runtime::new().unwrap();
-    let db_path = dirs_next::config_dir()
-        .unwrap_or_else(|| std::path::PathBuf::from("."))
-        .join("aipen")
-        .join("aipen.db");
-
-    // 确保目录存在
-    if let Some(parent) = db_path.parent() {
-        std::fs::create_dir_all(parent).ok();
-    }
-
-    let pool = rt.block_on(db::init_db(db_path.to_str().unwrap()))
-        .expect("数据库初始化失败");
-
-    let ai_config = load_config_from_db(&pool);
-
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(AppState {
-            db: pool,
-            ai_config: Mutex::new(ai_config),
+        .setup(|app| {
+            // 使用 Tauri 的 app data 目录存储数据库
+            let app_dir = app.path().app_data_dir()
+                .map_err(|e| format!("获取应用数据目录失败: {}", e))
+                .expect("无法获取应用数据目录");
+            std::fs::create_dir_all(&app_dir)
+                .expect("无法创建应用数据目录");
+
+            let db_path = app_dir.join("aipen.db");
+            println!("数据库路径: {:?}", db_path);
+
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            let pool = rt.block_on(db::init_db(db_path.to_str().unwrap()))
+                .expect("数据库初始化失败");
+
+            let ai_config = load_config_from_db(&pool);
+
+            app.manage(AppState {
+                db: pool,
+                ai_config: Mutex::new(ai_config),
+            });
+
+            Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             // 文档
