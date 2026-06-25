@@ -20,11 +20,6 @@ function handleClear() {
   store.diffResult = null;
 }
 
-function getLineNumber(index: number, tag: string): string {
-  // Count context lines to compute display line numbers per side
-  return String(index + 1);
-}
-
 function getChangePercent(): string {
   if (!diffResult.value) return "0%";
   const total = diffResult.value.hunks.length;

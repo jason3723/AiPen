@@ -3,7 +3,7 @@ import { useDocumentStore } from "../stores/document";
 import { storeToRefs } from "pinia";
 
 const store = useDocumentStore();
-const { versions, loading, selectedOldVersionId, selectedNewVersionId, currentTitle } =
+const { versions, loading, selectedOldVersionId, selectedNewVersionId } =
   storeToRefs(store);
 
 function formatDate(dateStr: string): string {
