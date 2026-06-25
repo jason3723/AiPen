@@ -73,6 +73,10 @@ mod tests {
         let result = diff_documents("hello", "hello\nworld");
         assert_eq!(result.additions, 1);
         assert_eq!(result.deletions, 0);
+        // 验证 hunk 内容
+        assert_eq!(result.hunks.len(), 2);
+        assert_eq!(result.hunks[0].tag, "equal");
+        assert_eq!(result.hunks[1].tag, "insert");
     }
 
     #[test]
@@ -80,6 +84,9 @@ mod tests {
         let result = diff_documents("hello\nworld", "hello");
         assert_eq!(result.additions, 0);
         assert_eq!(result.deletions, 1);
+        assert_eq!(result.hunks.len(), 2);
+        assert_eq!(result.hunks[0].tag, "equal");
+        assert_eq!(result.hunks[1].tag, "delete");
     }
 
     #[test]
@@ -87,5 +94,33 @@ mod tests {
         let result = diff_documents("hello\nfoo", "hello\nbar");
         assert_eq!(result.additions, 1);
         assert_eq!(result.deletions, 1);
+    }
+
+    #[test]
+    fn test_diff_empty_both() {
+        let result = diff_documents("", "");
+        assert_eq!(result.additions, 0);
+        assert_eq!(result.deletions, 0);
+    }
+
+    #[test]
+    fn test_diff_empty_to_content() {
+        let result = diff_documents("", "hello");
+        assert_eq!(result.additions, 1);
+    }
+
+    #[test]
+    fn test_diff_single_line_identical() {
+        let result = diff_documents("hello", "hello");
+        assert_eq!(result.additions, 0);
+        assert_eq!(result.deletions, 0);
+    }
+
+    #[test]
+    fn test_diff_newline_consistency() {
+        let r1 = diff_documents("a\nb", "a\nc");
+        let r2 = diff_documents("a\nb\n", "a\nc\n");
+        assert_eq!(r1.additions, r2.additions);
+        assert_eq!(r1.deletions, r2.deletions);
     }
 }
