@@ -1,0 +1,1135 @@
+/* ─── 全局样式 ─────────────────────────────────────────── */
+:root {
+  --bg-primary: #1a1b26;
+  --bg-secondary: #24253a;
+  --bg-tertiary: #1e1f32;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --accent: #58a6ff;
+  --accent-hover: #79c0ff;
+  --border: #30363d;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --info: #58a6ff;
+
+  --sidebar-width: 380px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* ─── 布局调整 ─────────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+}
+
+.app-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+}
+
+.analysis-area {
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+}
+
+.app-footer {
+  height: 36px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  flex-shrink: 0;
+}
+
+/* ─── 编辑器 ────────────────────────────────────────────── */
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+}
+
+.editor-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.editor-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.heading-hints {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.hh-item {
+  color: var(--text-secondary);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.hh-item:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.hh-item:nth-child(1) { font-size: 14px; }
+.hh-item:nth-child(2) { font-size: 13px; }
+.hh-item:nth-child(3) { font-size: 12px; }
+.hh-item:nth-child(4) { font-size: 11px; }
+
+.codemirror-container {
+  flex: 1;
+  overflow: auto;
+}
+
+/* ─── 分析区域 ──────────────────────────────────────────── */
+.analysis-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-tertiary);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.analysis-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* ─── 通用按钮 ──────────────────────────────────────────── */
+.btn-primary {
+  padding: 6px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Diff 分析结果 ────────────────────────────────────── */
+.diff-review h3,
+.writing-review h3,
+.skill-panel h3 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.result-section {
+  margin-top: 16px;
+}
+
+.result-section h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.change-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.change-location {
+  display: inline-block;
+  background: var(--bg-primary);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+.change-original {
+  color: var(--danger);
+  text-decoration: line-through;
+}
+
+.change-arrow {
+  margin: 0 6px;
+  color: var(--text-secondary);
+}
+
+.change-revised {
+  color: var(--success);
+}
+
+.change-reason {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.change-confidence {
+  font-size: 11px;
+  color: var(--info);
+}
+
+.issue-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  border-left: 3px solid var(--border);
+  font-size: 13px;
+}
+
+.issue-item.severity-critical {
+  border-left-color: var(--danger);
+}
+
+.issue-item.severity-major {
+  border-left-color: var(--warning);
+}
+
+.issue-item.severity-suggestion {
+  border-left-color: var(--info);
+}
+
+.severity-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+.severity-badge.critical {
+  background: var(--danger);
+  color: #fff;
+}
+
+.severity-badge.major {
+  background: var(--warning);
+  color: #000;
+}
+
+.severity-badge.suggestion {
+  background: var(--info);
+  color: #fff;
+}
+
+.issue-location {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.issue-suggestion {
+  color: var(--accent);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ─── 写作复盘 ──────────────────────────────────────────── */
+.review-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.review-controls label {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.review-controls input {
+  width: 60px;
+  padding: 4px 6px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.review-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.review-assessment {
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.review-assessment h4 {
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.review-patterns h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.pattern-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  border-left: 3px solid var(--info);
+  font-size: 13px;
+}
+
+.pattern-item.repeated_issue {
+  border-left-color: var(--warning);
+}
+
+.pattern-item.improvement {
+  border-left-color: var(--success);
+}
+
+.pattern-item.regression {
+  border-left-color: var(--danger);
+}
+
+.pattern-suggestion {
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+/* ─── 技能面板 ──────────────────────────────────────────── */
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-card {
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+
+.skill-card.enabled {
+  border-color: rgba(88, 166, 255, 0.3);
+}
+
+.skill-card.disabled {
+  opacity: 0.5;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.skill-header h4 {
+  font-size: 14px;
+}
+
+.skill-description {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.skill-trigger {
+  font-size: 11px;
+  color: var(--info);
+  background: rgba(88, 166, 255, 0.1);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* ─── Toggle 开关 ──────────────────────────────────────── */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: 0.3s;
+  border-radius: 20px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--accent);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(16px);
+}
+
+/* ─── 全局工具栏 ─────────────────────────────────────────── */
+.editor-global-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 16px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-brand {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.toolbar-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toolbar-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.export-btn {
+  background: var(--accent);
+  color: #fff !important;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.export-btn:hover {
+  background: var(--accent-hover) !important;
+}
+
+/* ─── 对话框 ────────────────────────────────────────────── */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 480px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialog-header h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.dialog-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.dialog-close:hover {
+  color: var(--text-primary);
+}
+
+.dialog-body {
+  padding: 20px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.template-preview {
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.template-preview h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.template-fields p {
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.btn-secondary {
+  padding: 6px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.error-msg {
+  padding: 8px 12px;
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  color: var(--danger);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.result-msg {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.result-msg.success {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.result-msg.failure {
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+/* ─── 版本历史 ─────────────────────────────────────────── */
+.version-history {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.vh-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.vh-header h3 {
+  font-size: 15px;
+  margin: 0;
+  flex: 1;
+}
+
+.btn-small {
+  padding: 3px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-small:hover {
+  color: var(--text-primary);
+}
+
+.btn-small:disabled {
+  opacity: 0.5;
+}
+
+.project-name {
+  font-size: 12px;
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.1);
+  padding: 2px 10px;
+  border-radius: 4px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-dialog {
+  width: 360px;
+}
+
+.project-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.project-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.project-icon {
+  font-size: 16px;
+}
+
+.project-name-item {
+  color: var(--text-primary);
+}
+
+.inline-form {
+  display: flex;
+  gap: 8px;
+}
+
+.inline-form .form-input {
+  flex: 1;
+}
+
+.inline-form .btn-primary {
+  white-space: nowrap;
+}
+
+.vh-hint {
+  font-size: 12px;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(88, 166, 255, 0.1);
+  border-radius: 4px;
+}
+
+.empty-hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+  padding: 24px;
+}
+
+.vh-timeline {
+  flex: 1;
+  overflow-y: auto;
+  border-left: 2px solid var(--border);
+  margin-left: 8px;
+  padding-left: 12px;
+}
+
+.vh-item {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.vh-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.vh-item.selected {
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+}
+
+.vh-item.compare {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.3);
+}
+
+.vh-timeline-dot {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding-top: 2px;
+  min-width: 12px;
+}
+
+.vh-item.selected .vh-timeline-dot {
+  color: var(--accent);
+}
+
+.vh-message {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.vh-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.vh-hash {
+  font-family: monospace;
+}
+
+.vh-diffs {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.vh-diffs h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.vh-diff-entry {
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+}
+
+.vh-diff-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.change-badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.change-badge.added { background: rgba(63, 185, 80, 0.2); color: var(--success); }
+.change-badge.modified { background: rgba(210, 153, 34, 0.2); color: var(--warning); }
+.change-badge.deleted { background: rgba(248, 81, 73, 0.2); color: var(--danger); }
+
+.vh-diff-path {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: monospace;
+}
+
+.vh-structured-change {
+  padding: 4px 0;
+  font-size: 12px;
+  font-family: monospace;
+  line-height: 1.6;
+}
+
+.vh-change-section {
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.vh-change-old {
+  color: var(--danger);
+  background: rgba(248, 81, 73, 0.05);
+}
+
+.vh-change-new {
+  color: var(--success);
+  background: rgba(63, 185, 80, 0.05);
+}
+
+.change-marker {
+  display: inline-block;
+  width: 16px;
+  font-weight: bold;
+}
+
+.vh-raw-diff {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ─── Git 状态栏 ───────────────────────────────────────── */
+.git-status-bar {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
+  font-size: 12px;
+  gap: 12px;
+}
+
+.git-status-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.git-branch {
+  font-family: monospace;
+  color: var(--accent);
+}
+
+.git-commits {
+  color: var(--text-secondary);
+}
+
+.git-dirty {
+  color: var(--warning);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.git-commit-area {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.git-commit-input {
+  flex: 1;
+  padding: 2px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  height: 22px;
+}
+
+.git-commit-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn-sm {
+  padding: 2px 10px;
+  font-size: 11px;
+  height: 22px;
+}
+
+.git-last-commit {
+  color: var(--text-secondary);
+  font-size: 11px;
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── API 设置 ─────────────────────────────────────────── */
+.api-settings {
+  padding: 0;
+}
+
+.api-settings h3 {
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: monospace;
+}
+
+select.form-input {
+  font-family: inherit;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.form-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.test-result {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.test-result.success {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.test-result.failure {
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+/* ─── 技能结果 ─────────────────────────────────────────── */
+.skill-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.skill-result {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--bg-primary);
+  border-radius: 6px;
+}
+
+.skill-result-badge {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.skill-result-badge.pass {
+  color: var(--success);
+}
+
+.skill-result-badge.fail {
+  color: var(--warning);
+}
+
+.skill-issue {
+  font-size: 12px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.skill-issue:last-child {
+  border-bottom: none;
+}
+
+.skill-suggestion {
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.error-detail {
+  white-space: pre-wrap;
+  font-size: 12px;
+  font-family: monospace;
+  max-height: 150px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* ─── 滚动条 ────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
