@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useDocumentStore } from "../stores/document";
 import { storeToRefs } from "pinia";
+import type { DiffHunk } from "../stores/document";
 
 const store = useDocumentStore();
 const { diffResult, loading, hasSelectedVersions, canDiff, selectedOldVersionId, selectedNewVersionId, versions } =
@@ -20,13 +22,61 @@ function handleClear() {
   store.diffResult = null;
 }
 
-function getChangePercent(): string {
-  if (!diffResult.value) return "0%";
-  const total = diffResult.value.hunks.length;
-  if (total === 0) return "0%";
-  const changes = diffResult.value.additions + diffResult.value.deletions;
-  return ((changes / total) * 100).toFixed(1) + "%";
+/// 变更块：收集连续 delete → 收集连续 insert → 1:1 配对，多余独立
+interface ChangeBlock {
+  kind: "modified" | "deleted" | "inserted";
+  deleted?: DiffHunk;
+  inserted?: DiffHunk;
 }
+
+const changeBlocks = computed<ChangeBlock[]>(() => {
+  if (!diffResult.value) return [];
+  const hunks = diffResult.value.hunks;
+  const blocks: ChangeBlock[] = [];
+  let i = 0;
+
+  while (i < hunks.length) {
+    // 跳过前导 equal 行
+    while (i < hunks.length && hunks[i].tag === "equal") { i++; }
+    if (i >= hunks.length) break;
+
+    // 收集同一组变更内的所有 delete 和 insert（忽略中间的 equal 行）
+    const deletes: DiffHunk[] = [];
+    const inserts: DiffHunk[] = [];
+    let merging = true;
+
+    while (merging && i < hunks.length) {
+      while (i < hunks.length && hunks[i].tag === "delete") { deletes.push(hunks[i++]); }
+      while (i < hunks.length && hunks[i].tag === "insert") { inserts.push(hunks[i++]); }
+
+      // 向前看：跳过 equal 后是否还有 delete/insert 需要合并？
+      let peek = i;
+      while (peek < hunks.length && hunks[peek].tag === "equal") { peek++; }
+      if (peek < hunks.length && (hunks[peek].tag === "delete" || hunks[peek].tag === "insert")) {
+        i = peek; // 跳过中间的 equal 上下文，继续收集
+      } else {
+        merging = false;
+      }
+    }
+
+    // 跳过尾部 equal 行
+    while (i < hunks.length && hunks[i].tag === "equal") { i++; }
+
+    // 配对
+    const paired = Math.min(deletes.length, inserts.length);
+    for (let p = 0; p < paired; p++) {
+      blocks.push({ kind: "modified", deleted: deletes[p], inserted: inserts[p] });
+    }
+    for (let p = paired; p < deletes.length; p++) {
+      blocks.push({ kind: "deleted", deleted: deletes[p] });
+    }
+    for (let p = paired; p < inserts.length; p++) {
+      blocks.push({ kind: "inserted", inserted: inserts[p] });
+    }
+  }
+
+  return blocks;
+});
 </script>
 
 <template>
@@ -50,16 +100,9 @@ function getChangePercent(): string {
       v-if="!loading.diff && !diffResult && !hasSelectedVersions"
       class="text-center py-8 text-gray-500 text-sm"
     >
-      <svg
-        class="w-10 h-10 mx-auto mb-3 text-gray-600"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
         />
       </svg>
@@ -72,16 +115,9 @@ function getChangePercent(): string {
       v-else-if="!loading.diff && !diffResult && hasSelectedVersions"
       class="text-center py-8 text-gray-500 text-sm"
     >
-      <svg
-        class="w-10 h-10 mx-auto mb-3 text-gray-600"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
         />
       </svg>
@@ -107,42 +143,23 @@ function getChangePercent(): string {
 
     <!-- 加载状态 -->
     <div v-if="loading.diff" class="space-y-2 animate-pulse">
-      <!-- 统计骨架 -->
       <div class="flex gap-2">
-        <div class="h-8 w-16 bg-gray-800 rounded-lg"></div>
-        <div class="h-8 w-16 bg-gray-800 rounded-lg"></div>
-        <div class="h-8 w-16 bg-gray-800 rounded-lg"></div>
+        <div class="h-7 w-16 rounded bg-gray-800"></div>
+        <div class="h-7 w-16 rounded bg-gray-800"></div>
+        <div class="h-7 w-14 rounded bg-gray-800"></div>
       </div>
-      <!-- 行骨架 -->
-      <div v-for="i in 6" :key="i" class="flex gap-2">
-        <div
-          class="h-5 rounded"
-          :class="[
-            i % 3 === 1 ? 'w-full bg-green-900/40' :
-            i % 3 === 2 ? 'w-3/4 bg-red-900/40' :
-            'w-5/6 bg-gray-800',
-          ]"
-        ></div>
+      <div class="space-y-1.5">
+        <div v-for="i in 5" :key="i" class="h-10 rounded bg-slate-800/40"></div>
       </div>
     </div>
 
-    <!-- 空状态（对比完成，无差异） -->
+    <!-- 空状态（无差异） -->
     <div
       v-else-if="diffResult && diffResult.hunks.length === 0"
       class="text-center py-8 text-gray-500 text-sm"
     >
-      <svg
-        class="w-10 h-10 mx-auto mb-3 text-gray-600"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1.5"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
+      <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <p class="mb-1">两个版本内容相同</p>
       <p class="text-xs text-gray-600">未发现任何差异</p>
@@ -150,87 +167,136 @@ function getChangePercent(): string {
 
     <!-- 正常状态（显示 Diff） -->
     <div v-else-if="diffResult && diffResult.hunks.length > 0" class="space-y-2">
-      <!-- 统计信息 -->
-      <div class="flex items-center gap-3 text-xs">
-        <div class="flex items-center gap-1 px-2 py-1 rounded bg-green-900/30 text-green-400">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span class="font-medium">{{ diffResult.additions }}</span>
-          <span class="text-green-600">新增</span>
+      <!-- 统计信息 + 版本 + 分割线 -->
+      <div class="space-y-2">
+        <!-- 统计信息：三列平均分布 -->
+        <div class="grid grid-cols-3 gap-2">
+          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-amber-500/10 text-amber-300 border border-amber-500/20">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="font-semibold">{{ diffResult.additions }}</span>
+            <span class="text-amber-400/70 whitespace-nowrap">新增</span>
+          </div>
+          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+            </svg>
+            <span class="font-semibold">{{ diffResult.deletions }}</span>
+            <span class="text-emerald-400/70 whitespace-nowrap">删除</span>
+          </div>
+          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-slate-700/30 text-slate-300 border border-slate-600/30">
+            <span class="text-slate-500 whitespace-nowrap">变更</span>
+            <span class="font-semibold">{{ changeBlocks.length }}</span>
+            <span class="text-slate-500 whitespace-nowrap">处</span>
+          </div>
         </div>
-        <div class="flex items-center gap-1 px-2 py-1 rounded bg-red-900/30 text-red-400">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-          </svg>
-          <span class="font-medium">{{ diffResult.deletions }}</span>
-          <span class="text-red-600">删除</span>
-        </div>
-        <div class="flex items-center gap-1 px-2 py-1 rounded bg-gray-800 text-gray-400">
-          <span class="text-gray-600">变更率</span>
-          <span class="font-medium">{{ getChangePercent() }}</span>
-        </div>
-      </div>
 
-      <!-- 变更概览条 -->
-      <div class="flex h-1.5 rounded-full overflow-hidden bg-gray-800">
-        <div
-          v-if="diffResult.additions > 0"
-          class="bg-green-500 transition-all"
-          :style="{ width: (diffResult.additions / (diffResult.additions + diffResult.deletions) * 100) + '%' }"
-        ></div>
-        <div
-          v-if="diffResult.deletions > 0"
-          class="bg-red-500 transition-all"
-          :style="{ width: (diffResult.deletions / (diffResult.additions + diffResult.deletions) * 100) + '%' }"
-        ></div>
-      </div>
-
-      <!-- 版本标签 -->
-      <div class="flex items-center gap-2 text-xs text-gray-500">
-        <span class="inline-flex items-center gap-1">
-          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          旧版: {{ getVersionLabel(selectedOldVersionId) }}
-        </span>
-        <span class="text-gray-700">|</span>
-        <span class="inline-flex items-center gap-1">
-          <span class="w-2 h-2 rounded-full bg-green-500"></span>
-          新版: {{ getVersionLabel(selectedNewVersionId) }}
-        </span>
-      </div>
-
-      <!-- Diff 行 -->
-      <div class="font-mono text-xs border border-gray-800 rounded-lg overflow-hidden">
-        <div
-          v-for="(hunk, i) in diffResult.hunks"
-          :key="i"
-          class="flex leading-5"
-          :class="{
-            'bg-green-950/40 border-l-2 border-green-600': hunk.tag === 'insert',
-            'bg-red-950/40 border-l-2 border-red-600': hunk.tag === 'delete',
-            'bg-transparent border-l-2 border-transparent hover:bg-gray-900/30': hunk.tag === 'equal',
-          }"
-        >
-          <!-- 行号或符号 -->
-          <span
-            class="flex-shrink-0 w-7 text-right select-none"
-            :class="{
-              'text-green-500': hunk.tag === 'insert',
-              'text-red-500': hunk.tag === 'delete',
-              'text-gray-600': hunk.tag === 'equal',
-            }"
-          >
-            {{ hunk.tag === 'insert' ? '+' : hunk.tag === 'delete' ? '-' : ' ' }}
+        <!-- 版本流向：无底色 -->
+        <div class="flex items-center justify-center">
+          <span class="inline-flex items-center gap-1.5 text-[10px] text-slate-400 whitespace-nowrap">
+            {{ getVersionLabel(selectedOldVersionId) }}
+            <span class="text-slate-600">→</span>
+            {{ getVersionLabel(selectedNewVersionId) }}
           </span>
-          <!-- 内容 -->
-          <span
-            class="flex-1 whitespace-pre-wrap px-1"
-            :class="{
-              'text-green-200': hunk.tag === 'insert',
-              'text-red-200': hunk.tag === 'delete',
-              'text-gray-300': hunk.tag === 'equal',
-            }"
-          >{{ hunk.content }}</span>
+        </div>
+
+        <!-- 分割线 -->
+        <div class="h-px bg-gradient-to-r from-transparent via-slate-600/30 to-transparent"></div>
+      </div>
+
+      <!-- 变更列表 -->
+      <div class="flex flex-col gap-1.5 pr-1">
+        <div
+          v-for="(block, bi) in changeBlocks"
+          :key="bi"
+          class="rounded-md border border-slate-700/30 overflow-hidden bg-slate-800/20"
+        >
+          <!-- 修改块：先删后增 -->
+          <template v-if="block.kind === 'modified' && block.deleted && block.inserted">
+            <!-- 删除行：翠绿 -->
+            <div class="flex items-stretch text-[13px] leading-relaxed border-b border-emerald-500/10 bg-emerald-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-emerald-500 py-1.5">
+                <span class="text-emerald-500/80 font-medium select-none">-</span>
+              </div>
+              <div class="flex-1 py-1.5 pr-3 font-mono text-slate-300 whitespace-pre-wrap break-all">
+                <template v-if="block.deleted.inline_changes && block.deleted.inline_changes.length > 0">
+                  <span
+                    v-for="(chunk, ci) in block.deleted.inline_changes"
+                    :key="ci"
+                    :class="{
+                      'bg-emerald-400/20 text-emerald-100 px-0.5 rounded line-through decoration-emerald-500/50': chunk.tag === 'delete',
+                      'text-slate-500': chunk.tag === 'equal',
+                    }"
+                  >{{ chunk.content }}</span>
+                </template>
+                <span v-else class="line-through decoration-emerald-500/40 text-slate-500">{{ block.deleted.content }}</span>
+              </div>
+            </div>
+            <!-- 新增行：琥珀 -->
+            <div class="flex items-stretch text-[13px] leading-relaxed bg-amber-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-amber-500 py-1.5">
+                <span class="text-amber-500/80 font-medium select-none">+</span>
+              </div>
+              <div class="flex-1 py-1.5 pr-3 font-mono text-slate-200 whitespace-pre-wrap break-all">
+                <template v-if="block.inserted.inline_changes && block.inserted.inline_changes.length > 0">
+                  <span
+                    v-for="(chunk, ci) in block.inserted.inline_changes"
+                    :key="ci"
+                    :class="{
+                      'bg-amber-400/20 text-amber-100 px-0.5 rounded': chunk.tag === 'insert',
+                      'text-slate-500': chunk.tag === 'equal',
+                    }"
+                  >{{ chunk.content }}</span>
+                </template>
+                <span v-else>{{ block.inserted.content }}</span>
+              </div>
+            </div>
+          </template>
+
+          <!-- 纯删除块：翠绿 -->
+          <template v-else-if="block.kind === 'deleted' && block.deleted">
+            <div class="flex items-stretch text-[13px] leading-relaxed bg-emerald-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-emerald-500 py-1.5">
+                <span class="text-emerald-500/80 font-medium select-none">-</span>
+              </div>
+              <div class="flex-1 py-1.5 pr-3 font-mono text-slate-300 whitespace-pre-wrap break-all">
+                <template v-if="block.deleted.inline_changes && block.deleted.inline_changes.length > 0">
+                  <span
+                    v-for="(chunk, ci) in block.deleted.inline_changes"
+                    :key="ci"
+                    :class="{
+                      'bg-emerald-400/20 text-emerald-100 px-0.5 rounded': chunk.tag === 'delete',
+                      'text-slate-500': chunk.tag === 'equal',
+                    }"
+                  >{{ chunk.content }}</span>
+                </template>
+                <span v-else class="text-slate-500">{{ block.deleted.content }}</span>
+              </div>
+            </div>
+          </template>
+
+          <!-- 纯新增块：琥珀 -->
+          <template v-else-if="block.kind === 'inserted' && block.inserted">
+            <div class="flex items-stretch text-[13px] leading-relaxed bg-amber-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-amber-500 py-1.5">
+                <span class="text-amber-500/80 font-medium select-none">+</span>
+              </div>
+              <div class="flex-1 py-1.5 pr-3 font-mono text-slate-200 whitespace-pre-wrap break-all">
+                <template v-if="block.inserted.inline_changes && block.inserted.inline_changes.length > 0">
+                  <span
+                    v-for="(chunk, ci) in block.inserted.inline_changes"
+                    :key="ci"
+                    :class="{
+                      'bg-amber-400/20 text-amber-100 px-0.5 rounded': chunk.tag === 'insert',
+                      'text-slate-500': chunk.tag === 'equal',
+                    }"
+                  >{{ chunk.content }}</span>
+                </template>
+                <span v-else>{{ block.inserted.content }}</span>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>

@@ -29,5 +29,8 @@ dist-ssr
 # Tauri
 src-tauri/target/
 
+# 更新签名密钥（私钥不得泄露）
+key.pem
+
 # SDK progress
 .superpowers/

@@ -49,7 +49,7 @@ mod tests {
     use crate::db;
 
     async fn setup_test_db() -> SqlitePool {
-        let pool = db::init_db("sqlite::memory:").await.unwrap();
+        let pool = db::init_db(std::path::Path::new(":memory:")).await.unwrap();
         // 创建测试文档
         db::create_document(&pool, "测试文档").await.unwrap();
         pool

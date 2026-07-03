@@ -1,0 +1,17 @@
+    Blocking waiting for file lock on build directory
+warning: struct `Material` is never constructed
+  --> src\db.rs:97:12
+   |
+97 | pub struct Material {
+   |            ^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MaterialTagLink` is never constructed
+   --> src\db.rs:114:12
+    |
+114 | pub struct MaterialTagLink {
+    |            ^^^^^^^^^^^^^^^
+
+warning: `aipen` (lib) generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.19s

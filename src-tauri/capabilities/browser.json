@@ -1,0 +1,14 @@
+{
+  "identifier": "browser",
+  "description": "Capability for the browser webview window",
+  "windows": ["browser"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "core:event:allow-emit",
+    "core:event:allow-listen",
+    "opener:default",
+    "opener:allow-open-url",
+    "opener:allow-default-urls"
+  ]
+}
