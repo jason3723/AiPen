@@ -607,7 +607,7 @@ const progressHint = computed(() => {
       <!-- 空状态 -->
       <div v-if="Object.keys(groupedRecipes).length === 0" class="text-center py-8 text-gray-500 dark:text-gray-600 text-xs">
         <p>暂无写作模板</p>
-        <p class="text-blue-500 cursor-pointer hover:underline mt-1" @click="showForm = true">
+        <p class="text-blue-500 dark:text-blue-400 cursor-pointer hover:underline mt-1" @click="showForm = true">
           创建第一个
         </p>
       </div>

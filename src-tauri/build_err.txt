@@ -1,0 +1,27 @@
+   Compiling aipen v3.0.0 (D:\Project\AiPen\src-tauri)
+warning: unused doc comment
+   --> src\ai.rs:471:5
+    |
+471 |     /// 原始字节缓冲区：避免 chunk 边界截断多字节 UTF-8 字符导致 � 乱码
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+472 |     let mut buf: Vec<u8> = Vec::new();
+    |     ---------------------------------- rustdoc does not generate documentation for statements
+    |
+    = help: use `//` for a plain comment
+    = note: `#[warn(unused_doc_comments)]` (part of `#[warn(unused)]`) on by default
+
+error[E0502]: cannot borrow `buf` as mutable because it is also borrowed as immutable
+   --> src\ai.rs:485:13
+    |
+483 |             let event_bytes = &buf[..event_end];
+    |                                --- immutable borrow occurs here
+484 |             let event = String::from_utf8_lossy(event_bytes);
+485 |             buf.drain(..event_end);
+    |             ^^^^^^^^^^^^^^^^^^^^^^ mutable borrow occurs here
+486 |
+487 |             for line in event.lines() {
+    |                         ----- immutable borrow later used here
+
+For more information about this error, try `rustc --explain E0502`.
+warning: `aipen` (lib) generated 1 warning
+error: could not compile `aipen` (lib) due to 1 previous error; 1 warning emitted

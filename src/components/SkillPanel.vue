@@ -131,7 +131,7 @@ const categoryColors: Record<string, string> = {
   correction: "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30",
   polish: "text-yellow-600 dark:text-yellow-400 bg-yellow-950/30",
   creative: "text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-950/30",
-  custom: "text-blue-400 bg-blue-100 dark:bg-blue-950/30",
+  custom: "text-blue-400 dark:text-blue-300 bg-blue-100 dark:bg-blue-950/30",
 };
 
 const groupedSkills = computed(() => {
@@ -447,7 +447,7 @@ function renderMarkdown(text: string) {
 
     <!-- 提示：选中文本 vs 全文 -->
     <div class="mb-3 text-xs text-gray-400 dark:text-gray-500 bg-gray-100/60 dark:bg-gray-800/50 rounded px-3 py-2 leading-relaxed">
-      <span v-if="selectedText">将对 <strong class="text-blue-400">选中文本</strong> 执行技能操作</span>
+      <span v-if="selectedText">将对 <strong class="text-blue-400 dark:text-blue-300">选中文本</strong> 执行技能操作</span>
       <span v-else>将对 <strong class="text-gray-700 dark:text-gray-300">全文</strong> 执行技能操作</span>
       <span class="text-gray-500 dark:text-gray-600 ml-1">（在编辑器中选中文本后回此面板运行技能）</span>
     </div>
@@ -587,7 +587,7 @@ function renderMarkdown(text: string) {
               <span class="text-[9px] text-gray-500 dark:text-gray-600">{{ finalDiff.changeCount }}处改动</span>
             </div>
             <div class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
-              <span v-for="seg in displayDiffSegments" :key="seg.text" :class="seg.red ? 'text-red-600 dark:text-red-400' : seg.strike ? 'text-gray-500 dark:text-gray-600 line-through' : ''">{{ seg.text }}</span>
+              <span v-for="seg in displayDiffSegments" :key="seg.text" :class="seg.red ? 'text-red-600 dark:text-red-400' : seg.strike ? 'text-emerald-600 dark:text-emerald-400 line-through decoration-emerald-400/60' : ''">{{ seg.text }}</span>
             </div>
           </div>
         </div>
@@ -617,7 +617,7 @@ function renderMarkdown(text: string) {
                 <div class="flex items-center gap-1.5">
                   <span class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">{{ skill.name }}</span>
                   <span v-if="skill.is_builtin" class="text-[10px] text-gray-500 dark:text-gray-600 border border-gray-300 dark:border-gray-700 px-1 rounded">内置</span>
-                  <span v-else class="text-[10px] text-blue-500 border border-blue-300 dark:border-blue-800/50 px-1 rounded">自定义</span>
+                  <span v-else class="text-[10px] text-blue-500 dark:text-blue-400 border border-blue-300 dark:border-blue-800/50 px-1 rounded">自定义</span>
                   <span v-if="skill.is_review_use" class="text-[10px] text-gray-500 dark:text-gray-600 border border-gray-300 dark:border-gray-700 px-1 rounded">慎用</span>
                 </div>
               </div>
@@ -666,13 +666,13 @@ function renderMarkdown(text: string) {
             <div v-if="showKbPicker === skill.id && !skill.is_builtin" class="border-t border-gray-300/50 dark:border-gray-700/50 px-3 py-2 space-y-2">
               <!-- 知识库 -->
               <div v-if="knowledgeBases.length > 0">
-                <div class="text-[10px] text-amber-500/70 mb-1.5">知识库</div>
+                <div class="text-[10px] text-amber-600/70 dark:text-amber-400/70 mb-1.5">知识库</div>
                 <div class="flex flex-wrap gap-1">
                   <button
                     v-for="kb in knowledgeBases"
                     :key="kb.id"
                     class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                    :class="(skillKbSelection[skill.id] || []).includes(kb.id) ? 'text-amber-600 dark:text-amber-400 bg-amber-950/40 border border-amber-300 dark:border-amber-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
+                    :class="(skillKbSelection[skill.id] || []).includes(kb.id) ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                     @click="toggleKbForSkill(skill.id, kb.id)"
                   >
                     {{ kb.name }}
@@ -683,13 +683,13 @@ function renderMarkdown(text: string) {
               <div v-if="knowledgeBases.length > 0 && matStore.tagWithCounts.length > 0" class="border-t border-gray-300/50 dark:border-gray-700/50"></div>
               <!-- 素材库标签 -->
               <div v-if="matStore.tagWithCounts.length > 0">
-                <div class="text-[10px] text-emerald-500/70 mb-1.5">素材库标签</div>
+                <div class="text-[10px] text-emerald-600/70 dark:text-emerald-400/70 mb-1.5">素材库标签</div>
                 <div class="flex flex-wrap gap-1">
                   <button
                     v-for="tag in matStore.tagWithCounts"
                     :key="tag.id"
                     class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                    :class="matStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
+                    :class="matStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                     @click="matStore.toggleMaterialTag(tag.id)"
                   >
                     {{ tag.name }} ({{ tag.material_count }})
@@ -774,7 +774,7 @@ function renderMarkdown(text: string) {
     <div class="border-t border-gray-200 dark:border-gray-800 pt-3 mt-auto">
       <button
         v-if="!showAddForm"
-        class="w-full h-8 text-xs text-blue-400 hover:text-blue-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded transition-colors"
+        class="w-full h-8 text-xs text-blue-400 dark:text-blue-300 hover:text-blue-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded transition-colors"
         @click="showAddForm = true"
       >
         + 添加自定义技能

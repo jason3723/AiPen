@@ -183,7 +183,7 @@ pub async fn query_balance(config: &AIConfig) -> Result<String, AIError> {
     let body = response.text().await.unwrap_or_default();
 
     if !status.is_success() {
-        let msg = if body.len() > 300 { format!("{}...", &body[..300]) } else { body };
+        let msg = if body.len() > 300 { format!("{}...", &body[..body.floor_char_boundary(300)]) } else { body };
         return Err(AIError::ApiError { status: status.as_u16(), message: msg });
     }
 
@@ -258,7 +258,7 @@ pub async fn test_connection(config: &AIConfig) -> Result<String, AIError> {
     } else {
         let body = response.text().await.unwrap_or_default();
         let msg = if body.len() > 200 {
-            format!("{}...", &body[..200])
+            format!("{}...", &body[..body.floor_char_boundary(200)])
         } else {
             body
         };
@@ -428,7 +428,7 @@ async fn send_ai_request(
         .map_err(|e| AIError::RequestFailed(e.to_string()))?;
 
     if !status.is_success() {
-        let msg = if body.len() > 300 { format!("{}...", &body[..300]) } else { body };
+        let msg = if body.len() > 300 { format!("{}...", &body[..body.floor_char_boundary(300)]) } else { body };
         return Err(AIError::ApiError { status: status.as_u16(), message: msg });
     }
 
@@ -462,22 +462,26 @@ pub async fn send_ai_request_streaming(
     let status = response.status();
     if !status.is_success() {
         let body = response.text().await.unwrap_or_default();
-        let msg = if body.len() > 300 { format!("{}...", &body[..300]) } else { body };
+        let msg = if body.len() > 300 { format!("{}...", &body[..body.floor_char_boundary(300)]) } else { body };
         return Err(AIError::ApiError { status: status.as_u16(), message: msg });
     }
 
     let mut stream = response.bytes_stream();
     let mut full_content = String::new();
-    let mut buffer = String::new();
+    // 原始字节缓冲区：避免 chunk 边界截断多字节 UTF-8 字符导致 � 乱码
+    let mut buf: Vec<u8> = Vec::new();
 
     while let Some(chunk_result) = stream.next().await {
         let chunk = chunk_result.map_err(|e| AIError::RequestFailed(e.to_string()))?;
-        buffer.push_str(&String::from_utf8_lossy(&chunk));
+        buf.extend_from_slice(&chunk);
 
-        // 处理缓冲区中的完整 SSE 事件（以 \n\n 分隔）
-        while let Some(pos) = buffer.find("\n\n") {
-            let event = buffer[..pos].to_string();
-            buffer = buffer[pos + 2..].to_string();
+        // 用字节查找最后一个完整事件边界（\n\n = 0x0A 0x0A）
+        let delim: &[u8] = b"\n\n";
+        while let Some(pos) = buf.windows(2).position(|w| w == delim) {
+            let event_end = pos + 2;
+            // 从缓冲区头部到该事件结束的字节都是完整可解码的 UTF-8
+            let event = String::from_utf8_lossy(&buf[..event_end]).into_owned();
+            buf.drain(..event_end);
 
             for line in event.lines() {
                 let data = match line.strip_prefix("data: ") {
@@ -498,9 +502,10 @@ pub async fn send_ai_request_streaming(
         }
     }
 
-    // 流结束后处理 buffer 中残留的数据（防御性处理，应对非标准 SSE 末尾）
-    if !buffer.trim().is_empty() {
-        for line in buffer.lines() {
+    // 流结束后处理缓冲区中残留的完整事件（防御性处理，应对非标准 SSE 末尾）
+    let remainder = String::from_utf8_lossy(&buf);
+    if !remainder.trim().is_empty() {
+        for line in remainder.lines() {
             let data = match line.strip_prefix("data: ") {
                 Some(d) => d,
                 None => if line == "data:" { "" } else { continue },

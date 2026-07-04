@@ -110,9 +110,9 @@ function priorityClass(priority: string): string {
           <div class="h-10 bg-purple-50/30 dark:bg-purple-900/30 rounded-xl"></div>
         </div>
         <div class="space-y-1">
-          <div class="h-4 w-16 bg-green-900/50 rounded mb-2"></div>
-          <div class="h-5 bg-green-900/30 rounded"></div>
-          <div class="h-5 w-5/6 bg-green-900/30 rounded"></div>
+          <div class="h-4 w-16 bg-green-100 dark:bg-green-900/50 rounded mb-2"></div>
+          <div class="h-5 bg-green-100 dark:bg-green-900/30 rounded"></div>
+          <div class="h-5 w-5/6 bg-green-100 dark:bg-green-900/30 rounded"></div>
         </div>
         <div class="space-y-1">
           <div class="h-4 w-16 bg-red-100 dark:bg-red-900/50 rounded mb-2"></div>
@@ -131,8 +131,8 @@ function priorityClass(priority: string): string {
     <template v-else-if="analysisResult">
       <div class="space-y-3">
         <!-- ── 总体评议 ── -->
-        <div class="bg-gradient-to-br from-purple-950/40 to-gray-950/30 rounded-xl border border-purple-800/30 overflow-hidden">
-          <div class="px-3 py-1.5 bg-purple-900/30 flex items-center justify-between">
+        <div class="bg-gradient-to-br from-purple-100 dark:from-purple-950/40 to-gray-100 dark:to-gray-950/30 rounded-xl border border-purple-300/30 dark:border-purple-800/30 overflow-hidden">
+          <div class="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-between">
             <div class="flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -173,7 +173,7 @@ function priorityClass(priority: string): string {
 
         <!-- ── 主旨与思想站位 ── -->
         <div class="bg-indigo-50/60 dark:bg-indigo-950/20 rounded-lg border border-indigo-300/40 dark:border-indigo-800/20 p-3 space-y-2">
-          <div class="flex items-center gap-1.5 text-xs font-semibold text-indigo-300">
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-300">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
             </svg>
@@ -181,10 +181,10 @@ function priorityClass(priority: string): string {
           </div>
           <div class="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
             <div v-if="analysisResult.ideological_analysis.elevation !== '无明显变化'">
-              <span class="text-indigo-400 font-medium">主旨提升：</span>{{ analysisResult.ideological_analysis.elevation }}
+              <span class="text-indigo-600 dark:text-indigo-400 font-medium">主旨提升：</span>{{ analysisResult.ideological_analysis.elevation }}
             </div>
             <div>
-              <span class="text-indigo-400 font-medium">站位评价：</span>{{ analysisResult.ideological_analysis.positioning }}
+              <span class="text-indigo-600 dark:text-indigo-400 font-medium">站位评价：</span>{{ analysisResult.ideological_analysis.positioning }}
             </div>
             <div>
               <span class="text-indigo-400 font-medium">深度视野：</span>{{ analysisResult.ideological_analysis.depth }}
@@ -219,7 +219,7 @@ function priorityClass(priority: string): string {
         </div>
 
         <!-- ── 深度洞察 ── -->
-        <div v-if="(analysisResult.insight_analysis.added_value?.length || analysisResult.insight_analysis.hollow_parts?.length)" class="bg-emerald-950/20 rounded-lg border border-emerald-800/20 p-3 space-y-2">
+        <div v-if="(analysisResult.insight_analysis.added_value?.length || analysisResult.insight_analysis.hollow_parts?.length)" class="bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-300/30 dark:border-emerald-800/20 p-3 space-y-2">
           <div class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -283,7 +283,7 @@ function priorityClass(priority: string): string {
                 </span>
                 <span class="text-xs text-gray-700 dark:text-gray-300 break-words leading-relaxed">{{ mod.example }}</span>
               </div>
-              <p class="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">{{ mod.reason }}</p>
+              <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">{{ mod.reason }}</p>
             </div>
           </div>
         </div>
@@ -297,7 +297,7 @@ function priorityClass(priority: string): string {
             维度对比
           </div>
           <ul class="space-y-1">
-            <li v-for="(item, i) in analysisResult.comparison" :key="'cmp'+i" class="flex items-start gap-1.5 text-xs text-gray-700 dark:text-gray-300 bg-amber-950/20 px-2.5 py-1.5 rounded border border-amber-900/20">
+            <li v-for="(item, i) in analysisResult.comparison" :key="'cmp'+i" class="flex items-start gap-1.5 text-xs text-gray-700 dark:text-gray-300 bg-amber-50 dark:bg-amber-950/20 px-2.5 py-1.5 rounded border border-amber-300/30 dark:border-amber-900/20">
               <span class="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0"></span><span>{{ item }}</span>
             </li>
           </ul>
@@ -305,14 +305,14 @@ function priorityClass(priority: string): string {
 
         <!-- ── 改进建议 ── -->
         <div v-if="analysisResult.revision_suggestions?.length" class="space-y-2">
-          <div class="flex items-center gap-1.5 text-xs font-semibold text-sky-300">
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-sky-600 dark:text-sky-300">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             改进建议
           </div>
           <div class="space-y-2">
-            <div v-for="(sug, i) in analysisResult.revision_suggestions" :key="'sug'+i" class="bg-sky-950/20 rounded-lg border border-sky-800/20 p-2.5 space-y-1.5">
+            <div v-for="(sug, i) in analysisResult.revision_suggestions" :key="'sug'+i" class="bg-sky-50 dark:bg-sky-950/20 rounded-lg border border-sky-300/30 dark:border-sky-800/20 p-2.5 space-y-1.5">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span
                   class="text-[10px] px-1 py-0 rounded font-medium"
@@ -327,8 +327,8 @@ function priorityClass(priority: string): string {
                 </span>
                 <span class="text-[10px] text-gray-400 dark:text-gray-500 truncate flex-1">{{ sug.target }}</span>
               </div>
-              <p class="text-xs text-sky-200 leading-relaxed">{{ sug.advice }}</p>
-              <p class="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">{{ sug.rationale }}</p>
+              <p class="text-xs text-sky-700 dark:text-sky-200 leading-relaxed">{{ sug.advice }}</p>
+              <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">{{ sug.rationale }}</p>
             </div>
           </div>
         </div>
@@ -389,7 +389,7 @@ function priorityClass(priority: string): string {
         <!-- API Key 未配置提示 -->
         <div
           v-if="!apiConfig.api_key"
-          class="mb-3 text-xs text-yellow-700 dark:text-yellow-500 bg-yellow-900/20 px-2 py-1.5 rounded"
+          class="mb-3 text-xs text-yellow-700 dark:text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1.5 rounded"
         >
           请先配置 API Key
           <button
@@ -425,7 +425,7 @@ function priorityClass(priority: string): string {
         </svg>
         <div class="flex-1 min-w-0">
           <p class="font-medium">分析失败</p>
-          <p class="text-red-300/70 mt-0.5 break-words">{{ analysisError }}</p>
+          <p class="text-red-600/70 dark:text-red-300/70 mt-0.5 break-words">{{ analysisError }}</p>
           <button
             class="mt-1.5 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs rounded transition-colors"
             @click="handleRetry"

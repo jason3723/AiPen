@@ -277,6 +277,7 @@ pub fn run() {
             commands::close_browser,
             commands::hide_browser,
             commands::show_browser,
+            commands::print_document,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

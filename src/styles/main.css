@@ -41,3 +41,175 @@ html, body {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #4b5563; /* gray-600 */
 }
+
+/* ── 打印样式：对齐 Word 导出设置（页边距、字体、字号、行间距均由编辑器 v-bind() 接管）── */
+@media print {
+  @page {
+    size: A4;
+    /* 对齐导出设置：上37mm 右26mm 下35mm 左28mm（A4 标准公文页边距） */
+    margin: 37mm 26mm 35mm 28mm;
+  }
+
+  /* 全局重置 */
+  html, body, #root, * {
+    background: #fff !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    overflow: visible !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 隐藏所有 UI 元素 */
+  header, footer, nav, aside,
+  .rich-toolbar, .rich-search-panel,
+  .ctx-menu, .ctx-overlay,
+  button, input, select, textarea,
+  [data-tauri-drag-region],
+  .no-drag {
+    display: none !important;
+  }
+
+  /* 编辑区容器 */
+  .rich-editor-wrapper,
+  .rich-content {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  /* ── 正文排版：字体/字号/行间距由编辑器 v-bind() 从导出设置接管，不再硬编码 ── */
+  .rich-content .ProseMirror {
+    padding: 0 !important;
+    color: #000 !important;
+    min-height: auto !important;
+    max-width: none !important;
+    width: 100% !important;
+    counter-reset: page 1;
+  }
+
+  /* ── 标题层级：仅控制分页行为，字号/字体/加粗由 v-bind() 接管 ── */
+  .rich-content .ProseMirror h1 {
+    page-break-after: avoid;
+  }
+  .rich-content .ProseMirror h2 {
+    page-break-after: avoid;
+  }
+  .rich-content .ProseMirror h3 {
+    page-break-after: avoid;
+  }
+  .rich-content .ProseMirror h4 {
+    page-break-after: avoid;
+  }
+
+  /* 段落 */
+  .rich-content .ProseMirror p {
+    orphans: 2;
+    widows: 2;
+  }
+
+  /* ── 表格 ── */
+  .rich-content .ProseMirror table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+  .rich-content .ProseMirror th,
+  .rich-content .ProseMirror td {
+    border: 1px solid #000 !important;
+    padding: 4pt 8pt !important;
+    text-align: left !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+  .rich-content .ProseMirror th {
+    font-weight: 700 !important;
+    background: #e8e8e8 !important;
+  }
+  .rich-content .ProseMirror tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* ── 图片 ── */
+  .rich-content .ProseMirror img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid;
+    display: block !important;
+    margin: 0.5em auto !important;
+  }
+
+  /* ── 列表 ── */
+  .rich-content .ProseMirror ul,
+  .rich-content .ProseMirror ol {
+    padding-left: 2em !important;
+    margin: 0.3em 0 !important;
+  }
+  .rich-content .ProseMirror li {
+    margin: 0.1em 0 !important;
+  }
+
+  /* ── 链接 ── */
+  .rich-content .ProseMirror a {
+    color: #00e !important;
+    text-decoration: underline !important;
+  }
+
+  /* ── 引用块 ── */
+  .rich-content .ProseMirror blockquote {
+    border-left: 4px solid #999 !important;
+    padding-left: 1em !important;
+    margin: 0.5em 0 !important;
+    color: #333 !important;
+    background: none !important;
+  }
+
+  /* ── 代码 ── */
+  .rich-content .ProseMirror pre,
+  .rich-content .ProseMirror code {
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    font-size: 9pt !important;
+    color: #000 !important;
+    background: #f8f8f8 !important;
+    border: 1px solid #ccc !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+  }
+
+  /* ── 分割线 ── */
+  .rich-content .ProseMirror hr {
+    border: none !important;
+    border-top: 1px solid #000 !important;
+    margin: 1em 0 !important;
+    opacity: 0.3 !important;
+  }
+
+  /* ── 高亮 / 删除线 ── */
+  .rich-content .ProseMirror mark {
+    background: #ffeb3b !important;
+    padding: 0 2px !important;
+  }
+  .rich-content .ProseMirror s {
+    text-decoration: line-through !important;
+  }
+
+  /* ── 上标/下标 ── */
+  .rich-content .ProseMirror sup {
+    font-size: 0.75em !important;
+    vertical-align: super !important;
+  }
+  .rich-content .ProseMirror sub {
+    font-size: 0.75em !important;
+    vertical-align: sub !important;
+  }
+
+  /* ── Diff 高亮移除（不需要打印） ── */
+  .rich-content .ProseMirror .diff-change-highlight,
+  .rich-content .ProseMirror .search-highlight {
+    background: transparent !important;
+    border-bottom: none !important;
+  }
+}

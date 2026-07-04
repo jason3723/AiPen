@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount, computed } from 'vue'
+import { ref, watch, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import { Mark, Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from 'prosemirror-state'
@@ -336,6 +336,40 @@ function zoomOut() {
 // ── 页面缩放（Ctrl+滚轮） ──
 const pageZoom = ref(1.0)
 
+// ── 大纲面板 ──
+const showOutline = ref(false)
+
+interface HeadingItem { level: number; text: string; pos: number }
+const headings = ref<HeadingItem[]>([])
+
+function extractHeadings(ed: any) {
+  if (!ed) { headings.value = []; return }
+  const result: HeadingItem[] = []
+  ed.state.doc.descendants((node: { type: { name: string }; attrs: { level: number }; textContent: string }, pos: number) => {
+    if (node.type.name === 'heading') {
+      result.push({ level: node.attrs.level, text: node.textContent, pos })
+    }
+  })
+  headings.value = result
+}
+
+function scrollToHeading(pos: number) {
+  const ed = editor.value
+  if (!ed) return
+  // ★ 用 +1 让 ProseMirror 视作"有变化"，避免相同位置重复点击时 ProseMirror 不更新视图
+  const newPos = ed.state.selection.from === pos ? pos + 1 : pos
+  ed.chain().focus().setTextSelection(newPos).run()
+  // 滚动到该 heading 节点对应的 DOM 元素（取最近的 heading 祖先）
+  nextTick(() => {
+    try {
+      const dom = ed.view.nodeDOM(pos) as HTMLElement | null
+      // 向上找最近的 heading 元素（domAtPos 可能落到文本子节点上）
+      const headingEl = (dom?.closest?.('h1, h2, h3, h4') as HTMLElement | null) || dom
+      headingEl?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } catch { /* DOM 已卸载 */ }
+  })
+}
+
 // ── 表格格选面板 ──
 const tablePickerOpen = ref(false)
 const tablePickerRows = ref(4)
@@ -487,7 +521,12 @@ function doReplace() {
   const idx = searchIdx.value - 1
   if (idx < 0 || idx >= _searchMatches.length) return
   const { from, to } = _searchMatches[idx]
-  ed.chain().focus().setTextSelection({ from, to }).insertContent(replaceQuery.value).run()
+  if (replaceQuery.value) {
+    ed.chain().focus().setTextSelection({ from, to }).insertContent(replaceQuery.value).run()
+  } else {
+    // 替换为空：直接删除选中文本
+    ed.chain().focus().setTextSelection({ from, to }).deleteSelection().run()
+  }
   // 替换后重新搜索
   setTimeout(() => doSearch(), 50)
 }
@@ -498,7 +537,12 @@ function doReplaceAll() {
   // 从后往前替换，避免位置偏移
   for (let i = allResults.length - 1; i >= 0; i--) {
     const { from, to } = allResults[i]
-    ed.chain().setTextSelection({ from, to }).insertContent(replaceQuery.value).run()
+    if (replaceQuery.value) {
+      ed.chain().setTextSelection({ from, to }).insertContent(replaceQuery.value).run()
+    } else {
+      // 替换为空：直接删除选中文本
+      ed.chain().setTextSelection({ from, to }).deleteSelection().run()
+    }
   }
   clearSearchHighlights()
   searchCount.value = 0
@@ -534,6 +578,9 @@ function clearSearchHighlights() {
   searchCount.value = 0
   searchIdx.value = 0
 }
+
+
+
 
 // ── 颜色（全部 computed，模板中只用 :style，杜绝 # 解析 bug） ──
 const tbBg = computed(() => isLight.value ? '#f8f9fa' : '#1e1e2e')
@@ -741,6 +788,7 @@ async function applyContent(content: any) {
     ed.commands.setContent({ type: 'doc', content: [] })
   }
   syncing = false
+  extractHeadings(ed)
 }
 
 // ── 创建 TipTap 编辑器 ──
@@ -750,7 +798,7 @@ const editor = useEditor({
   extensions: [
     StarterKit.configure({
       heading: { levels: [1, 2, 3, 4] },
-      link: { openOnClick: false, HTMLAttributes: { class: 'text-blue-500 underline' } },
+      link: { openOnClick: false, HTMLAttributes: { class: 'text-blue-500 dark:text-blue-400 underline' } },
     }),
     Highlight.configure({ multicolor: true }),
     TextAlign.configure({ types: ['heading', 'paragraph'], alignments: ['left', 'center', 'right', 'justify'] }),
@@ -778,6 +826,7 @@ const editor = useEditor({
     })
   },
   onUpdate() {
+    extractHeadings(editor.value)
     // ★ 核心保护：初始化期间 / 程序化同步期间，不 emit
     if (!initialized || syncing) return
     const ed = editor.value
@@ -877,6 +926,7 @@ watch(
         const prepared = await prepareContent(newVal)
         ed.commands.setContent(prepared)
         syncing = false
+        extractHeadings(ed)
       } else if (typeof newVal === 'string') {
         // 向后兼容：纯文本字符串 → 按段落拆分为 JSON 后设置
         syncing = true
@@ -891,6 +941,7 @@ watch(
         const prepared = await prepareContent(newVal)
         ed.commands.setContent(prepared)
         syncing = false
+        extractHeadings(ed)
       } else if (typeof newVal === 'string') {
         // 向后兼容：纯文本字符串 → 按段落拆分为 JSON 后设置
         syncing = true
@@ -1206,6 +1257,8 @@ const svg = {
   mergeCells: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="6" rx="1"/><rect x="14" y="5" width="7" height="6" rx="1"/><rect x="3" y="13" width="18" height="6" rx="1"/><line x1="10" y1="8" x2="14" y2="8"/></svg>`,
   splitCell: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/><line x1="11" y1="8" x2="13" y2="8"/><line x1="11" y1="12" x2="13" y2="12"/><line x1="11" y1="16" x2="13" y2="16"/></svg>`,
   toggleHeader: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/><rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none"/></svg>`,
+  printer: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 12H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`,
+  outline: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
 }
 
 // ── 按钮辅助 ──
@@ -1425,6 +1478,16 @@ function btnClass(active: boolean) {
       <!-- 查找替换 -->
       <button title="查找替换 Ctrl+F" class="rich-btn" :class="{ 'rich-btn-active': searchOpen }" @mousedown.prevent="toggleSearch" v-html="svg.search" />
 
+      <span class="rich-sep" :style="{ backgroundColor: tbSep }" />
+
+      <!-- 打印 -->
+      <button title="打印文档" class="rich-btn" onclick="window.print()" v-html="svg.printer" />
+
+      <span class="rich-sep" :style="{ backgroundColor: tbSep }" />
+
+      <!-- 大纲导航 -->
+      <button title="大纲导航" class="rich-btn" :class="{ 'rich-btn-active': showOutline }" @mousedown.prevent="showOutline = !showOutline" v-html="svg.outline" />
+
       <!-- 右侧：字体 / 大小 / 主题 -->
       <div class="flex-1" />
 
@@ -1541,8 +1604,50 @@ function btnClass(active: boolean) {
       <button class="rich-search-btn text-[10px]" @click="toggleSearch" v-html="svg.close" />
     </div>
 
-    <!-- TipTap 编辑区 -->
-    <EditorContent :editor="editor" class="flex-1 overflow-y-auto rich-content" :style="{ color: contentText }" />
+    <!-- Body: outline panel + editor -->
+    <div class="flex flex-1 min-h-0">
+      <!-- 大纲导航面板 -->
+      <div
+        v-if="showOutline"
+        class="rich-outline shrink-0 flex flex-col border-r overflow-hidden"
+        :style="{ backgroundColor: tbBg, borderColor: tbBorder, width: '200px' }"
+      >
+        <div class="flex items-center justify-between px-2.5 py-1.5 border-b shrink-0" :style="{ borderColor: tbBorder }">
+          <span class="text-[11px] font-semibold" :style="{ color: btnText }">大纲导航</span>
+          <button class="flex items-center justify-center w-5 h-5 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors" @mousedown.prevent="showOutline = false">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" :stroke="btnText" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="flex-1 overflow-y-auto py-1">
+          <div v-if="headings.length === 0" class="px-3 py-4 text-center text-[11px] opacity-40" :style="{ color: btnText }">
+            暂无标题<br/>使用标题样式（H1-H4）<br/>将自动出现在这里
+          </div>
+          <div
+            v-for="(h, i) in headings"
+            :key="i"
+            class="outline-item flex items-center gap-1 px-2.5 py-1 cursor-pointer text-[12px] leading-snug transition-colors select-none truncate"
+            :class="{
+              'outline-lv1': h.level === 1,
+              'outline-lv2': h.level === 2,
+              'outline-lv3': h.level === 3,
+              'outline-lv4': h.level === 4,
+            }"
+            :style="{
+              paddingLeft: (8 + (h.level - 1) * 14) + 'px',
+              color: h.level <= 2 ? btnText : cardMetaColor,
+              fontWeight: h.level === 1 ? 600 : 400,
+            }"
+            :title="h.text"
+            @mousedown.prevent="scrollToHeading(h.pos)"
+          >
+            {{ h.text || '(空标题)' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- TipTap 编辑区 -->
+      <EditorContent :editor="editor" class="flex-1 overflow-y-auto rich-content" :style="{ color: contentText }" />
+    </div>
 
     <!-- 右键菜单 (Teleport to body) -->
     <Teleport to="body">
@@ -1665,6 +1770,16 @@ function btnClass(active: boolean) {
   font-family: v-bind(bodyFontFamily), 'Microsoft YaHei', sans-serif;
   line-height: v-bind(bodyLineHeight);
   text-align: justify;
+  caret-color: #1a1a1a !important;
+  /* ★ 自绘 I-beam 光标（绕开 WebView2 系统指针位图缓存 bug）
+     画布 20×24：竖条 y=2..22，上下短横在 y=2 / y=22（端点对齐）
+     白色外描边 + 黑色主体，热点 (10, 12) = I-beam 中心 */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'><line x1='10' y1='2' x2='10' y2='22' stroke='white' stroke-width='3'/><line x1='10' y1='2' x2='10' y2='22' stroke='black' stroke-width='1.5'/><line x1='5' y1='2' x2='15' y2='2' stroke='white' stroke-width='2.5'/><line x1='5' y1='2' x2='15' y2='2' stroke='black' stroke-width='1.2'/><line x1='5' y1='22' x2='15' y2='22' stroke='white' stroke-width='2.5'/><line x1='5' y1='22' x2='15' y2='22' stroke='black' stroke-width='1.2'/></svg>") 10 12, text;
+}
+.dark .rich-content .ProseMirror {
+  caret-color: #c0caf5 !important;
+  /* 深色模式：白色竖线 + 黑色描边 */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'><line x1='10' y1='2' x2='10' y2='22' stroke='black' stroke-width='3'/><line x1='10' y1='2' x2='10' y2='22' stroke='white' stroke-width='1.5'/><line x1='5' y1='2' x2='15' y2='2' stroke='black' stroke-width='2.5'/><line x1='5' y1='2' x2='15' y2='2' stroke='white' stroke-width='1.2'/><line x1='5' y1='22' x2='15' y2='22' stroke='black' stroke-width='2.5'/><line x1='5' y1='22' x2='15' y2='22' stroke='white' stroke-width='1.2'/></svg>") 10 12, text;
 }
 .rich-content .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
@@ -1997,5 +2112,20 @@ function btnClass(active: boolean) {
 .rich-search-btn:disabled {
   opacity: 0.35;
   cursor: default;
+}
+
+/* ── 大纲导航面板 ── */
+.rich-outline {
+  animation: outlineSlideIn 0.15s ease-out;
+}
+@keyframes outlineSlideIn {
+  from { width: 0; opacity: 0; }
+  to { width: 200px; opacity: 1; }
+}
+.rich-outline .outline-item:hover {
+  background: v-bind(ddHoverBg);
+}
+.rich-outline .outline-lv1 {
+  font-weight: 600;
 }
 </style>

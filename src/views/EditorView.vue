@@ -1108,6 +1108,7 @@ async function handleExportWord() {
   if (!currentContent.value) return;
   await exportToWord(JSON.stringify(currentContent.value), currentTitle.value, exportSettingsStore.settings);
 }
+
 </script>
 
 <template>
@@ -1118,7 +1119,7 @@ async function handleExportWord() {
       class="flex items-center pl-4 pr-2 h-12 border-b border-gray-200 dark:border-gray-800 bg-gray-100/80 dark:bg-gray-900/50 shrink-0 drag-region"
     >
       <div class="flex items-center gap-3">
-        <h1 class="text-sm font-bold text-blue-400 tracking-wider">AiPen</h1>
+        <h1 class="text-sm font-bold text-blue-400 dark:text-blue-300 tracking-wider">AiPen</h1>
         <span class="text-xs text-gray-500 dark:text-gray-600">|</span>
         <!-- 可编辑标题 -->
         <span
@@ -1555,11 +1556,11 @@ async function handleExportWord() {
         <!-- 浏览器 / WebView -->
         <div v-if="editMode === 'webview'" class="flex-1 flex flex-col min-h-0">
           <!-- 地址栏 -->
-          <div ref="browserAddressBarRef" class="flex items-center gap-2 px-3 py-2 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shrink-0 sticky top-0 z-10">
+          <div ref="browserAddressBarRef" class="flex items-center gap-2 py-2 border-b border-gray-200/40 dark:border-gray-800/30 bg-white dark:bg-[#030712] shrink-0 sticky top-0 z-10">
             <!-- 导航按钮 -->
-            <div class="flex items-center gap-1 shrink-0">
+            <div class="flex items-center gap-1 shrink-0 ml-1.5">
               <button
-                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100/60 dark:hover:bg-gray-800/50 rounded transition-colors"
                 title="后退"
                 @click="handleBrowserBack"
               >
@@ -1568,7 +1569,7 @@ async function handleExportWord() {
                 </svg>
               </button>
               <button
-                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100/60 dark:hover:bg-gray-800/50 rounded transition-colors"
                 title="前进"
                 @click="handleBrowserForward"
               >
@@ -1577,7 +1578,7 @@ async function handleExportWord() {
                 </svg>
               </button>
               <button
-                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100/60 dark:hover:bg-gray-800/50 rounded transition-colors"
                 title="刷新"
                 @click="handleBrowserRefresh"
               >
@@ -1591,30 +1592,31 @@ async function handleExportWord() {
               v-model="browserUrlInput"
               type="text"
               placeholder="输入网址..."
-              class="flex-1 h-7 px-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+              class="flex-1 h-7 px-3 bg-gray-100/60 dark:bg-gray-800 border border-gray-200/60 dark:border-gray-700/50 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
               @keyup.enter="handleAddressBarNavigate"
             />
-            <!-- Go 按钮 -->
-            <button
-              class="h-7 px-3 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded transition-colors shrink-0"
-              @click="handleAddressBarNavigate"
-            >
-              前往
-            </button>
-            <!-- 关闭浏览器（销毁 webview） -->
-            <button
-              v-if="browserOpen"
-              class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors shrink-0"
-              title="关闭浏览器（释放资源）"
-              @click="handleBrowserDestroy"
-            >
+            <!-- 右侧按钮组：Go + 关闭 -->
+            <div class="flex items-center gap-2 shrink-0 mr-1.5">
+              <button
+                class="h-7 px-3 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded transition-colors shrink-0"
+                @click="handleAddressBarNavigate"
+              >
+                前往
+              </button>
+              <button
+                v-if="browserOpen"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors shrink-0"
+                title="关闭浏览器（释放资源）"
+                @click="handleBrowserDestroy"
+              >
               <svg class="w-3.5 h-3.5" viewBox="0 0 14 14"><line x1="2" y1="2" x2="12" y2="12" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="2" x2="2" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>
             </button>
+            </div>
           </div>
           <!-- WebView 占位 / 提示 -->
           <div
             v-if="!browserOpen"
-            class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900"
+            class="flex-1 flex items-center justify-center bg-white dark:bg-[#030712]"
           >
             <div class="text-center space-y-3">
               <span class="text-3xl">🌐</span>
@@ -1750,7 +1752,7 @@ async function handleExportWord() {
         <template v-if="editMode === 'document' && !isViewingHistory">
           <span v-if="draftSaveStatus === 'pending'" class="text-yellow-700 dark:text-yellow-500">● 检测到变更…</span>
           <span v-else-if="draftSaveStatus === 'saving'" class="text-blue-400">● 正在保存…</span>
-          <span v-else-if="draftSaveStatus === 'saved'" class="text-green-700">● 草稿已自动保存{{ lastSaveTime ? `（${lastSaveTime}）` : '' }}</span>
+          <span v-else-if="draftSaveStatus === 'saved'" class="text-green-600 dark:text-green-400">● 草稿已自动保存{{ lastSaveTime ? `（${lastSaveTime}）` : '' }}</span>
           <span v-else-if="draftSaveStatus === 'error'" class="text-red-500">● 保存失败</span>
           <span v-else-if="draftSaveStatus === 'idle' && lastSaveTime" class="text-gray-400 dark:text-gray-500">草稿已保存（{{ lastSaveTime }}）</span>
         </template>
@@ -1758,7 +1760,7 @@ async function handleExportWord() {
       <!-- 中间拖拽区域 -->
       <div class="flex-1 h-full" />
       <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-600 no-drag">
-        <span v-if="loading.init" class="text-blue-400">初始化中...</span>
+        <span v-if="loading.init" class="text-blue-400 dark:text-blue-300">初始化中...</span>
         <!-- AI 状态 -->
         <span
           class="inline-flex items-center px-1.5 py-px rounded font-medium text-gray-500 dark:text-gray-400"
@@ -1785,10 +1787,10 @@ async function handleExportWord() {
           class="inline-flex items-center px-1.5 py-px rounded font-medium transition-colors cursor-pointer select-none no-drag bg-gray-200 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700"
           @click="toggleTheme"
         >
-          <svg v-if="isDark" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg v-if="isDark" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
           </svg>
-          <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg v-else class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
           </svg>
@@ -1804,7 +1806,7 @@ async function handleExportWord() {
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 17h.01" />
           </svg>
         </button>
-        <span class="text-gray-500 dark:text-gray-400">大庆油田 |  陈刚 18088793359</span>
+        <span class="text-gray-500 dark:text-gray-400">大庆油田 | 陈刚 18088793359</span>
       </div>
     </footer>
 
@@ -1866,7 +1868,7 @@ async function handleExportWord() {
                 • <b class="text-gray-800 dark:text-gray-200">重命名</b> — 悬停文档点击 ✎ 图标，或点击顶部标题栏直接重命名<br/>
                 • <b class="text-gray-800 dark:text-gray-200">删除</b> — 悬停文档点击 ✕ 图标，确认弹窗确认后不可恢复<br/>
                 • <b class="text-gray-800 dark:text-gray-200">移动</b> — 悬停文档点击 ↗ 图标，弹出面板选择目标文件夹或创建新文件夹后移入<br/>
-                • <b class="text-gray-800 dark:text-gray-200">自动保存</b> — 编辑内容防抖 1 秒自动保存草稿。状态栏实时显示保存状态：<span class="text-yellow-700 dark:text-yellow-500">检测到变更…</span> → <span class="text-blue-400">正在保存…</span> → <span class="text-green-700">草稿已自动保存（HH:MM:SS）</span><br/>
+                • <b class="text-gray-800 dark:text-gray-200">自动保存</b> — 编辑内容防抖 1 秒自动保存草稿。状态栏实时显示保存状态：<span class="text-yellow-700 dark:text-yellow-500">检测到变更…</span> → <span class="text-blue-400 dark:text-blue-300">正在保存…</span> → <span class="text-green-600 dark:text-green-400">草稿已自动保存（HH:MM:SS）</span><br/>
                 • <b class="text-gray-800 dark:text-gray-200">安全退出</b> — 关闭窗口时自动保存并弹出确认提示，防止误关闭<br/>
                 • <b class="text-gray-800 dark:text-gray-200">切换即保</b> — 从文档切换到素材/浏览器时自动保存当前文档<br/><br/>
                 <b class="text-gray-800 dark:text-gray-200">📁 文件夹管理</b><br/>

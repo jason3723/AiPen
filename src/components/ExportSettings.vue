@@ -71,7 +71,7 @@ const labelSm = 'text-[10px] text-gray-400 dark:text-gray-500 shrink-0';
         <div class="flex-1 overflow-y-auto px-5 py-4 space-y-5">
           <!-- 字体设置 -->
           <section>
-            <h4 class="text-xs font-semibold text-blue-400 mb-3 uppercase tracking-wider">字体</h4>
+            <h4 class="text-xs font-semibold text-blue-400 dark:text-blue-300 mb-3 uppercase tracking-wider">字体</h4>
             <div class="space-y-2">
               <!-- H1 -->
               <div class="flex items-center gap-1.5">
@@ -177,7 +177,7 @@ const labelSm = 'text-[10px] text-gray-400 dark:text-gray-500 shrink-0';
 
           <!-- 页面设置 -->
           <section>
-            <h4 class="text-xs font-semibold text-blue-400 mb-3 uppercase tracking-wider">页面边距 (mm)</h4>
+            <h4 class="text-xs font-semibold text-blue-400 dark:text-blue-300 mb-3 uppercase tracking-wider">页面边距 (mm)</h4>
             <div class="grid grid-cols-4 gap-3">
               <label class="flex flex-col gap-1">
                 <span class="text-[11px] text-gray-400 dark:text-gray-500">上</span>
@@ -216,7 +216,7 @@ const labelSm = 'text-[10px] text-gray-400 dark:text-gray-500 shrink-0';
 
           <!-- 文档网格 & 段落 -->
           <section>
-            <h4 class="text-xs font-semibold text-blue-400 mb-3 uppercase tracking-wider">文档网格 &amp; 段落</h4>
+            <h4 class="text-xs font-semibold text-blue-400 dark:text-blue-300 mb-3 uppercase tracking-wider">文档网格 &amp; 段落</h4>
             <div class="grid grid-cols-3 gap-3">
               <label class="flex flex-col gap-1">
                 <span class="text-[11px] text-gray-400 dark:text-gray-500">每行字数</span>
@@ -247,7 +247,7 @@ const labelSm = 'text-[10px] text-gray-400 dark:text-gray-500 shrink-0';
 
           <!-- 距边界 -->
           <section>
-            <h4 class="text-xs font-semibold text-blue-400 mb-3 uppercase tracking-wider">距边界 (mm)</h4>
+            <h4 class="text-xs font-semibold text-blue-400 dark:text-blue-300 mb-3 uppercase tracking-wider">距边界 (mm)</h4>
             <div class="flex gap-3">
               <label class="flex flex-col gap-1 flex-1">
                 <span class="text-[11px] text-gray-400 dark:text-gray-500">页眉</span>
@@ -270,7 +270,7 @@ const labelSm = 'text-[10px] text-gray-400 dark:text-gray-500 shrink-0';
 
           <!-- 表格 -->
           <section>
-            <h4 class="text-xs font-semibold text-blue-400 mb-3 uppercase tracking-wider">表格 · 单元格边距 (mm)</h4>
+            <h4 class="text-xs font-semibold text-blue-400 dark:text-blue-300 mb-3 uppercase tracking-wider">表格 · 单元格边距 (mm)</h4>
             <div class="grid grid-cols-4 gap-3">
               <label class="flex flex-col gap-1">
                 <span class="text-[11px] text-gray-400 dark:text-gray-500">上</span>

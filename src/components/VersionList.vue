@@ -151,7 +151,7 @@ async function handleRollback(versionId: string) {
         class="group flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors"
         :class="{
           'bg-blue-100 dark:bg-blue-900/30 border border-blue-700/50': isSelected(v.id) === 'old',
-          'bg-green-900/30 border border-green-700/50': isSelected(v.id) === 'new',
+          'bg-green-100 dark:bg-green-900/30 border border-green-700/50': isSelected(v.id) === 'new',
           'bg-amber-100 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700/40': isViewing(v.id) && isSelected(v.id) === 'none',
           'hover:bg-gray-100/50 dark:hover:bg-gray-800/50 border border-transparent': isSelected(v.id) === 'none' && !isViewing(v.id),
         }"

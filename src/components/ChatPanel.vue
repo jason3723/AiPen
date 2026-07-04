@@ -84,6 +84,49 @@ watch(
 const pendingQuote = ref("");
 function removeQuote() { pendingQuote.value = "" }
 
+// 本地文件附件
+const attachedFiles = ref<{ name: string; content: string }[]>([]);
+const fileInputRef = ref<HTMLInputElement>();
+
+function triggerFilePicker() {
+  fileInputRef.value?.click();
+}
+
+function handleFilesSelected(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const files = input.files;
+  if (!files || files.length === 0) return;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const content = ev.target?.result as string;
+      if (content) {
+        // 去重：同名文件覆盖
+        const existing = attachedFiles.value.findIndex(f => f.name === file.name);
+        if (existing >= 0) attachedFiles.value.splice(existing, 1);
+        attachedFiles.value.push({ name: file.name, content });
+      }
+    };
+    reader.readAsText(file);
+  }
+  input.value = "";
+}
+
+function removeAttachedFile(index: number) {
+  attachedFiles.value.splice(index, 1);
+}
+
+function buildContextText(): string {
+  const parts: string[] = [];
+  if (pendingQuote.value) parts.push(pendingQuote.value);
+  for (const f of attachedFiles.value) {
+    parts.push(`[文件: ${f.name}]\n${f.content}`);
+  }
+  if (quoteFullText.value && props.currentContent) parts.push(props.currentContent);
+  return parts.join("\n\n---\n\n");
+}
+
 const materialStore = useMaterialStore();
 
 async function loadKnowledgeBases() {
@@ -167,10 +210,10 @@ async function loadMessages(convId: string) {
 async function sendMessage() {
   const text = inputText.value.trim();
   if (!text || !currentConvId.value) return;
-  // 选中文本优先，其次如果开启了引用全文则用全文
-  const quote = pendingQuote.value || (quoteFullText.value ? props.currentContent || "" : "");
+  const quote = buildContextText() || null;
   inputText.value = "";
   pendingQuote.value = "";
+  attachedFiles.value = [];
   loading.value.send = true;
   error.value = "";
 
@@ -457,18 +500,33 @@ function formatTime(ts: string) {
       </div>
 
       <!-- 知识库与素材库选择 -->
-      <div v-if="knowledgeBases.length > 0 || materialStore.tagWithCounts.length > 0" class="mb-2">
-        <div class="flex items-center gap-1 flex-wrap">
-          <button
-            class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-1 transition-colors"
-            @click="showKbPicker = !showKbPicker"
-          >
-            📚 {{ (selectedKbIds.length + materialStore.selectedMaterialTagIds.length) > 0 ? (selectedKbIds.length + materialStore.selectedMaterialTagIds.length) + '个' : '知识库' }}
-          </button>
+      <div class="flex items-center gap-1 flex-wrap mb-2 relative">
+        <button
+          v-if="knowledgeBases.length > 0 || materialStore.tagWithCounts.length > 0"
+          class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-1 transition-colors"
+          @click="showKbPicker = !showKbPicker"
+        >
+          📚 {{ (selectedKbIds.length + materialStore.selectedMaterialTagIds.length) > 0 ? (selectedKbIds.length + materialStore.selectedMaterialTagIds.length) + '个' : '知识库' }}
+        </button>
+        <button
+          class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-1 transition-colors"
+          title="上传文本文件供AI引用"
+          @click="triggerFilePicker"
+        >
+          📁 {{ attachedFiles.length > 0 ? attachedFiles.length + '个文件' : '本地文件' }}
+        </button>
+        <input
+          ref="fileInputRef"
+          type="file"
+          multiple
+          accept=".txt,.md,.json,.csv,.xml,.html,.htm,.py,.js,.ts,.jsx,.tsx,.rs,.go,.java,.c,.cpp,.h,.hpp,.css,.scss,.less,.yaml,.yml,.toml,.cfg,.ini,.log,.sh,.bat,.ps1,.sql,.r,.rb,.php,.swift,.kt,.dart,.lua,.pl,.tex,.rst,.org,.vue,.svelte"
+          class="hidden"
+          @change="handleFilesSelected"
+        />
           <span
             v-for="kid in selectedKbIds"
             :key="kid"
-            class="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded cursor-pointer"
+            class="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded cursor-pointer"
             @click="toggleKb(kid)"
           >
             {{ knowledgeBases.find(k => k.id === kid)?.name || kid }}
@@ -476,22 +534,21 @@ function formatTime(ts: string) {
           <span
             v-for="tid in materialStore.selectedMaterialTagIds"
             :key="tid"
-            class="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-950/40 px-1.5 py-0.5 rounded cursor-pointer"
+            class="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded cursor-pointer"
             @click="materialStore.toggleMaterialTag(tid)"
           >
             {{ materialStore.tagWithCounts.find(t => t.id === tid)?.name || tid }}
           </span>
-        </div>
-        <div v-if="showKbPicker" class="mt-1.5 space-y-2">
+        <div v-if="showKbPicker" class="absolute bottom-full left-0 mb-1.5 space-y-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2.5 min-w-[200px] z-20">
           <!-- 知识库 -->
           <div v-if="knowledgeBases.length > 0">
-            <div class="text-[10px] text-amber-500/70 mb-1">知识库</div>
+            <div class="text-[10px] text-amber-600/70 dark:text-amber-400/70 mb-1">知识库</div>
             <div class="flex flex-wrap gap-1">
               <button
                 v-for="kb in knowledgeBases"
                 :key="kb.id"
                 class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                :class="selectedKbIds.includes(kb.id) ? 'text-amber-600 dark:text-amber-400 bg-amber-950/40 border border-amber-300 dark:border-amber-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
+                :class="selectedKbIds.includes(kb.id) ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                 @click="toggleKb(kb.id)"
               >
                 {{ kb.name }}
@@ -502,13 +559,13 @@ function formatTime(ts: string) {
           <div v-if="knowledgeBases.length > 0 && materialStore.tagWithCounts.length > 0" class="border-t border-gray-300/50 dark:border-gray-700/50"></div>
           <!-- 素材库标签 -->
           <div v-if="materialStore.tagWithCounts.length > 0">
-            <div class="text-[10px] text-emerald-500/70 mb-1">素材库标签</div>
+            <div class="text-[10px] text-emerald-600/70 dark:text-emerald-400/70 mb-1">素材库标签</div>
             <div class="flex flex-wrap gap-1">
               <button
                 v-for="tag in materialStore.tagWithCounts"
                 :key="tag.id"
                 class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                :class="materialStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
+                :class="materialStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                 @click="materialStore.toggleMaterialTag(tag.id)"
               >
                 {{ tag.name }} ({{ tag.material_count }})
@@ -516,6 +573,19 @@ function formatTime(ts: string) {
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 本地文件附件标签 -->
+      <div v-if="attachedFiles.length > 0" class="flex items-center gap-1 flex-wrap mb-2">
+        <span
+          v-for="(f, i) in attachedFiles"
+          :key="f.name"
+          class="text-[10px] text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded cursor-pointer"
+          title="点击移除"
+          @click="removeAttachedFile(i)"
+        >
+          📄 {{ f.name }}
+        </span>
       </div>
 
       <div class="flex gap-2">

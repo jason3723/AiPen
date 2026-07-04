@@ -2225,7 +2225,7 @@ defineExpose({ onPlaybackComplete })
                   <div class="flex items-center gap-1.5">
                     <span class="text-xs">🧠</span>
                     <span class="text-[11px] font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">AI 思考过程</span>
-                    <span class="text-[10px] text-purple-500/70 bg-purple-100 dark:bg-purple-950/40 px-1 py-0.5 rounded-full border border-purple-800/30">{{ outlineThinkingExpanded ? '收起' : '查看' }}</span>
+                    <span class="text-[10px] text-purple-600/70 dark:text-purple-400/70 bg-purple-100 dark:bg-purple-950/40 px-1 py-0.5 rounded-full border border-purple-800/30">{{ outlineThinkingExpanded ? '收起' : '查看' }}</span>
                   </div>
                   <span class="text-[10px] text-purple-600 dark:text-purple-400 transition-transform" :class="outlineThinkingExpanded ? 'rotate-180' : ''">▼</span>
                 </button>

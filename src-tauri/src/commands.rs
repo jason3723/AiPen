@@ -2,6 +2,7 @@ use crate::{ai, db, diff, version};
 use tauri::{Emitter, State};
 use serde_json;
 use ai::ChatMessagePayload;
+use uuid::Uuid;
 
 // ─── 精神融入：内置知识库摘要索引 ──────────────────────────────
 // 每个内置 KB 一句话描述，用于 AI 阶段 1 做精匹配
@@ -1635,6 +1636,13 @@ use base64::Engine;
 
 const BROWSER_INIT_SCRIPT: &str = r#"
 (function() {
+  // ── 注入网页框架边框（与地址栏底部边框一致） ──
+  var style = document.createElement('style');
+  style.textContent = 'html { border: 1px solid rgba(229,231,235,0.4); box-sizing: border-box; }'
+    + ' @media (prefers-color-scheme: dark) { html { border-color: rgba(31,41,55,0.3); } }'
+    + ' html.dark { border-color: rgba(31,41,55,0.3); }';
+  document.head.appendChild(style);
+
   // ── 拦截 target="_blank" 链接和 window.open，在当前窗口打开 ──
   // 劫持 window.open，重定向到当前页面
   window.open = function(url, target, features) {
@@ -1805,8 +1813,8 @@ pub async fn create_browser_webview(
     let parsed = url::Url::parse(&url).map_err(|e| format!("无效网址: {}", e))?;
     let main = app.get_webview_window("main").ok_or("找不到主窗口")?;
 
-    // 获取主窗口屏幕位置 + DPI 缩放，算出浏览器窗口的屏幕坐标
-    let main_pos = main.outer_position().map_err(|e| format!("获取窗口位置失败: {}", e))?;
+    // 获取主窗口内容区屏幕位置 + DPI 缩放，算出浏览器窗口的屏幕坐标
+    let main_pos = main.inner_position().map_err(|e| format!("获取窗口位置失败: {}", e))?;
     let scale = main.scale_factor().map_err(|e| format!("获取缩放因子失败: {}", e))?;
     let logical_x = main_pos.x as f64 / scale + x;
     let logical_y = main_pos.y as f64 / scale + y;
@@ -1822,6 +1830,7 @@ pub async fn create_browser_webview(
     .position(logical_x, logical_y)
     .inner_size(width, height)
     .decorations(false)
+    .shadow(false)
     .skip_taskbar(true)
     .resizable(true)
     .always_on_top(true)
@@ -1931,9 +1940,7 @@ pub async fn resize_browser_webview(
 ) -> Result<(), String> {
     let wv = app.get_webview_window("browser").ok_or("浏览器未打开".to_string())?;
     let main = app.get_webview_window("main").ok_or("找不到主窗口")?;
-    let main_pos = main.outer_position().map_err(|e| format!("获取窗口位置失败: {}", e))?;
-    // 缩放因子使用主窗口的（与 create_browser_webview 保持一致），
-    // 避免不同显示器/多屏场景下两个窗口的 scale_factor 不一致时换算误差
+    let main_pos = main.inner_position().map_err(|e| format!("获取窗口位置失败: {}", e))?;
     let scale = main.scale_factor().map_err(|e| format!("获取缩放因子失败: {}", e))?;
     let logical_x = main_pos.x as f64 / scale + x;
     let logical_y = main_pos.y as f64 / scale + y;
@@ -1965,5 +1972,56 @@ pub async fn show_browser(app: tauri::AppHandle) -> Result<(), String> {
     if let Some(wv) = app.get_webview_window("browser") {
         wv.show().map_err(|e| format!("显示浏览器失败: {}", e))?;
     }
+    Ok(())
+}
+
+// ─── 系统打印命令 ───
+
+#[tauri::command]
+pub async fn print_document(html: String, title: String) -> Result<(), String> {
+    let temp_dir = std::env::temp_dir().join("aipen_print");
+    std::fs::create_dir_all(&temp_dir).map_err(|e| format!("创建临时目录失败: {}", e))?;
+    let file_path = temp_dir.join(format!("{}.html", Uuid::new_v4()));
+
+    let full_html = if html.trim_start().starts_with("<!DOCTYPE") || html.trim_start().starts_with("<html") {
+        html
+    } else {
+        format!(
+            r#"<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>{}</title>
+<style>@page{{size:A4;margin:20mm}}body{{font-family:'Microsoft YaHei','PingFang SC',sans-serif;font-size:12pt;line-height:1.8;color:#000;margin:0;padding:0}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #000;padding:4pt 6pt}}img{{max-width:100%}}</style>
+</head><body>{}</body></html>"#,
+            title.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;"),
+            html
+        )
+    };
+
+    std::fs::write(&file_path, &full_html).map_err(|e| format!("写入临时文件失败: {}", e))?;
+    let path_str = file_path.to_str().ok_or("路径编码失败")?;
+
+    #[cfg(target_os = "windows")]
+    {
+        let ps = format!("Start-Process -Verb Print -FilePath '{}'", path_str.replace('\'', "''"));
+        std::process::Command::new("powershell")
+            .args(["-NoProfile", "-Command", &ps])
+            .spawn()
+            .map_err(|e| format!("调起系统打印失败: {}", e))?;
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("lp")
+            .args(["-t", &title, path_str])
+            .spawn()
+            .map_err(|e| format!("调起系统打印失败: {}", e))?;
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        std::process::Command::new("lp")
+            .args(["-t", &title, path_str])
+            .spawn()
+            .map_err(|e| format!("调起系统打印失败: {}", e))?;
+    }
+
     Ok(())
 }
