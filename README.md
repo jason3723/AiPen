@@ -1,7 +1,7 @@
 # AiPen — AI 辅助公文写作桌面应用
 
 <p align="center">
-  <img src="https://github.com/jason3723/AiPen/blob/main/icon.ico" alt="AiPen Logo" width="720" />
+  <img src="icon.ico" alt="AiPen Logo" />
 </p>
 
 <p align="center">
@@ -148,9 +148,7 @@ npm run tauri build
 
 ## 📖 文档
 
-- **[完整使用手册](docs/USER_GUIDE.md)** — 安装后也会作为内置文档自动创建
-- **[更新日志](docs/CHANGELOG.md)** — 每个版本的详细变更
-
+- **[完整使用手册](USER_GUIDE.md)** — 安装后也会作为内置文档自动创建
 ---
 
 ## 📄 许可证
