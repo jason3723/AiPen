@@ -179,12 +179,12 @@ async function handleSave() {
   <Teleport to="body">
     <div class="fixed inset-0 z-[10001] flex items-center justify-center" @click.self="emit('close')">
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div class="relative w-full max-w-lg max-h-[80vh] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl flex flex-col">
+      <div class="relative w-full max-w-lg max-h-[80vh] bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl flex flex-col">
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 shrink-0">
-          <h2 class="text-sm font-semibold text-gray-200">存入素材库</h2>
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0">
+          <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200">存入素材库</h2>
           <button
-            class="h-7 w-7 flex items-center justify-center rounded text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors"
+            class="h-7 w-7 flex items-center justify-center rounded text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             @click="emit('close')"
           >✕</button>
         </div>
@@ -194,34 +194,34 @@ async function handleSave() {
           <!-- 正在分析 -->
           <div v-if="step === 'analyzing'" class="flex items-center gap-3 py-6 justify-center">
             <span class="animate-spin text-blue-400">⏳</span>
-            <span class="text-sm text-gray-400">AI 正在分析内容并匹配标签...</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400">AI 正在分析内容并匹配标签...</span>
           </div>
 
           <!-- 确认标签 -->
           <template v-if="step === 'confirm' || step === 'saving'">
             <!-- 素材预览 -->
             <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">素材内容</h3>
-              <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2 text-xs text-gray-300 max-h-24 overflow-y-auto whitespace-pre-wrap">
+              <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">素材内容</h3>
+              <div class="bg-gray-100/60 dark:bg-gray-800/50 border border-gray-300/50 dark:border-gray-700/50 rounded-lg px-3 py-2 text-xs text-gray-700 dark:text-gray-300 max-h-24 overflow-y-auto whitespace-pre-wrap">
                 {{ content.slice(0, 200) }}{{ content.length > 200 ? '...' : '' }}
               </div>
             </div>
 
             <!-- 来源信息 -->
-            <div v-if="sourceUrl || sourceTitle" class="text-[11px] text-gray-500">
+            <div v-if="sourceUrl || sourceTitle" class="text-[11px] text-gray-400 dark:text-gray-500">
               <span v-if="sourceTitle">来源：{{ sourceTitle }}</span>
               <span v-if="sourceUrl" class="ml-2 break-all">{{ sourceUrl }}</span>
             </div>
 
             <!-- AI 打标签错误 -->
-            <div v-if="aiError" class="text-xs text-amber-400 bg-amber-950/20 border border-amber-800/30 rounded px-3 py-2">
+            <div v-if="aiError" class="text-xs text-amber-600 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-300/50 dark:border-amber-800/30 rounded px-3 py-2">
               AI 标签分析失败：{{ aiError }}。将保存为无标签素材。
             </div>
 
             <!-- 1. AI 匹配标签（点击选择/取消） -->
             <div v-if="matchedDisplay.length > 0">
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                AI 匹配标签 <span class="text-gray-600 normal-case">（点击选择/取消）</span>
+              <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                AI 匹配标签 <span class="text-gray-500 dark:text-gray-600 normal-case">（点击选择/取消）</span>
               </h3>
               <div class="flex flex-wrap gap-1.5">
                 <span
@@ -229,8 +229,8 @@ async function handleSave() {
                   :key="item.name"
                   class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] rounded-full border transition-colors cursor-pointer select-none"
                   :class="(item.isExisting && selectedTagIds.has(item.existingId)) || (!item.isExisting && newTagNames.includes(item.name))
-                    ? 'bg-blue-600/30 border-blue-500/50 text-blue-300'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'"
+                    ? 'bg-blue-600/30 border-blue-500/50 text-blue-700 dark:text-blue-300'
+                    : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-600'"
                   @click="item.isExisting ? toggleExistingTag(item.existingId) : removeNewTag(item.name)"
                 >
                   {{ item.name }}
@@ -240,14 +240,14 @@ async function handleSave() {
 
             <!-- 2. 建议新标签（点击选择/取消） -->
             <div v-if="newTagNames.length > 0">
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                建议新标签 <span class="text-gray-600 normal-case">（点击选择/取消）</span>
+              <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                建议新标签 <span class="text-gray-500 dark:text-gray-600 normal-case">（点击选择/取消）</span>
               </h3>
               <div class="flex flex-wrap gap-1.5">
                 <span
                   v-for="name in newTagNames"
                   :key="name"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] rounded-full bg-amber-900/20 border border-amber-700/40 text-amber-300 cursor-pointer select-none hover:bg-amber-900/30 transition-colors"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] rounded-full bg-amber-100 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700/40 text-amber-700 dark:text-amber-300 cursor-pointer select-none hover:bg-amber-900/30 transition-colors"
                   @click="removeNewTag(name)"
                 >
                   + {{ name }}
@@ -257,9 +257,9 @@ async function handleSave() {
 
             <!-- 3. 从已有标签中选择（绿色，点击切换） -->
             <div v-if="store.tags.length > 0">
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
                 从已有标签中选择
-                <span class="text-gray-600 normal-case">（{{ store.tags.length }} 个）</span>
+                <span class="text-gray-500 dark:text-gray-600 normal-case">（{{ store.tags.length }} 个）</span>
               </h3>
               <div class="flex flex-wrap gap-1.5">
                 <button
@@ -268,8 +268,8 @@ async function handleSave() {
                   type="button"
                   class="px-2.5 py-1 text-[11px] rounded-full border transition-colors"
                   :class="selectedTagIds.has(tag.id)
-                    ? 'bg-emerald-600/30 border-emerald-500/50 text-emerald-300'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'"
+                    ? 'bg-emerald-600/30 border-emerald-300 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-300'
+                    : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-300'"
                   @click="toggleExistingTag(tag.id)"
                 >
                   {{ tag.name }}
@@ -279,7 +279,7 @@ async function handleSave() {
 
             <!-- 4. 自定义标签输入 -->
             <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              <h3 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
                 新增自定义标签
               </h3>
               <div class="flex items-center gap-2">
@@ -288,12 +288,12 @@ async function handleSave() {
                   type="text"
                   placeholder="输入标签名后回车"
                   maxlength="20"
-                  class="flex-1 h-8 px-3 text-xs bg-gray-800 border border-gray-700 rounded text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  class="flex-1 h-8 px-3 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-800 dark:text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500"
                   @keydown="handleCustomKeydown"
                 />
                 <button
                   type="button"
-                  class="h-8 px-4 text-xs bg-gray-700 hover:bg-gray-600 text-gray-200 rounded transition-colors disabled:opacity-50"
+                  class="h-8 px-4 text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded transition-colors disabled:opacity-50"
                   :disabled="!customTagInput.trim()"
                   @click="addCustomTag"
                 >添加</button>
@@ -303,13 +303,13 @@ async function handleSave() {
         </div>
 
         <!-- Footer -->
-        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-800 shrink-0">
-          <span class="text-[11px] text-gray-600">
+        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-800 shrink-0">
+          <span class="text-[11px] text-gray-500 dark:text-gray-600">
             {{ step === 'analyzing' ? '正在分析...' : `已选 ${totalSelected} 个标签` }}
           </span>
           <div class="flex items-center gap-2">
             <button
-              class="h-8 px-4 text-xs text-gray-400 hover:text-gray-200 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+              class="h-8 px-4 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
               :disabled="step === 'saving'"
               @click="emit('close')"
             >

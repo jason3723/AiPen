@@ -134,10 +134,10 @@ async function handleDelete(kb: KnowledgeBase) {
     <!-- 错误 -->
     <div
       v-if="error"
-      class="mb-2 text-xs text-red-400 bg-red-950/30 border border-red-900/30 rounded px-3 py-2"
+      class="mb-2 text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded px-3 py-2"
     >
       {{ error }}
-      <button class="ml-2 underline hover:text-red-300" @click="error = ''">关闭</button>
+      <button class="ml-2 underline hover:text-red-600 dark:hover:text-red-300" @click="error = ''">关闭</button>
     </div>
 
     <!-- 操作栏 -->
@@ -152,56 +152,56 @@ async function handleDelete(kb: KnowledgeBase) {
     </div>
 
     <!-- 加载中 -->
-    <div v-if="loading.list" class="text-gray-500 text-xs text-center py-8">加载知识库...</div>
+    <div v-if="loading.list" class="text-gray-400 dark:text-gray-500 text-xs text-center py-8">加载知识库...</div>
 
     <!-- 知识库列表 -->
     <div v-else class="flex-1 overflow-y-auto space-y-2">
       <div
         v-for="kb in knowledgeBases"
         :key="kb.id"
-        class="border border-gray-700/50 rounded-lg bg-gray-800/30"
+        class="border border-gray-300/50 dark:border-gray-700/50 rounded-lg bg-gray-100/50 dark:bg-gray-800/30"
       >
         <!-- 头部 -->
         <div
-          class="flex items-center justify-between px-3 py-2.5 cursor-pointer hover:bg-gray-800/50 transition-colors"
+          class="flex items-center justify-between px-3 py-2.5 cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors"
           @click="togglePreview(kb.id)"
         >
           <div class="flex-1 min-w-0 flex items-center gap-2">
-            <span class="text-xs font-medium text-gray-200 truncate">{{ kb.name }}</span>
+            <span class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">{{ kb.name }}</span>
             <span
-              class="text-[10px] px-1.5 py-0.5 rounded shrink-0"
-              :class="kb.is_builtin ? 'text-amber-400 bg-amber-950/40' : 'text-blue-400 bg-blue-950/40'"
+              class="text-[10px] px-1 rounded shrink-0"
+              :class="kb.is_builtin ? 'text-gray-500 dark:text-gray-600 border border-gray-300 dark:border-gray-700' : 'bg-blue-400/25 text-gray-800 dark:text-gray-200'"
             >
               {{ kb.is_builtin ? '内置' : '自定义' }}
             </span>
-            <span class="text-[10px] text-gray-600 shrink-0">{{ kb.content.length }} 字</span>
+            <span class="text-[10px] text-gray-500 dark:text-gray-600 shrink-0">{{ kb.content.length }} 字</span>
           </div>
           <div class="flex items-center gap-1 shrink-0 ml-2">
-            <span class="text-[10px] text-gray-500">{{ previewingId === kb.id ? '▼' : '▶' }}</span>
+            <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ previewingId === kb.id ? '▼' : '▶' }}</span>
           </div>
         </div>
 
         <!-- 内容预览 -->
-        <div v-if="previewingId === kb.id" class="border-t border-gray-700/50">
+        <div v-if="previewingId === kb.id" class="border-t border-gray-300/50 dark:border-gray-700/50">
           <!-- 内置：不可查看内容 -->
-          <div v-if="kb.is_builtin" class="px-3 py-3 text-xs text-gray-500 text-center">
+          <div v-if="kb.is_builtin" class="px-3 py-3 text-xs text-gray-400 dark:text-gray-500 text-center">
             内置知识库，不可查看内容
           </div>
           <!-- 自定义：显示内容 -->
           <div v-else>
-            <div class="px-3 py-3 text-xs text-gray-300 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap">
+            <div class="px-3 py-3 text-xs text-gray-700 dark:text-gray-300 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap">
               {{ kb.content }}
             </div>
             <div class="flex items-center gap-1 px-3 pb-2">
               <button
-                class="text-[10px] text-gray-500 hover:text-yellow-400 px-1.5 transition-colors"
+                class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-yellow-600 dark:hover:text-yellow-400 px-1.5 transition-colors"
                 @click.stop="openEditForm(kb)"
               >
                 编辑
               </button>
-              <span class="text-gray-700">|</span>
+              <span class="text-gray-300 dark:text-gray-700">|</span>
               <button
-                class="text-[10px] text-gray-500 hover:text-red-400 px-1.5 transition-colors"
+                class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 px-1.5 transition-colors"
                 @click.stop="handleDelete(kb)"
               >
                 删除
@@ -212,7 +212,7 @@ async function handleDelete(kb: KnowledgeBase) {
       </div>
 
       <!-- 空状态 -->
-      <div v-if="knowledgeBases.length === 0" class="text-center py-8 text-gray-600 text-xs">
+      <div v-if="knowledgeBases.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-600 text-xs">
         暂无知识库
       </div>
     </div>
@@ -224,43 +224,43 @@ async function handleDelete(kb: KnowledgeBase) {
       @click.self="cancelForm"
     >
       <div class="absolute inset-0 bg-black/60" />
-      <div class="relative w-full max-w-lg max-h-[85vh] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl flex flex-col mx-4">
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-          <h3 class="text-sm font-semibold text-gray-200">
+      <div class="relative w-full max-w-lg max-h-[85vh] bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl flex flex-col mx-4">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+          <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
             {{ editingId ? '编辑知识库' : '确认知识库信息' }}
           </h3>
           <button
-            class="h-6 w-6 flex items-center justify-center text-gray-500 hover:text-gray-300 rounded"
+            class="h-6 w-6 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded"
             @click="cancelForm"
           >✕</button>
         </div>
         <div class="px-4 py-3 space-y-3 overflow-y-auto">
-          <div v-if="!editingId" class="text-[10px] text-gray-500 bg-amber-950/20 border border-amber-900/30 rounded px-2 py-1.5">
+          <div v-if="!editingId" class="text-[10px] text-gray-400 dark:text-gray-500 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-300/40 dark:border-amber-900/30 rounded px-2 py-1.5">
             文件已解析完成，请确认名称后保存
           </div>
           <div>
-            <label class="text-[10px] text-gray-500 block mb-1">名称</label>
+            <label class="text-[10px] text-gray-400 dark:text-gray-500 block mb-1">名称</label>
             <input
               v-model="form.name"
               type="text"
-              class="w-full h-8 px-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 focus:border-blue-500 focus:outline-none"
+              class="w-full h-8 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 focus:border-blue-500 focus:outline-none"
               placeholder="知识库名称"
             />
           </div>
           <div>
-            <label class="text-[10px] text-gray-500 block mb-1">
+            <label class="text-[10px] text-gray-400 dark:text-gray-500 block mb-1">
               内容
-              <span class="text-gray-600 ml-1">{{ form.content.length }} 字</span>
+              <span class="text-gray-500 dark:text-gray-600 ml-1">{{ form.content.length }} 字</span>
             </label>
             <textarea
               v-model="form.content"
               rows="8"
-              class="w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 focus:border-blue-500 focus:outline-none resize-none"
+              class="w-full px-2 py-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 focus:border-blue-500 focus:outline-none resize-none"
               placeholder="知识库内容..."
             />
           </div>
         </div>
-        <div class="flex gap-2 px-4 py-3 border-t border-gray-800">
+        <div class="flex gap-2 px-4 py-3 border-t border-gray-200 dark:border-gray-800">
           <button
             class="flex-1 h-7 text-xs bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded transition-colors"
             :disabled="saving || !form.name.trim() || !form.content.trim()"
@@ -269,7 +269,7 @@ async function handleDelete(kb: KnowledgeBase) {
             {{ saving ? '保存中...' : '保存' }}
           </button>
           <button
-            class="h-7 px-4 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+            class="h-7 px-4 text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded transition-colors"
             @click="cancelForm"
           >
             取消

@@ -2,15 +2,28 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // 在页面渲染前同步读取主题偏好，消除启动闪烁
+      (function() {
+        const theme = localStorage.getItem('aipen-theme');
+        // 仅当用户曾手动切换为深色时才启用；首次启动默认浅色
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AiPen — AI 辅助文档写作</title>
-    <!-- 消除启动白屏：在 CSS/JS 加载前就设置暗色背景 -->
+    <!-- 消除启动白屏：在 CSS/JS 加载前就设置背景色 -->
     <style>
       html, body, #root {
-        background-color: #030712;
+        background-color: #ffffff;
         margin: 0;
         overflow: hidden;
+      }
+      html.dark, html.dark body, html.dark #root {
+        background-color: #030712;
       }
     </style>
   </head>

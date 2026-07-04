@@ -82,12 +82,12 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
 <template>
   <div class="space-y-2">
     <div class="flex items-center justify-between">
-      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+      <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
         Diff 比对
       </h3>
       <button
         v-if="diffResult"
-        class="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+        class="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
         @click="handleClear"
         title="清除对比结果"
       >
@@ -98,35 +98,35 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
     <!-- 等待状态（未选择版本） -->
     <div
       v-if="!loading.diff && !diffResult && !hasSelectedVersions"
-      class="text-center py-8 text-gray-500 text-sm"
+      class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm"
     >
-      <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-10 h-10 mx-auto mb-3 text-gray-500 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
         />
       </svg>
       <p class="mb-1">选择两个版本进行对比</p>
-      <p class="text-xs text-gray-600">在版本历史中分别选择旧版和新版</p>
+      <p class="text-xs text-gray-500 dark:text-gray-600">在版本历史中分别选择旧版和新版</p>
     </div>
 
     <!-- 等待状态（已选版本，未触发比较） -->
     <div
       v-else-if="!loading.diff && !diffResult && hasSelectedVersions"
-      class="text-center py-8 text-gray-500 text-sm"
+      class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm"
     >
-      <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-10 h-10 mx-auto mb-3 text-gray-500 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
         />
       </svg>
-      <p class="mb-2 text-xs text-gray-400">
-        <span class="inline-block px-1.5 py-0.5 rounded bg-blue-800 text-blue-200 text-xs mr-1">旧版</span>
+      <p class="mb-2 text-xs text-gray-600 dark:text-gray-400">
+        <span class="inline-block px-1.5 py-0.5 rounded bg-blue-400/25 text-gray-800 dark:text-gray-200 text-xs mr-1">旧版</span>
         {{ getVersionLabel(selectedOldVersionId) }}
       </p>
-      <p class="mb-3 text-xs text-gray-400">
-        <span class="inline-block px-1.5 py-0.5 rounded bg-green-800 text-green-200 text-xs mr-1">新版</span>
+      <p class="mb-3 text-xs text-gray-600 dark:text-gray-400">
+        <span class="inline-block px-1.5 py-0.5 rounded bg-green-400/25 text-gray-800 dark:text-gray-200 text-xs mr-1">新版</span>
         {{ getVersionLabel(selectedNewVersionId) }}
       </p>
       <button
@@ -136,7 +136,7 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
       >
         开始对比
       </button>
-      <p v-if="!canDiff && selectedOldVersionId === selectedNewVersionId" class="mt-2 text-xs text-yellow-500">
+      <p v-if="!canDiff && selectedOldVersionId === selectedNewVersionId" class="mt-2 text-xs text-yellow-700 dark:text-yellow-500">
         请选择两个不同的版本
       </p>
     </div>
@@ -144,9 +144,9 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
     <!-- 加载状态 -->
     <div v-if="loading.diff" class="space-y-2 animate-pulse">
       <div class="flex gap-2">
-        <div class="h-7 w-16 rounded bg-gray-800"></div>
-        <div class="h-7 w-16 rounded bg-gray-800"></div>
-        <div class="h-7 w-14 rounded bg-gray-800"></div>
+        <div class="h-7 w-16 rounded bg-gray-100 dark:bg-gray-800"></div>
+        <div class="h-7 w-16 rounded bg-gray-100 dark:bg-gray-800"></div>
+        <div class="h-7 w-14 rounded bg-gray-100 dark:bg-gray-800"></div>
       </div>
       <div class="space-y-1.5">
         <div v-for="i in 5" :key="i" class="h-10 rounded bg-slate-800/40"></div>
@@ -156,13 +156,13 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
     <!-- 空状态（无差异） -->
     <div
       v-else-if="diffResult && diffResult.hunks.length === 0"
-      class="text-center py-8 text-gray-500 text-sm"
+      class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm"
     >
-      <svg class="w-10 h-10 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-10 h-10 mx-auto mb-3 text-gray-500 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <p class="mb-1">两个版本内容相同</p>
-      <p class="text-xs text-gray-600">未发现任何差异</p>
+      <p class="text-xs text-gray-500 dark:text-gray-600">未发现任何差异</p>
     </div>
 
     <!-- 正常状态（显示 Diff） -->
@@ -171,19 +171,19 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
       <div class="space-y-2">
         <!-- 统计信息：三列平均分布 -->
         <div class="grid grid-cols-3 gap-2">
-          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-amber-500/10 text-amber-300 border border-amber-500/20">
+          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-500/20">
             <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             <span class="font-semibold">{{ diffResult.additions }}</span>
-            <span class="text-amber-400/70 whitespace-nowrap">新增</span>
+            <span class="text-amber-600 dark:text-amber-400/70 whitespace-nowrap">新增</span>
           </div>
-          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+          <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/20">
             <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
             </svg>
             <span class="font-semibold">{{ diffResult.deletions }}</span>
-            <span class="text-emerald-400/70 whitespace-nowrap">删除</span>
+            <span class="text-emerald-600 dark:text-emerald-400/70 whitespace-nowrap">删除</span>
           </div>
           <div class="flex items-center justify-center gap-1 px-2 py-1 rounded text-xs bg-slate-700/30 text-slate-300 border border-slate-600/30">
             <span class="text-slate-500 whitespace-nowrap">变更</span>
@@ -215,8 +215,8 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
           <!-- 修改块：先删后增 -->
           <template v-if="block.kind === 'modified' && block.deleted && block.inserted">
             <!-- 删除行：翠绿 -->
-            <div class="flex items-stretch text-[13px] leading-relaxed border-b border-emerald-500/10 bg-emerald-500/[0.03]">
-              <div class="w-6 flex items-start justify-center border-l-2 border-emerald-500 py-1.5">
+            <div class="flex items-stretch text-[13px] leading-relaxed border-b border-emerald-300 dark:border-emerald-500/10 bg-emerald-100 dark:bg-emerald-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-emerald-300 dark:border-emerald-500 py-1.5">
                 <span class="text-emerald-500/80 font-medium select-none">-</span>
               </div>
               <div class="flex-1 py-1.5 pr-3 font-mono text-slate-300 whitespace-pre-wrap break-all">
@@ -234,8 +234,8 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
               </div>
             </div>
             <!-- 新增行：琥珀 -->
-            <div class="flex items-stretch text-[13px] leading-relaxed bg-amber-500/[0.03]">
-              <div class="w-6 flex items-start justify-center border-l-2 border-amber-500 py-1.5">
+            <div class="flex items-stretch text-[13px] leading-relaxed bg-amber-100 dark:bg-amber-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-amber-300 dark:border-amber-500 py-1.5">
                 <span class="text-amber-500/80 font-medium select-none">+</span>
               </div>
               <div class="flex-1 py-1.5 pr-3 font-mono text-slate-200 whitespace-pre-wrap break-all">
@@ -256,8 +256,8 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
 
           <!-- 纯删除块：翠绿 -->
           <template v-else-if="block.kind === 'deleted' && block.deleted">
-            <div class="flex items-stretch text-[13px] leading-relaxed bg-emerald-500/[0.03]">
-              <div class="w-6 flex items-start justify-center border-l-2 border-emerald-500 py-1.5">
+            <div class="flex items-stretch text-[13px] leading-relaxed bg-emerald-100 dark:bg-emerald-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-emerald-300 dark:border-emerald-500 py-1.5">
                 <span class="text-emerald-500/80 font-medium select-none">-</span>
               </div>
               <div class="flex-1 py-1.5 pr-3 font-mono text-slate-300 whitespace-pre-wrap break-all">
@@ -278,8 +278,8 @@ const changeBlocks = computed<ChangeBlock[]>(() => {
 
           <!-- 纯新增块：琥珀 -->
           <template v-else-if="block.kind === 'inserted' && block.inserted">
-            <div class="flex items-stretch text-[13px] leading-relaxed bg-amber-500/[0.03]">
-              <div class="w-6 flex items-start justify-center border-l-2 border-amber-500 py-1.5">
+            <div class="flex items-stretch text-[13px] leading-relaxed bg-amber-100 dark:bg-amber-500/[0.03]">
+              <div class="w-6 flex items-start justify-center border-l-2 border-amber-300 dark:border-amber-500 py-1.5">
                 <span class="text-amber-500/80 font-medium select-none">+</span>
               </div>
               <div class="flex-1 py-1.5 pr-3 font-mono text-slate-200 whitespace-pre-wrap break-all">

@@ -294,14 +294,14 @@ function renderMarkdown(text: string) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/\*\*(.+?)\*\*/g, "<strong class='font-bold text-white'>$1</strong>")
-    .replace(/### (.+)/g, "<h4 class='text-xs font-bold text-gray-200 mt-2 mb-1'>$1</h4>")
-    .replace(/## (.+)/g, "<h3 class='text-sm font-bold text-blue-300 mt-3 mb-1'>$1</h3>")
-    .replace(/# (.+)/g, "<h2 class='text-sm font-bold text-blue-200 mt-3 mb-2'>$1</h2>")
-    .replace(/^\- (.+)/gm, "<li class='ml-3 text-gray-300 text-xs'>• $1</li>")
-    .replace(/^(\d+)\. (.+)/gm, "<li class='ml-3 text-gray-300 text-xs'>$1. $2</li>")
-    .replace(/`([^`]+)`/g, "<code class='bg-gray-800 text-yellow-300 px-1 rounded text-[11px]'>$1</code>")
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre class='bg-gray-800 text-gray-300 p-2 rounded text-[11px] my-1 overflow-x-auto'><code>$2</code></pre>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong class='font-bold text-gray-900 dark:text-gray-100'>$1</strong>")
+    .replace(/### (.+)/g, "<h4 class='text-xs font-bold text-gray-800 dark:text-gray-200 mt-2 mb-1'>$1</h4>")
+    .replace(/## (.+)/g, "<h3 class='text-sm font-bold text-blue-700 dark:text-blue-300 mt-3 mb-1'>$1</h3>")
+    .replace(/# (.+)/g, "<h2 class='text-sm font-bold text-blue-700 dark:text-blue-300 mt-3 mb-2'>$1</h2>")
+    .replace(/^\- (.+)/gm, "<li class='ml-3 text-gray-700 dark:text-gray-300 text-xs'>• $1</li>")
+    .replace(/^(\d+)\. (.+)/gm, "<li class='ml-3 text-gray-700 dark:text-gray-300 text-xs'>$1. $2</li>")
+    .replace(/`([^`]+)`/g, "<code class='bg-gray-100 dark:bg-gray-800 text-yellow-700 dark:text-yellow-300 px-1 rounded text-[11px]'>$1</code>")
+    .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre class='bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded text-[11px] my-1 overflow-x-auto'><code>$2</code></pre>")
     .replace(/\n\n/g, "<br><br>")
     .replace(/\n/g, "<br>");
 }
@@ -319,17 +319,17 @@ function formatTime(ts: string) {
     <!-- 错误 -->
     <div
       v-if="error"
-      class="mb-2 text-xs text-red-400 bg-red-950/30 border border-red-900/30 rounded px-3 py-2"
+      class="mb-2 text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded px-3 py-2"
     >
       {{ error }}
-      <button class="ml-2 underline hover:text-red-300" @click="error = ''">关闭</button>
+      <button class="ml-2 underline hover:text-red-600 dark:hover:text-red-300" @click="error = ''">关闭</button>
     </div>
 
     <!-- 对话列表 -->
     <div class="flex items-center gap-2 mb-2">
       <select
         :value="currentConvId"
-        class="flex-1 h-7 px-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 focus:border-blue-500 focus:outline-none"
+        class="flex-1 h-7 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 focus:border-blue-500 focus:outline-none"
         @change="selectConversation(($event.target as HTMLSelectElement).value)"
       >
         <option v-for="conv in conversations" :key="conv.id" :value="conv.id">
@@ -351,7 +351,7 @@ function formatTime(ts: string) {
         <input
           v-model="renameInput"
           type="text"
-          class="flex-1 h-6 px-2 bg-gray-800 border border-blue-500 rounded text-xs text-gray-200 focus:outline-none"
+          class="flex-1 h-6 px-2 bg-gray-100 dark:bg-gray-800 border border-blue-500 rounded text-xs text-gray-800 dark:text-gray-200 focus:outline-none"
           @keyup.enter="confirmRename"
           @blur="confirmRename"
           @keyup.escape="renamingConv = ''"
@@ -359,15 +359,15 @@ function formatTime(ts: string) {
       </template>
       <template v-else>
         <button
-          class="text-[10px] text-gray-500 hover:text-yellow-400 px-1.5 transition-colors"
+          class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-yellow-600 dark:hover:text-yellow-400 px-1.5 transition-colors"
           title="重命名"
           @click="startRename(conversations.find(c => c.id === currentConvId)!)"
         >
           重命名
         </button>
-        <span class="text-gray-700">|</span>
+        <span class="text-gray-300 dark:text-gray-700">|</span>
         <button
-          class="text-[10px] text-gray-500 hover:text-red-400 px-1.5 transition-colors"
+          class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 px-1.5 transition-colors"
           title="删除对话"
           @click="handleDelete(currentConvId)"
         >
@@ -379,11 +379,11 @@ function formatTime(ts: string) {
           title="开启后将当前文档全文作为AI对话上下文"
           @click="quoteFullText = !quoteFullText"
         >
-          <span class="text-[10px] transition-colors" :class="quoteFullText ? 'text-blue-400' : 'text-gray-600'">引用全文</span>
+          <span class="text-[10px] transition-colors" :class="quoteFullText ? 'text-blue-400' : 'text-gray-500 dark:text-gray-600'">引用全文</span>
           <button
             type="button"
             class="relative inline-flex h-4 w-7 items-center rounded-full transition-colors focus:outline-none"
-            :class="quoteFullText ? 'bg-blue-600' : 'bg-gray-700'"
+            :class="quoteFullText ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'"
           >
             <span
               class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
@@ -399,7 +399,7 @@ function formatTime(ts: string) {
       ref="messagesContainer"
       class="flex-1 overflow-y-auto space-y-3 mb-3 min-h-0"
     >
-      <div v-if="messages.length === 0 && !loading.send" class="text-center text-gray-600 text-xs py-8">
+      <div v-if="messages.length === 0 && !loading.send" class="text-center text-gray-500 dark:text-gray-600 text-xs py-8">
         开始对话吧 🗨
       </div>
 
@@ -412,21 +412,21 @@ function formatTime(ts: string) {
         <div
           class="max-w-[90%] rounded-lg px-3 py-2 text-xs leading-relaxed"
           :class="msg.role === 'user'
-            ? 'bg-blue-600/30 text-gray-200'
-            : 'bg-gray-800/60 text-gray-300'"
+            ? 'bg-blue-600/30 text-gray-800 dark:text-gray-200'
+            : 'bg-gray-100/70 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300'"
         >
           <div v-if="msg.context_text" class="text-[10px] text-blue-400/70 mb-1.5 border-l-2 border-blue-600/50 pl-2 italic leading-relaxed max-h-20 overflow-y-auto">
             {{ msg.context_text }}
           </div>
           <!-- eslint-disable-next-line vue/no-v-html -->
           <div v-html="renderMarkdown(msg.content)" />
-          <div class="text-[10px] text-gray-600 mt-1">{{ formatTime(msg.created_at) }}</div>
+          <div class="text-[10px] text-gray-500 dark:text-gray-600 mt-1">{{ formatTime(msg.created_at) }}</div>
         </div>
       </div>
 
       <!-- 加载中指示 -->
       <div v-if="loading.send" class="flex justify-start">
-        <div class="bg-gray-800/60 rounded-lg px-3 py-2 text-xs text-gray-400">
+        <div class="bg-gray-100/70 dark:bg-gray-800/60 rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-gray-400">
           <span class="inline-flex gap-1">
             <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0ms" />
             <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 150ms" />
@@ -437,18 +437,18 @@ function formatTime(ts: string) {
     </div>
 
     <!-- 输入区域 -->
-    <div class="border-t border-gray-800 pt-2">
+    <div class="border-t border-gray-200 dark:border-gray-800 pt-2">
       <!-- 引用气泡 -->
       <div
         v-if="pendingQuote"
-        class="relative mb-2 px-2.5 py-2 bg-blue-950/40 border border-blue-800/40 rounded-lg group"
+        class="relative mb-2 px-2.5 py-2 bg-blue-100 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-800/40 rounded-lg group"
       >
         <div class="text-[10px] text-blue-400 font-medium mb-0.5">📎 引用文本</div>
-        <div class="text-[11px] text-gray-300 leading-relaxed line-clamp-3 italic">
+        <div class="text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3 italic">
           {{ pendingQuote }}
         </div>
         <button
-          class="absolute top-1.5 right-2 h-5 w-5 flex items-center justify-center text-[10px] text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded transition-colors opacity-0 group-hover:opacity-100"
+          class="absolute top-1.5 right-2 h-5 w-5 flex items-center justify-center text-[10px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors opacity-0 group-hover:opacity-100"
           title="移除引用"
           @click="removeQuote"
         >
@@ -460,7 +460,7 @@ function formatTime(ts: string) {
       <div v-if="knowledgeBases.length > 0 || materialStore.tagWithCounts.length > 0" class="mb-2">
         <div class="flex items-center gap-1 flex-wrap">
           <button
-            class="text-[10px] text-gray-500 hover:text-gray-300 px-1 transition-colors"
+            class="text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-1 transition-colors"
             @click="showKbPicker = !showKbPicker"
           >
             📚 {{ (selectedKbIds.length + materialStore.selectedMaterialTagIds.length) > 0 ? (selectedKbIds.length + materialStore.selectedMaterialTagIds.length) + '个' : '知识库' }}
@@ -468,7 +468,7 @@ function formatTime(ts: string) {
           <span
             v-for="kid in selectedKbIds"
             :key="kid"
-            class="text-[10px] text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded cursor-pointer"
+            class="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded cursor-pointer"
             @click="toggleKb(kid)"
           >
             {{ knowledgeBases.find(k => k.id === kid)?.name || kid }}
@@ -476,7 +476,7 @@ function formatTime(ts: string) {
           <span
             v-for="tid in materialStore.selectedMaterialTagIds"
             :key="tid"
-            class="text-[10px] text-emerald-400 bg-emerald-950/40 px-1.5 py-0.5 rounded cursor-pointer"
+            class="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-950/40 px-1.5 py-0.5 rounded cursor-pointer"
             @click="materialStore.toggleMaterialTag(tid)"
           >
             {{ materialStore.tagWithCounts.find(t => t.id === tid)?.name || tid }}
@@ -491,7 +491,7 @@ function formatTime(ts: string) {
                 v-for="kb in knowledgeBases"
                 :key="kb.id"
                 class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                :class="selectedKbIds.includes(kb.id) ? 'text-amber-400 bg-amber-950/40 border border-amber-700/50' : 'text-gray-500 bg-gray-800 border border-gray-700 hover:text-gray-300'"
+                :class="selectedKbIds.includes(kb.id) ? 'text-amber-600 dark:text-amber-400 bg-amber-950/40 border border-amber-300 dark:border-amber-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                 @click="toggleKb(kb.id)"
               >
                 {{ kb.name }}
@@ -499,7 +499,7 @@ function formatTime(ts: string) {
             </div>
           </div>
           <!-- 分隔符 -->
-          <div v-if="knowledgeBases.length > 0 && materialStore.tagWithCounts.length > 0" class="border-t border-gray-700/50"></div>
+          <div v-if="knowledgeBases.length > 0 && materialStore.tagWithCounts.length > 0" class="border-t border-gray-300/50 dark:border-gray-700/50"></div>
           <!-- 素材库标签 -->
           <div v-if="materialStore.tagWithCounts.length > 0">
             <div class="text-[10px] text-emerald-500/70 mb-1">素材库标签</div>
@@ -508,7 +508,7 @@ function formatTime(ts: string) {
                 v-for="tag in materialStore.tagWithCounts"
                 :key="tag.id"
                 class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                :class="materialStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-400 bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-500 bg-gray-800 border border-gray-700 hover:text-gray-300'"
+                :class="materialStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                 @click="materialStore.toggleMaterialTag(tag.id)"
               >
                 {{ tag.name }} ({{ tag.material_count }})
@@ -523,7 +523,7 @@ function formatTime(ts: string) {
           v-model="inputText"
           placeholder="输入消息，Enter 发送，Shift+Enter 换行"
           rows="2"
-          class="flex-1 px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+          class="flex-1 px-2.5 py-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none resize-none"
           :disabled="loading.send || !currentConvId"
           @keydown="handleKeydown"
         />

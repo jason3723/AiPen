@@ -6,6 +6,14 @@ import { useDocumentStore } from "../stores/document";
 import { useMaterialStore } from "../stores/materialStore";
 import { storeToRefs } from "pinia";
 import { computeDiff, type DiffChunk } from "../utils/diff";
+import { useTheme } from "../stores/theme";
+
+const { isDark } = useTheme();
+
+// 呼吸灯带主题色
+const breathTrackBg = computed(() => isDark.value ? 'rgba(30,41,59,0.6)' : 'rgba(0,0,0,0.08)');
+const breathShimmer = computed(() => isDark.value ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.1)');
+const breathSweepStyle = computed(() => `background: linear-gradient(90deg, transparent 0%, transparent 40%, ${breathShimmer.value} 50%, transparent 60%, transparent 100%); background-size: 200% 100%;`);
 
 export interface Skill {
   id: string;
@@ -120,10 +128,10 @@ const categoryLabels: Record<string, string> = {
 };
 
 const categoryColors: Record<string, string> = {
-  correction: "text-red-400 bg-red-950/30",
-  polish: "text-yellow-400 bg-yellow-950/30",
-  creative: "text-purple-400 bg-purple-950/30",
-  custom: "text-blue-400 bg-blue-950/30",
+  correction: "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30",
+  polish: "text-yellow-600 dark:text-yellow-400 bg-yellow-950/30",
+  creative: "text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-950/30",
+  custom: "text-blue-400 bg-blue-100 dark:bg-blue-950/30",
 };
 
 const groupedSkills = computed(() => {
@@ -414,13 +422,13 @@ function renderMarkdown(text: string) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/\*\*(.+?)\*\*/g, "<strong class='font-bold text-white'>$1</strong>")
-    .replace(/### (.+)/g, "<h4 class='text-sm font-bold text-gray-200 mt-3 mb-1'>$1</h4>")
-    .replace(/## (.+)/g, "<h3 class='text-sm font-bold text-blue-300 mt-4 mb-1'>$1</h3>")
-    .replace(/# (.+)/g, "<h2 class='text-base font-bold text-blue-200 mt-4 mb-2'>$1</h2>")
-    .replace(/^\- (.+)/gm, "<li class='ml-4 text-gray-300'>• $1</li>")
-    .replace(/^(\d+)\. (.+)/gm, "<li class='ml-4 text-gray-300'>$1. $2</li>")
-    .replace(/`([^`]+)`/g, "<code class='bg-gray-800 text-yellow-300 px-1 rounded text-xs'>$1</code>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong class='font-bold text-gray-900 dark:text-gray-100'>$1</strong>")
+    .replace(/### (.+)/g, "<h4 class='text-sm font-bold text-gray-800 dark:text-gray-200 mt-3 mb-1'>$1</h4>")
+    .replace(/## (.+)/g, "<h3 class='text-sm font-bold text-blue-700 dark:text-blue-300 mt-4 mb-1'>$1</h3>")
+    .replace(/# (.+)/g, "<h2 class='text-base font-bold text-blue-700 dark:text-blue-300 mt-4 mb-2'>$1</h2>")
+    .replace(/^\- (.+)/gm, "<li class='ml-4 text-gray-700 dark:text-gray-300'>• $1</li>")
+    .replace(/^(\d+)\. (.+)/gm, "<li class='ml-4 text-gray-700 dark:text-gray-300'>$1. $2</li>")
+    .replace(/`([^`]+)`/g, "<code class='bg-gray-100 dark:bg-gray-800 text-yellow-700 dark:text-yellow-300 px-1 rounded text-xs'>$1</code>")
     .replace(/\n\n/g, "<br><br>")
     .replace(/\n/g, "<br>");
 }
@@ -431,31 +439,31 @@ function renderMarkdown(text: string) {
     <!-- 错误 -->
     <div
       v-if="error"
-      class="mb-2 text-xs text-red-400 bg-red-950/30 border border-red-900/30 rounded px-3 py-2"
+      class="mb-2 text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded px-3 py-2"
     >
       {{ error }}
-      <button class="ml-2 underline hover:text-red-300" @click="error = ''">关闭</button>
+      <button class="ml-2 underline hover:text-red-600 dark:hover:text-red-300" @click="error = ''">关闭</button>
     </div>
 
     <!-- 提示：选中文本 vs 全文 -->
-    <div class="mb-3 text-xs text-gray-500 bg-gray-800/50 rounded px-3 py-2 leading-relaxed">
+    <div class="mb-3 text-xs text-gray-400 dark:text-gray-500 bg-gray-100/60 dark:bg-gray-800/50 rounded px-3 py-2 leading-relaxed">
       <span v-if="selectedText">将对 <strong class="text-blue-400">选中文本</strong> 执行技能操作</span>
-      <span v-else>将对 <strong class="text-gray-300">全文</strong> 执行技能操作</span>
-      <span class="text-gray-600 ml-1">（在编辑器中选中文本后回此面板运行技能）</span>
+      <span v-else>将对 <strong class="text-gray-700 dark:text-gray-300">全文</strong> 执行技能操作</span>
+      <span class="text-gray-500 dark:text-gray-600 ml-1">（在编辑器中选中文本后回此面板运行技能）</span>
     </div>
 
     <!-- 技能组合管道 -->
-    <div class="mb-3 border border-gray-700/40 rounded-lg bg-gray-800/20">
+    <div class="mb-3 border border-gray-700/40 rounded-lg bg-gray-100/30 dark:bg-gray-800/20">
       <!-- 折叠头 -->
       <button
         class="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-800/30 transition-colors"
         @click="pipelineExpanded = !pipelineExpanded"
       >
-        <span class="text-xs text-gray-300">
+        <span class="text-xs text-gray-700 dark:text-gray-300">
           🔧 技能组合
-          <span v-if="pipeline.length > 0" class="text-gray-500 ml-1">({{ pipeline.length }})</span>
+          <span v-if="pipeline.length > 0" class="text-gray-400 dark:text-gray-500 ml-1">({{ pipeline.length }})</span>
         </span>
-        <span class="text-[10px] text-gray-600">{{ pipelineExpanded ? "收起 ▲" : "展开 ▼" }}</span>
+        <span class="text-[10px] text-gray-500 dark:text-gray-600">{{ pipelineExpanded ? "收起 ▲" : "展开 ▼" }}</span>
       </button>
 
       <!-- 展开区 -->
@@ -466,23 +474,23 @@ function renderMarkdown(text: string) {
             <span
               class="flex items-center gap-1 px-2 py-0.5 rounded text-[10px]"
               :class="pipelineRunning && pipelineCurrentStep === idx + 1
-                ? 'bg-blue-600/40 text-blue-200 border border-blue-500/30'
+                ? 'bg-blue-50 dark:bg-blue-600/40 text-blue-600 dark:text-blue-200 border border-blue-500/30'
                 : pipelineRunning && pipelineCurrentStep > idx + 1
-                  ? 'bg-green-900/30 text-green-300 border border-green-700/30'
-                  : 'bg-gray-700/50 text-gray-300 border border-gray-600/30'"
+                  ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-700/30'
+                  : 'bg-gray-200/60 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-600/30'"
             >
               {{ step.name }}
               <button
                 v-if="!pipelineRunning"
-                class="text-gray-500 hover:text-red-400 leading-none"
+                class="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 leading-none"
                 @click="removeFromPipeline(idx)"
               >×</button>
-              <span v-else-if="pipelineCurrentStep > idx + 1" class="text-green-400">✓</span>
+              <span v-else-if="pipelineCurrentStep > idx + 1" class="text-green-600 dark:text-green-400">✓</span>
               <span v-else-if="pipelineCurrentStep === idx + 1" class="animate-pulse">⏳</span>
             </span>
-            <span v-if="idx < pipeline.length - 1" class="text-gray-600 text-[10px]">→</span>
+            <span v-if="idx < pipeline.length - 1" class="text-gray-500 dark:text-gray-600 text-[10px]">→</span>
           </template>
-          <span v-if="pipeline.length === 0" class="text-[10px] text-gray-600">
+          <span v-if="pipeline.length === 0" class="text-[10px] text-gray-500 dark:text-gray-600">
             从下方技能添加，构建处理流水线
           </span>
         </div>
@@ -492,7 +500,7 @@ function renderMarkdown(text: string) {
           <!-- + 添加技能 下拉 -->
           <div class="relative">
             <button
-              class="h-6 px-2 text-[10px] bg-gray-700 hover:bg-gray-600 text-gray-300 rounded disabled:opacity-40 transition-colors"
+              class="h-6 px-2 text-[10px] bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded disabled:opacity-40 transition-colors"
               :disabled="pipelineRunning"
               @click="showPipelineSkillPicker = !showPipelineSkillPicker"
             >
@@ -500,12 +508,12 @@ function renderMarkdown(text: string) {
             </button>
             <div
               v-if="showPipelineSkillPicker"
-              class="absolute top-full left-0 mt-1 w-40 max-h-40 overflow-y-auto bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10"
+              class="absolute top-full left-0 mt-1 w-40 max-h-40 overflow-y-auto bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10"
             >
               <button
                 v-for="skill in skills"
                 :key="skill.id"
-                class="w-full text-left px-2.5 py-1.5 text-[10px] text-gray-300 hover:bg-gray-700 hover:text-white flex items-center gap-1.5 transition-colors"
+                class="w-full text-left px-2.5 py-1.5 text-[10px] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-white flex items-center gap-1.5 transition-colors"
                 @click="addToPipeline(skill)"
               >
                 <span
@@ -523,7 +531,7 @@ function renderMarkdown(text: string) {
 
           <button
             v-if="pipeline.length > 0 && !pipelineRunning"
-            class="h-6 px-2 text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
+            class="h-6 px-2 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             @click="clearPipeline"
           >清空</button>
 
@@ -552,26 +560,19 @@ function renderMarkdown(text: string) {
           <!-- 执行中：呼吸灯带跑马灯 -->
           <div v-if="pipelineRunning" class="py-1.5 space-y-1">
             <div class="flex items-center gap-2">
-              <span class="text-[10px] text-gray-500">步骤 {{ pipelineCurrentStep }}/{{ pipelineTotalSteps }}</span>
-              <span class="text-[10px] text-gray-600">
+              <span class="text-[10px] text-gray-400 dark:text-gray-500">步骤 {{ pipelineCurrentStep }}/{{ pipelineTotalSteps }}</span>
+              <span class="text-[10px] text-gray-500 dark:text-gray-600">
                 {{ pipeline[pipelineCurrentStep - 1]?.name || "处理中" }}
               </span>
             </div>
             <!-- 呼吸灯带 -->
-            <div class="relative h-1.5 rounded-full overflow-hidden" style="background: rgba(30,41,59,0.6);">
+            <div class="relative h-1.5 rounded-full overflow-hidden" :style="{ background: breathTrackBg }">
               <!-- 底光：整体呼吸脉动 -->
               <div class="absolute inset-0 rounded-full animate-breath-pulse"
                 style="background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6); background-size: 300% 100%;">
               </div>
               <!-- 流光：呼吸式扫过 -->
-              <div class="absolute inset-0 rounded-full animate-breath-sweep"
-                style="background: linear-gradient(90deg,
-                  transparent 0%,
-                  transparent 40%,
-                  rgba(255,255,255,0.6) 50%,
-                  transparent 60%,
-                  transparent 100%
-                ); background-size: 200% 100%;">
+              <div class="absolute inset-0 rounded-full animate-breath-sweep" :style="breathSweepStyle">
               </div>
             </div>
           </div>
@@ -582,11 +583,11 @@ function renderMarkdown(text: string) {
             class="border border-gray-700/40 rounded-lg bg-gray-800/10 px-2.5 py-2"
           >
             <div class="flex items-center justify-between mb-1.5">
-              <span class="text-[10px] text-green-400">✓ 处理完成</span>
-              <span class="text-[9px] text-gray-600">{{ finalDiff.changeCount }}处改动</span>
+              <span class="text-[10px] text-green-600 dark:text-green-400">✓ 处理完成</span>
+              <span class="text-[9px] text-gray-500 dark:text-gray-600">{{ finalDiff.changeCount }}处改动</span>
             </div>
-            <div class="text-xs text-gray-300 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
-              <span v-for="seg in displayDiffSegments" :key="seg.text" :class="seg.red ? 'text-red-400' : seg.strike ? 'text-gray-600 line-through' : ''">{{ seg.text }}</span>
+            <div class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
+              <span v-for="seg in displayDiffSegments" :key="seg.text" :class="seg.red ? 'text-red-600 dark:text-red-400' : seg.strike ? 'text-gray-500 dark:text-gray-600 line-through' : ''">{{ seg.text }}</span>
             </div>
           </div>
         </div>
@@ -594,7 +595,7 @@ function renderMarkdown(text: string) {
     </div>
 
     <!-- 加载中 -->
-    <div v-if="loading.list" class="text-gray-500 text-xs text-center py-8">加载技能列表...</div>
+    <div v-if="loading.list" class="text-gray-400 dark:text-gray-500 text-xs text-center py-8">加载技能列表...</div>
 
     <!-- 技能列表（按分类分组） -->
     <div v-else class="flex-1 overflow-y-auto space-y-4">
@@ -609,22 +610,22 @@ function renderMarkdown(text: string) {
         </div>
 
         <div class="space-y-2">
-          <div v-for="skill in groupSkills" :key="skill.id" class="border border-gray-700/50 rounded-lg bg-gray-800/30">
+          <div v-for="skill in groupSkills" :key="skill.id" class="border border-gray-300/50 dark:border-gray-700/50 rounded-lg bg-gray-100/50 dark:bg-gray-800/30">
             <!-- 技能头部 -->
             <div class="flex items-center justify-between px-3 py-2.5">
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5">
-                  <span class="text-xs font-medium text-gray-200 truncate">{{ skill.name }}</span>
-                  <span v-if="skill.is_builtin" class="text-[10px] text-gray-600 border border-gray-700 px-1 rounded">内置</span>
-                  <span v-else class="text-[10px] text-blue-500 border border-blue-800/50 px-1 rounded">自定义</span>
-                  <span v-if="skill.is_review_use" class="text-[10px] text-gray-600 border border-gray-700 px-1 rounded">慎用</span>
+                  <span class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">{{ skill.name }}</span>
+                  <span v-if="skill.is_builtin" class="text-[10px] text-gray-500 dark:text-gray-600 border border-gray-300 dark:border-gray-700 px-1 rounded">内置</span>
+                  <span v-else class="text-[10px] text-blue-500 border border-blue-300 dark:border-blue-800/50 px-1 rounded">自定义</span>
+                  <span v-if="skill.is_review_use" class="text-[10px] text-gray-500 dark:text-gray-600 border border-gray-300 dark:border-gray-700 px-1 rounded">慎用</span>
                 </div>
               </div>
               <div class="flex items-center gap-1 shrink-0 ml-2">
                 <!-- 自定义技能：删除 -->
                 <button
                   v-if="!skill.is_builtin"
-                  class="h-6 w-6 flex items-center justify-center text-[10px] text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
+                  class="h-6 w-6 flex items-center justify-center text-[10px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="删除技能"
                   @click="handleDelete(skill)"
                 >
@@ -633,7 +634,7 @@ function renderMarkdown(text: string) {
                 <!-- 自定义技能：编辑 -->
                 <button
                   v-if="!skill.is_builtin"
-                  class="h-6 w-6 flex items-center justify-center text-[10px] text-gray-500 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
+                  class="h-6 w-6 flex items-center justify-center text-[10px] text-gray-400 dark:text-gray-500 hover:text-blue-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="编辑技能"
                   @click="startEditSkill(skill)"
                 >
@@ -643,7 +644,7 @@ function renderMarkdown(text: string) {
                 <button
                   v-if="!skill.is_builtin && (knowledgeBases.length > 0 || matStore.tagWithCounts.length > 0)"
                   class="h-6 px-1.5 flex items-center justify-center gap-0.5 text-[10px] rounded transition-colors"
-                  :class="(getSelectedKbCount(skill.id) + matStore.selectedMaterialTagIds.length) > 0 ? 'text-amber-400' : 'text-gray-500 hover:text-gray-300'"
+                  :class="(getSelectedKbCount(skill.id) + matStore.selectedMaterialTagIds.length) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
                   title="选择引用知识库与素材库"
                   @click="toggleKbPicker(skill.id)"
                 >
@@ -662,7 +663,7 @@ function renderMarkdown(text: string) {
             </div>
 
             <!-- 知识库与素材库选择器（仅自定义技能） -->
-            <div v-if="showKbPicker === skill.id && !skill.is_builtin" class="border-t border-gray-700/50 px-3 py-2 space-y-2">
+            <div v-if="showKbPicker === skill.id && !skill.is_builtin" class="border-t border-gray-300/50 dark:border-gray-700/50 px-3 py-2 space-y-2">
               <!-- 知识库 -->
               <div v-if="knowledgeBases.length > 0">
                 <div class="text-[10px] text-amber-500/70 mb-1.5">知识库</div>
@@ -671,7 +672,7 @@ function renderMarkdown(text: string) {
                     v-for="kb in knowledgeBases"
                     :key="kb.id"
                     class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                    :class="(skillKbSelection[skill.id] || []).includes(kb.id) ? 'text-amber-400 bg-amber-950/40 border border-amber-700/50' : 'text-gray-500 bg-gray-800 border border-gray-700 hover:text-gray-300'"
+                    :class="(skillKbSelection[skill.id] || []).includes(kb.id) ? 'text-amber-600 dark:text-amber-400 bg-amber-950/40 border border-amber-300 dark:border-amber-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                     @click="toggleKbForSkill(skill.id, kb.id)"
                   >
                     {{ kb.name }}
@@ -679,7 +680,7 @@ function renderMarkdown(text: string) {
                 </div>
               </div>
               <!-- 分隔符 -->
-              <div v-if="knowledgeBases.length > 0 && matStore.tagWithCounts.length > 0" class="border-t border-gray-700/50"></div>
+              <div v-if="knowledgeBases.length > 0 && matStore.tagWithCounts.length > 0" class="border-t border-gray-300/50 dark:border-gray-700/50"></div>
               <!-- 素材库标签 -->
               <div v-if="matStore.tagWithCounts.length > 0">
                 <div class="text-[10px] text-emerald-500/70 mb-1.5">素材库标签</div>
@@ -688,7 +689,7 @@ function renderMarkdown(text: string) {
                     v-for="tag in matStore.tagWithCounts"
                     :key="tag.id"
                     class="text-[10px] px-2 py-0.5 rounded transition-colors"
-                    :class="matStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-400 bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-500 bg-gray-800 border border-gray-700 hover:text-gray-300'"
+                    :class="matStore.selectedMaterialTagIds.includes(tag.id) ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-950/40 border border-emerald-700/50' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'"
                     @click="matStore.toggleMaterialTag(tag.id)"
                   >
                     {{ tag.name }} ({{ tag.material_count }})
@@ -698,21 +699,21 @@ function renderMarkdown(text: string) {
             </div>
 
             <!-- 编辑技能表单（仅自定义技能） -->
-            <div v-if="editingSkillId === skill.id && !skill.is_builtin" class="border-t border-gray-700/50 px-3 py-2 space-y-2">
+            <div v-if="editingSkillId === skill.id && !skill.is_builtin" class="border-t border-gray-300/50 dark:border-gray-700/50 px-3 py-2 space-y-2">
               <input
                 v-model="editSkillForm.name"
                 type="text"
                 placeholder="技能名称"
-                class="w-full h-7 px-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                class="w-full h-7 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
               />
               <textarea
                 v-model="editSkillForm.prompt_template"
                 placeholder="提示词模板"
                 rows="3"
-                class="w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+                class="w-full px-2 py-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none resize-none"
               />
               <div class="flex items-center gap-2">
-                <span class="text-[10px] text-gray-500">温度：</span>
+                <span class="text-[10px] text-gray-400 dark:text-gray-500">温度：</span>
                 <input
                   v-model.number="editSkillForm.temperature"
                   type="range"
@@ -721,7 +722,7 @@ function renderMarkdown(text: string) {
                   step="0.1"
                   class="flex-1 h-4"
                 />
-                <span class="text-[10px] text-gray-400 w-6">{{ editSkillForm.temperature }}</span>
+                <span class="text-[10px] text-gray-600 dark:text-gray-400 w-6">{{ editSkillForm.temperature }}</span>
               </div>
               <div class="flex gap-2">
                 <button
@@ -732,7 +733,7 @@ function renderMarkdown(text: string) {
                   {{ savingEdit ? "保存中..." : "保存修改" }}
                 </button>
                 <button
-                  class="h-7 px-3 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  class="h-7 px-3 text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded transition-colors"
                   @click="cancelEditSkill"
                 >
                   取消
@@ -741,17 +742,17 @@ function renderMarkdown(text: string) {
             </div>
 
             <!-- 执行结果 -->
-            <div v-if="resultMap[skill.id]" class="border-t border-gray-700/50">
+            <div v-if="resultMap[skill.id]" class="border-t border-gray-300/50 dark:border-gray-700/50">
               <button
-                class="w-full flex items-center justify-between px-3 py-1.5 text-[10px] text-gray-500 hover:text-gray-300 hover:bg-gray-800/50 transition-colors"
+                class="w-full flex items-center justify-between px-3 py-1.5 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors"
                 @click="toggleResult(skill.id)"
               >
                 <span>{{ expandedMap[skill.id] ? "▼ 收起结果" : "▶ 展开结果" }}</span>
-                <span class="text-gray-600">{{ resultMap[skill.id].length }} 字</span>
+                <span class="text-gray-500 dark:text-gray-600">{{ resultMap[skill.id].length }} 字</span>
               </button>
               <div
                 v-if="expandedMap[skill.id]"
-                class="px-3 pb-3 text-xs text-gray-300 leading-relaxed max-h-80 overflow-y-auto"
+                class="px-3 pb-3 text-xs text-gray-700 dark:text-gray-300 leading-relaxed max-h-80 overflow-y-auto"
               >
                 <div
                   class="prose prose-invert prose-xs max-w-none"
@@ -764,16 +765,16 @@ function renderMarkdown(text: string) {
       </div>
 
       <!-- 空状态 -->
-      <div v-if="skills.length === 0" class="text-center py-8 text-gray-600 text-xs">
+      <div v-if="skills.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-600 text-xs">
         暂无技能
       </div>
     </div>
 
     <!-- 添加自定义技能 -->
-    <div class="border-t border-gray-800 pt-3 mt-auto">
+    <div class="border-t border-gray-200 dark:border-gray-800 pt-3 mt-auto">
       <button
         v-if="!showAddForm"
-        class="w-full h-8 text-xs text-blue-400 hover:text-blue-300 hover:bg-gray-800/50 rounded transition-colors"
+        class="w-full h-8 text-xs text-blue-400 hover:text-blue-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded transition-colors"
         @click="showAddForm = true"
       >
         + 添加自定义技能
@@ -784,11 +785,11 @@ function renderMarkdown(text: string) {
           v-model="newSkillForm.name"
           type="text"
           placeholder="技能名称，如：标题优化"
-          class="w-full h-8 px-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+          class="w-full h-8 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
         />
         <select
           v-model="newSkillForm.category"
-          class="w-full h-8 px-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 focus:border-blue-500 focus:outline-none"
+          class="w-full h-8 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 focus:border-blue-500 focus:outline-none"
         >
           <option value="custom">自定义</option>
           <option value="correction">纠错</option>
@@ -799,10 +800,10 @@ function renderMarkdown(text: string) {
           v-model="newSkillForm.prompt_template"
           placeholder="提示词模板，如：你是文案优化专家，请优化以下文本..."
           rows="3"
-          class="w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+          class="w-full px-2 py-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none resize-none"
         />
         <div class="flex items-center gap-2">
-          <span class="text-[10px] text-gray-500">温度：</span>
+          <span class="text-[10px] text-gray-400 dark:text-gray-500">温度：</span>
           <input
             v-model.number="newSkillForm.temperature"
             type="range"
@@ -811,7 +812,7 @@ function renderMarkdown(text: string) {
             step="0.1"
             class="flex-1 h-4"
           />
-          <span class="text-[10px] text-gray-400 w-6">{{ newSkillForm.temperature }}</span>
+          <span class="text-[10px] text-gray-600 dark:text-gray-400 w-6">{{ newSkillForm.temperature }}</span>
         </div>
         <div class="flex gap-2">
           <button
@@ -822,7 +823,7 @@ function renderMarkdown(text: string) {
             {{ savingNew ? "保存中..." : "保存" }}
           </button>
           <button
-            class="h-7 px-3 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+            class="h-7 px-3 text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded transition-colors"
             @click="showAddForm = false"
           >
             取消

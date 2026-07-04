@@ -25,8 +25,10 @@ import { computeDiff } from "../utils/diff";
 import { textToDocJson } from "../utils/textToDocJson";
 import MaterialPanel from "../components/MaterialPanel.vue";
 import MaterialClipDialog from "../components/MaterialClipDialog.vue";
+import { useTheme } from "../stores/theme";
 
 const { confirm } = useConfirm();
+const { isDark, toggleTheme } = useTheme();
 
 // ── 应用版本 ──
 const appVersion = "3.0.0";
@@ -519,24 +521,24 @@ function handleScoreDocument() {
   store.scoreDocument();
 }
 function scoreBadgeColor(score: number): string {
-  if (score >= 85) return 'bg-emerald-500/25 text-emerald-300 border-emerald-500/40'
-  if (score >= 75) return 'bg-lime-500/20 text-lime-300 border-lime-500/30'
-  if (score >= 65) return 'bg-sky-500/20 text-sky-300 border-sky-500/30'
-  if (score >= 55) return 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-  return 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+  if (score >= 85) return 'bg-amber-400/25 text-gray-800 dark:text-gray-200'
+  if (score >= 75) return 'bg-emerald-400/25 text-gray-800 dark:text-gray-200'
+  if (score >= 65) return 'bg-sky-400/25 text-gray-800 dark:text-gray-200'
+  if (score >= 55) return 'bg-gray-400/25 text-gray-800 dark:text-gray-200'
+  return 'bg-rose-400/25 text-gray-800 dark:text-gray-200'
 }
 function scoreTextColor(score: number): string {
-  if (score >= 85) return 'text-emerald-300'
-  if (score >= 75) return 'text-lime-300'
-  if (score >= 65) return 'text-sky-300'
-  if (score >= 55) return 'text-amber-300'
-  return 'text-rose-300'
+  if (score >= 85) return 'text-amber-600 dark:text-amber-300'
+  if (score >= 75) return 'text-emerald-600 dark:text-emerald-300'
+  if (score >= 65) return 'text-sky-600 dark:text-sky-300'
+  if (score >= 55) return 'text-gray-600 dark:text-gray-300'
+  return 'text-rose-600 dark:text-rose-300'
 }
 function scoreBarColor(score: number): string {
-  if (score >= 85) return 'bg-emerald-400'
-  if (score >= 75) return 'bg-lime-400'
+  if (score >= 85) return 'bg-amber-400'
+  if (score >= 75) return 'bg-emerald-400'
   if (score >= 65) return 'bg-sky-400'
-  if (score >= 55) return 'bg-amber-400'
+  if (score >= 55) return 'bg-gray-400'
   return 'bg-rose-400'
 }
 function scoreStars(score: number): string {
@@ -1109,19 +1111,19 @@ async function handleExportWord() {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-gray-950 text-gray-100">
+  <div class="h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
     <!-- 工具栏 -->
     <header
       data-tauri-drag-region
-      class="flex items-center pl-4 pr-2 h-12 border-b border-gray-800 bg-gray-900/50 shrink-0 drag-region"
+      class="flex items-center pl-4 pr-2 h-12 border-b border-gray-200 dark:border-gray-800 bg-gray-100/80 dark:bg-gray-900/50 shrink-0 drag-region"
     >
       <div class="flex items-center gap-3">
         <h1 class="text-sm font-bold text-blue-400 tracking-wider">AiPen</h1>
-        <span class="text-xs text-gray-600">|</span>
+        <span class="text-xs text-gray-500 dark:text-gray-600">|</span>
         <!-- 可编辑标题 -->
         <span
           v-if="!editingTitle"
-          class="text-sm text-gray-300 cursor-pointer hover:text-blue-400 border-b border-dashed border-transparent hover:border-blue-400 no-drag"
+          class="text-sm text-gray-700 dark:text-gray-300 cursor-pointer hover:text-blue-400 border-b border-dashed border-transparent hover:border-blue-400 no-drag"
           @click="startRename"
           title="点击重命名"
         >
@@ -1131,7 +1133,7 @@ async function handleExportWord() {
           v-else
           v-model="titleInput"
           type="text"
-          class="text-sm bg-gray-800 border border-blue-500 rounded px-2 py-0.5 text-gray-200 outline-none no-drag"
+          class="text-sm bg-gray-100 dark:bg-gray-800 border border-blue-500 rounded px-2 py-0.5 text-gray-800 dark:text-gray-200 outline-none no-drag"
           @keyup.enter="confirmRename"
           @blur="confirmRename"
           @keyup.escape="editingTitle = false"
@@ -1143,7 +1145,7 @@ async function handleExportWord() {
         class="relative ml-3 flex items-center gap-1 no-drag"
       >
         <button
-          class="flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-xs font-semibold cursor-pointer transition-opacity hover:opacity-80"
+          class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-opacity hover:opacity-80"
           :class="scoreBadgeColor(documentScore.total_score)"
           @click="scorePopoverShow = !scorePopoverShow"
           :title="documentScore.encouragement"
@@ -1154,7 +1156,7 @@ async function handleExportWord() {
         </button>
         <button
           class="h-5 w-5 flex items-center justify-center rounded-full text-[10px] transition-colors"
-          :class="scoreLoading ? 'text-gray-500 animate-spin' : 'text-gray-500 hover:text-gray-300 hover:bg-gray-700'"
+          :class="scoreLoading ? 'text-gray-400 dark:text-gray-500 animate-spin' : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
           :disabled="scoreLoading"
           title="重新评分"
           @click="handleScoreDocument"
@@ -1164,7 +1166,7 @@ async function handleExportWord() {
       </div>
       <button
         v-else-if="currentContent"
-        class="flex items-center gap-0.5 ml-3 px-2 py-0.5 rounded-full border border-gray-700 text-[11px] text-gray-500 hover:text-gray-300 hover:border-gray-500 transition-colors cursor-pointer no-drag"
+        class="flex items-center gap-0.5 ml-3 px-2 py-0.5 rounded-full border border-gray-300 dark:border-gray-700 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-500 transition-colors cursor-pointer no-drag"
         :disabled="scoreLoading"
         title="AI 综合评分"
         @click="handleScoreDocument"
@@ -1185,7 +1187,7 @@ async function handleExportWord() {
         </button>
         <!-- 导出设置 -->
         <button
-          class="h-7 px-3 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs rounded transition-colors no-drag"
+          class="h-7 px-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs rounded transition-colors no-drag"
           title="导出 Word 排版设置"
           @click="showExportSettings = true"
         >
@@ -1196,7 +1198,7 @@ async function handleExportWord() {
           v-model="commitMsg"
           type="text"
           placeholder="提交信息（可选，默认时间命名）"
-          class="w-52 h-7 px-3 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none no-drag"
+          class="w-52 h-7 px-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none no-drag"
           @keyup.enter="handleCommit"
         />
         <button
@@ -1207,25 +1209,25 @@ async function handleExportWord() {
           {{ loading.commit ? "提交中..." : "提交版本" }}
         </button>
         <!-- 分隔符 -->
-        <span class="h-5 w-px bg-gray-700" />
+        <span class="h-5 w-px bg-gray-200 dark:bg-gray-700" />
         <!-- 窗口控制按钮组 -->
-        <div class="flex items-center bg-gray-800/80 rounded-md border border-gray-700/50 p-0.5 gap-1.5 h-7 no-drag">
+        <div class="flex items-center bg-gray-100/90 dark:bg-gray-800/80 rounded-md border border-gray-300/50 dark:border-gray-700/50 p-0.5 gap-1.5 h-7 no-drag">
           <button
-            class="h-6 w-6 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-gray-600/50 rounded transition-colors"
+            class="h-6 w-6 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-300/60 dark:hover:bg-gray-600/50 rounded transition-colors"
             title="最小化"
             @click="handleMinimize"
           >
             <svg class="w-3 h-3" viewBox="0 0 12 12"><rect x="1" y="5.5" width="10" height="1" fill="currentColor"/></svg>
           </button>
           <button
-            class="h-6 w-6 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-gray-600/50 rounded transition-colors"
+            class="h-6 w-6 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-300/60 dark:hover:bg-gray-600/50 rounded transition-colors"
             title="最大化"
             @click="handleMaximize"
           >
             <svg class="w-3 h-3" viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"/></svg>
           </button>
           <button
-            class="h-6 w-6 flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded transition-colors"
+            class="h-6 w-6 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
             title="关闭"
             @click="handleClose"
           >
@@ -1238,14 +1240,14 @@ async function handleExportWord() {
     <!-- 历史版本查看提示条 -->
     <div
       v-if="isViewingHistory"
-      class="flex items-center justify-between px-4 py-2 bg-amber-900/40 border-b border-amber-700/50 shrink-0"
+      class="flex items-center justify-between px-4 py-2 bg-amber-100 dark:bg-amber-900/40 border-b border-amber-300 dark:border-amber-700/50 shrink-0"
     >
       <div class="flex items-center gap-2 text-sm">
-        <span class="text-amber-400 text-base">ⓘ</span>
-        <span class="text-amber-200 font-medium">
+        <span class="text-amber-600 dark:text-amber-400 text-base">ⓘ</span>
+        <span class="text-amber-800 dark:text-amber-200 font-medium">
           正在查看历史版本（只读）：<span class="font-bold">{{ viewingVersionLabel }}</span>
         </span>
-        <span class="text-amber-400/70 text-xs">
+        <span class="text-amber-600 dark:text-amber-400/70 text-xs">
           可以选中复制，不能编辑
         </span>
       </div>
@@ -1262,12 +1264,12 @@ async function handleExportWord() {
     <div class="flex flex-1 min-h-0">
       <!-- 左侧文档列表 / 素材 / 浏览器 -->
       <aside
-        class="flex flex-col border-r border-gray-800 bg-gray-900/50 shrink-0 transition-all duration-200"
+        class="flex flex-col border-r border-gray-200 dark:border-gray-800 bg-gray-100/80 dark:bg-gray-900/50 shrink-0 transition-all duration-200"
         :class="leftCollapsed ? 'w-0 overflow-hidden border-r-0' : 'w-48'"
         @contextmenu="onSidebarContextMenu"
       >
         <!-- Sub-Tab 切换 -->
-        <nav class="flex border-b border-gray-800">
+        <nav class="flex border-b border-gray-200 dark:border-gray-800">
           <button
             v-for="tab in [
               { key: 'docs' as const, label: '文档' },
@@ -1279,7 +1281,7 @@ async function handleExportWord() {
             :class="
               leftSubTab === tab.key
                 ? 'text-blue-400 border-b-2 border-blue-500'
-                : 'text-gray-500 hover:text-gray-300'
+                : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
             "
             @click="leftSubTab = tab.key"
           >
@@ -1290,11 +1292,11 @@ async function handleExportWord() {
         <!-- 文档列表 -->
         <template v-if="leftSubTab === 'docs'">
           <!-- 顶栏：全部 ▼ + 新建 -->
-          <div class="flex items-center justify-between px-3 py-2 border-b border-gray-800">
+          <div class="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-800">
             <!-- 左：文件夹筛选下拉 -->
             <button
               ref="folderFilterBtnRef"
-              class="text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-300 transition-colors flex items-center gap-1"
+              class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center gap-1"
               @click="showFolderFilterDropdown = !showFolderFilterDropdown"
             >
               {{ currentFolderFilter === 'all' ? '全部' : (folders.find(f => f.id === currentFolderFilter)?.name || '全部') }}
@@ -1308,38 +1310,38 @@ async function handleExportWord() {
                 @click.self="showFolderFilterDropdown = false"
               >
                 <div
-                  class="absolute w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-xl py-1"
+                  class="absolute w-40 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-xl py-1"
                   :style="folderFilterDropdownStyle"
                 >
                     <div
                       class="px-3 py-1.5 text-xs cursor-pointer transition-colors"
-                      :class="currentFolderFilter === 'all' ? 'text-blue-400 bg-blue-900/20' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'"
+                      :class="currentFolderFilter === 'all' ? 'text-blue-400 bg-blue-100 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'"
                       @click.stop="store.setFolderFilter('all'); showFolderFilterDropdown = false"
                     >全部文档</div>
-                    <div class="h-px bg-gray-800 mx-2 my-1" v-if="folders.length > 0" />
+                    <div class="h-px bg-gray-100 dark:bg-gray-800 mx-2 my-1" v-if="folders.length > 0" />
                     <template v-for="f in folders" :key="f.id">
                       <div
                         class="flex items-center justify-between px-3 py-1.5 text-xs cursor-pointer transition-colors group"
-                        :class="currentFolderFilter === f.id ? 'text-blue-400 bg-blue-900/20' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'"
+                        :class="currentFolderFilter === f.id ? 'text-blue-400 bg-blue-100 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'"
                         @click.stop="store.setFolderFilter(f.id); showFolderFilterDropdown = false"
                       >
                         <span>
-                          <svg class="w-3 h-3 inline-block mr-1 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+                          <svg class="w-3 h-3 inline-block mr-1 text-gray-400 dark:text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
                           {{ f.name }}
                         </span>
                         <div class="hidden group-hover:flex items-center gap-1 ml-2">
-                          <button class="text-gray-600 hover:text-yellow-400" title="重命名" @click.stop="handleRenameFolder(f.id)">✎</button>
-                          <button class="text-gray-600 hover:text-red-400" title="删除" @click.stop="handleDeleteFolder(f.id)">✕</button>
+                          <button class="text-gray-500 dark:text-gray-600 hover:text-yellow-600 dark:hover:text-yellow-400" title="重命名" @click.stop="handleRenameFolder(f.id)">✎</button>
+                          <button class="text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400" title="删除" @click.stop="handleDeleteFolder(f.id)">✕</button>
                         </div>
                       </div>
                     </template>
-                    <div v-if="folders.length === 0" class="px-3 py-1.5 text-xs text-gray-600">暂无文件夹</div>
+                    <div v-if="folders.length === 0" class="px-3 py-1.5 text-xs text-gray-500 dark:text-gray-600">暂无文件夹</div>
                   </div>
                 </div>
               </Teleport>
             <!-- 右：新建按钮 -->
             <button
-              class="text-xs text-gray-500 hover:text-blue-400 transition-colors"
+              class="text-xs text-gray-400 dark:text-gray-500 hover:text-blue-400 transition-colors"
               title="新建文档"
               @click="handleNewDocument"
             >+ 新建</button>
@@ -1351,8 +1353,8 @@ async function handleExportWord() {
               class="group flex items-center gap-1 px-2 py-2 cursor-pointer transition-colors"
               :class="
                 doc.id === store.currentDocId
-                  ? 'bg-blue-900/30 border-l-2 border-blue-500 text-blue-300'
-                  : 'border-l-2 border-transparent text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
+                  ? 'bg-blue-100 dark:bg-blue-900/30 border-l-2 border-blue-500 text-blue-700 dark:text-blue-300'
+                  : 'border-l-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 hover:text-gray-800 dark:hover:text-gray-200'
               "
               @click="store.switchDocument(doc.id)"
             >
@@ -1361,36 +1363,36 @@ async function handleExportWord() {
                   v-if="editingSidebarDocId === doc.id"
                   v-model="editingSidebarDocTitle"
                   type="text"
-                  class="w-full bg-gray-800 border border-blue-500 rounded px-1.5 py-0.5 text-xs text-gray-200 outline-none"
+                  class="w-full bg-gray-100 dark:bg-gray-800 border border-blue-500 rounded px-1.5 py-0.5 text-xs text-gray-800 dark:text-gray-200 outline-none"
                   @keyup.enter="confirmRenameDialog()"
                   @keyup.escape="cancelRenameDialog()"
                   @blur="confirmRenameDialog()"
                   @click.stop
                 />
                 <p v-else class="text-xs truncate">{{ doc.title }}</p>
-                <p class="text-[10px] text-gray-600 truncate">
+                <p class="text-[10px] text-gray-500 dark:text-gray-600 truncate">
                   {{ doc.updated_at?.slice(0, 10) }}
-                  <span v-if="doc.folder_name" class="ml-1.5 text-gray-600">
-                    <svg class="w-2.5 h-2.5 inline-block mr-0.5 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+                  <span v-if="doc.folder_name" class="ml-1.5 text-gray-500 dark:text-gray-600">
+                    <svg class="w-2.5 h-2.5 inline-block mr-0.5 text-gray-500 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
                     {{ doc.folder_name }}
                   </span>
-                  <span v-else class="ml-1.5 text-gray-700">未分类</span>
+                  <span v-else class="ml-1.5 text-gray-300 dark:text-gray-700">未分类</span>
                 </p>
               </div>
               <!-- 操作按钮：编辑 | 移动 | 删除 -->
               <div class="hidden group-hover:flex items-center gap-0.5 shrink-0">
                 <button
-                  class="h-5 w-5 flex items-center justify-center text-xs text-gray-500 hover:text-yellow-400 hover:bg-gray-700 rounded transition-colors"
+                  class="h-5 w-5 flex items-center justify-center text-xs text-gray-400 dark:text-gray-500 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="重命名"
                   @click.stop="startRenameDialog(doc)"
                 >✎</button>
                 <button
-                  class="h-5 w-5 flex items-center justify-center text-xs text-gray-500 hover:text-blue-400 hover:bg-gray-700 rounded transition-colors"
+                  class="h-5 w-5 flex items-center justify-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="移动到文件夹"
                   @click.stop="openMoveDocModal(doc)"
                 >↗</button>
                 <button
-                  class="h-5 w-5 flex items-center justify-center text-xs text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
+                  class="h-5 w-5 flex items-center justify-center text-xs text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="删除"
                   @click.stop="confirmDelete(doc)"
                 >✕</button>
@@ -1399,7 +1401,7 @@ async function handleExportWord() {
             <!-- 空状态 -->
             <div
               v-if="filteredDocuments.length === 0 && !loading.init"
-              class="text-center py-8 text-gray-600 text-xs"
+              class="text-center py-8 text-gray-500 dark:text-gray-600 text-xs"
             >
               <p>{{ currentFolderFilter === 'all' ? '暂无文档' : '该文件夹暂无文档' }}</p>
               <p
@@ -1418,16 +1420,16 @@ async function handleExportWord() {
             @click.self="showMoveDocModal = false"
           >
             <div class="absolute inset-0 bg-black/60 backdrop-blur-md" />
-            <div class="relative w-full max-w-sm rounded-xl shadow-2xl flex flex-col bg-gray-900 border border-gray-700 text-gray-200">
-              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+            <div class="relative w-full max-w-sm rounded-xl shadow-2xl flex flex-col bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
                 <span class="text-sm font-semibold">移动「{{ moveDocTarget?.title }}」到</span>
-                <button class="text-gray-500 hover:text-gray-300 text-lg leading-none" @click="showMoveDocModal = false">✕</button>
+                <button class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg leading-none" @click="showMoveDocModal = false">✕</button>
               </div>
               <div class="px-4 py-3 space-y-2 max-h-[50vh] overflow-y-auto">
                 <!-- 未分类 -->
                 <div
                   class="px-3 py-2 rounded text-xs cursor-pointer transition-colors"
-                  :class="moveDocSelectedFolderId === '__uncategorized' ? 'bg-blue-900/30 text-blue-300' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'"
+                  :class="moveDocSelectedFolderId === '__uncategorized' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'"
                   @click="moveDocSelectedFolderId = '__uncategorized'"
                 >未分类</div>
                 <!-- 已有文件夹 -->
@@ -1435,25 +1437,25 @@ async function handleExportWord() {
                   v-for="f in folders"
                   :key="f.id"
                   class="px-3 py-2 rounded text-xs cursor-pointer transition-colors"
-                  :class="moveDocSelectedFolderId === f.id ? 'bg-blue-900/30 text-blue-300' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'"
+                  :class="moveDocSelectedFolderId === f.id ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'"
                   @click="moveDocSelectedFolderId = f.id"
                 >
-                  <svg class="w-3 h-3 inline-block mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+                  <svg class="w-3 h-3 inline-block mr-1 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
                   {{ f.name }}
                 </div>
                 <!-- 创建新文件夹 -->
-                <div class="flex gap-2 pt-2 border-t border-gray-800">
+                <div class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
                   <input
                     v-model="moveDocNewFolderName"
                     type="text"
                     placeholder="新建文件夹..."
-                    class="flex-1 h-7 px-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                    class="flex-1 h-7 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
                     @keyup.enter="handleMoveDoc"
                   />
                 </div>
               </div>
-              <div class="px-4 py-2.5 border-t border-gray-800 flex justify-end gap-2">
-                <button class="h-7 px-3 text-xs text-gray-500 hover:text-gray-300 rounded transition-colors" @click="showMoveDocModal = false">取消</button>
+              <div class="px-4 py-2.5 border-t border-gray-200 dark:border-gray-800 flex justify-end gap-2">
+                <button class="h-7 px-3 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded transition-colors" @click="showMoveDocModal = false">取消</button>
                 <button
                   class="h-7 px-3 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded transition-colors disabled:opacity-50"
                   :disabled="!moveDocSelectedFolderId && !moveDocNewFolderName.trim()"
@@ -1477,11 +1479,11 @@ async function handleExportWord() {
 
       <!-- 左侧折叠按钮 -->
       <button
-        class="w-5 flex items-center justify-center bg-gray-800/30 hover:bg-gray-700/50 border-r border-gray-800 shrink-0 transition-colors cursor-pointer group"
+        class="w-5 flex items-center justify-center bg-gray-100/50 dark:bg-gray-800/30 hover:bg-gray-200/60 dark:hover:bg-gray-700/50 border-r border-gray-200 dark:border-gray-800 shrink-0 transition-colors cursor-pointer group"
         :title="leftCollapsed ? '展开文档列表' : '折叠文档列表'"
         @click="leftCollapsed = !leftCollapsed"
       >
-        <span class="text-gray-500 group-hover:text-gray-300 text-xs transition-colors">
+        <span class="text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:hover:text-gray-300 text-xs transition-colors">
           {{ leftCollapsed ? '▶' : '◀' }}
         </span>
       </button>
@@ -1491,7 +1493,7 @@ async function handleExportWord() {
         <!-- 写作进度条（生成/审查/润色阶段） -->
         <div
           v-if="composeActive && isWritingPhase"
-          class="flex items-center justify-between px-4 h-9 border-b shrink-0 bg-gray-900/90 backdrop-blur-sm"
+          class="flex items-center justify-between px-4 h-9 border-b shrink-0 bg-gray-100/90 dark:bg-gray-900/90 backdrop-blur-sm"
           :class="{
             'border-emerald-800/50': progressPhaseColor === 'emerald',
             'border-amber-800/50': progressPhaseColor === 'amber',
@@ -1511,14 +1513,14 @@ async function handleExportWord() {
             >
               {{ composePhase === 'generating' ? '正文撰写中' : composePhase === 'reviewing' ? '质量审查中' : '润色定稿中' }}
             </span>
-            <span class="text-[11px] text-gray-500 hidden sm:inline">{{ composeProgress?.stageLabel || '' }}</span>
+            <span class="text-[11px] text-gray-400 dark:text-gray-500 hidden sm:inline">{{ composeProgress?.stageLabel || '' }}</span>
           </div>
 
           <!-- 中：审查/润色状态 -->
           <span
             v-if="reviewStatusText"
             class="flex-1 mx-4 text-center text-[11px] font-medium animate-pulse truncate"
-            :class="composePhase === 'polishing' ? 'text-purple-300' : 'text-amber-300'"
+            :class="composePhase === 'polishing' ? 'text-purple-700 dark:text-purple-300' : 'text-amber-700 dark:text-amber-300'"
           >
             {{ reviewStatusText }}
           </span>
@@ -1538,11 +1540,11 @@ async function handleExportWord() {
                 }"
               ></div>
             </div>
-            <span class="text-[11px] text-gray-600 tabular-nums">
+            <span class="text-[11px] text-gray-500 dark:text-gray-600 tabular-nums">
               {{ composeProgress?.currentStep || 0 }}/{{ composeProgress?.totalSteps || 0 }}
             </span>
             <button
-              class="h-7 px-3 text-xs text-red-400/70 bg-red-950/20 border border-red-900/30 hover:text-red-300 hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors"
+              class="h-7 px-3 text-xs text-red-600 dark:text-red-400/70 bg-red-100 dark:bg-red-950/20 border border-red-300 dark:border-red-900/30 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors"
               @click="handleRequestClose"
             >
               结束创作
@@ -1553,11 +1555,11 @@ async function handleExportWord() {
         <!-- 浏览器 / WebView -->
         <div v-if="editMode === 'webview'" class="flex-1 flex flex-col min-h-0">
           <!-- 地址栏 -->
-          <div ref="browserAddressBarRef" class="flex items-center gap-2 px-3 py-2 border-b border-gray-800 bg-gray-900 shrink-0 sticky top-0 z-10">
+          <div ref="browserAddressBarRef" class="flex items-center gap-2 px-3 py-2 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shrink-0 sticky top-0 z-10">
             <!-- 导航按钮 -->
             <div class="flex items-center gap-1 shrink-0">
               <button
-                class="h-7 w-7 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-gray-800 rounded transition-colors"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                 title="后退"
                 @click="handleBrowserBack"
               >
@@ -1566,7 +1568,7 @@ async function handleExportWord() {
                 </svg>
               </button>
               <button
-                class="h-7 w-7 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-gray-800 rounded transition-colors"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                 title="前进"
                 @click="handleBrowserForward"
               >
@@ -1575,7 +1577,7 @@ async function handleExportWord() {
                 </svg>
               </button>
               <button
-                class="h-7 w-7 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-gray-800 rounded transition-colors"
+                class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                 title="刷新"
                 @click="handleBrowserRefresh"
               >
@@ -1589,7 +1591,7 @@ async function handleExportWord() {
               v-model="browserUrlInput"
               type="text"
               placeholder="输入网址..."
-              class="flex-1 h-7 px-3 bg-gray-800 border border-gray-700 rounded text-xs text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+              class="flex-1 h-7 px-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
               @keyup.enter="handleAddressBarNavigate"
             />
             <!-- Go 按钮 -->
@@ -1602,7 +1604,7 @@ async function handleExportWord() {
             <!-- 关闭浏览器（销毁 webview） -->
             <button
               v-if="browserOpen"
-              class="h-7 w-7 flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded transition-colors shrink-0"
+              class="h-7 w-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors shrink-0"
               title="关闭浏览器（释放资源）"
               @click="handleBrowserDestroy"
             >
@@ -1612,13 +1614,13 @@ async function handleExportWord() {
           <!-- WebView 占位 / 提示 -->
           <div
             v-if="!browserOpen"
-            class="flex-1 flex items-center justify-center bg-gray-900"
+            class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900"
           >
             <div class="text-center space-y-3">
               <span class="text-3xl">🌐</span>
-              <p class="text-sm text-gray-500">浏览器模式</p>
-              <p class="text-xs text-gray-600">在上方地址栏输入网址，或点击左侧书签打开 WebView</p>
-              <p class="text-xs text-gray-600">选择 「文档」 Tab 返回编辑器</p>
+              <p class="text-sm text-gray-400 dark:text-gray-500">浏览器模式</p>
+              <p class="text-xs text-gray-500 dark:text-gray-600">在上方地址栏输入网址，或点击左侧书签打开 WebView</p>
+              <p class="text-xs text-gray-500 dark:text-gray-600">选择 「文档」 Tab 返回编辑器</p>
             </div>
           </div>
         </div>
@@ -1649,23 +1651,23 @@ async function handleExportWord() {
 
       <!-- 右侧折叠按钮 -->
       <button
-        class="w-5 flex items-center justify-center bg-gray-800/30 hover:bg-gray-700/50 border-l border-gray-800 shrink-0 transition-colors cursor-pointer group"
+        class="w-5 flex items-center justify-center bg-gray-100/50 dark:bg-gray-800/30 hover:bg-gray-200/60 dark:hover:bg-gray-700/50 border-l border-gray-200 dark:border-gray-800 shrink-0 transition-colors cursor-pointer group"
         :title="rightCollapsed ? '展开工具面板' : '折叠工具面板'"
         @click="rightCollapsed = !rightCollapsed"
       >
-        <span class="text-gray-500 group-hover:text-gray-300 text-xs transition-colors">
+        <span class="text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:hover:text-gray-300 text-xs transition-colors">
           {{ rightCollapsed ? '◀' : '▶' }}
         </span>
       </button>
 
       <!-- 右侧：面板区 -->
       <aside
-        class="flex flex-col border-l border-gray-800 bg-gray-900/30 shrink-0 transition-all duration-200"
+        class="flex flex-col border-l border-gray-200 dark:border-gray-800 bg-gray-100/60 dark:bg-gray-900/30 shrink-0 transition-all duration-200"
         :class="rightCollapsed ? 'w-0 overflow-hidden border-l-0' : 'w-80'"
         @contextmenu="onSidebarContextMenu"
       >
         <!-- Tab 切换 -->
-        <nav class="flex border-b border-gray-800">
+        <nav class="flex border-b border-gray-200 dark:border-gray-800">
           <button
             v-for="tab in [
               { key: 'versions', label: '版本' },
@@ -1682,7 +1684,7 @@ async function handleExportWord() {
             :class="
               sidebarTab === tab.key
                 ? 'text-blue-400 border-b-2 border-blue-500'
-                : 'text-gray-500 hover:text-gray-300'
+                : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
             "
             @click="sidebarTab = tab.key as typeof sidebarTab"
           >
@@ -1695,10 +1697,10 @@ async function handleExportWord() {
           <!-- 全局错误 -->
           <div
             v-if="error"
-            class="mb-3 text-sm text-red-400 bg-red-950/30 border border-red-900/30 rounded-lg px-3 py-2"
+            class="mb-3 text-sm text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded-lg px-3 py-2"
           >
             {{ error }}
-            <button class="ml-2 text-xs underline hover:text-red-300" @click="store.error = ''">
+            <button class="ml-2 text-xs underline hover:text-red-600 dark:hover:text-red-300" @click="store.error = ''">
               关闭
             </button>
           </div>
@@ -1733,8 +1735,8 @@ async function handleExportWord() {
     </div>
 
     <!-- 状态栏 -->
-    <footer data-tauri-drag-region class="flex items-center px-4 h-7 border-t border-gray-800 bg-gray-900/50 shrink-0 drag-region">
-      <div class="flex items-center gap-3 text-xs text-gray-600 no-drag">
+    <footer data-tauri-drag-region class="flex items-center px-4 h-7 border-t border-gray-200 dark:border-gray-800 bg-gray-100/80 dark:bg-gray-900/50 shrink-0 drag-region">
+      <div class="flex items-center gap-3 text-[11px] text-gray-500 dark:text-gray-600 no-drag">
         <span v-if="editMode === 'document' && currentContent">
           字数: {{ typeof currentContent === 'object' && currentContent.content ? currentContent.content.reduce(
             (acc: number, n: any) => acc + (n.content ? n.content.reduce((s: number, t: any) => s + (t.text ? t.text.length : 0), 0) : 0), 0
@@ -1746,49 +1748,63 @@ async function handleExportWord() {
           ) : (typeof materialStore.currentMaterialContent === 'string' ? materialStore.currentMaterialContent.length : 0) }}
         </span>
         <template v-if="editMode === 'document' && !isViewingHistory">
-          <span v-if="draftSaveStatus === 'pending'" class="text-yellow-500">● 检测到变更…</span>
+          <span v-if="draftSaveStatus === 'pending'" class="text-yellow-700 dark:text-yellow-500">● 检测到变更…</span>
           <span v-else-if="draftSaveStatus === 'saving'" class="text-blue-400">● 正在保存…</span>
-          <span v-else-if="draftSaveStatus === 'saved'" class="text-green-600">● 草稿已自动保存{{ lastSaveTime ? `（${lastSaveTime}）` : '' }}</span>
+          <span v-else-if="draftSaveStatus === 'saved'" class="text-green-700">● 草稿已自动保存{{ lastSaveTime ? `（${lastSaveTime}）` : '' }}</span>
           <span v-else-if="draftSaveStatus === 'error'" class="text-red-500">● 保存失败</span>
-          <span v-else-if="draftSaveStatus === 'idle' && lastSaveTime" class="text-gray-500">草稿已保存（{{ lastSaveTime }}）</span>
+          <span v-else-if="draftSaveStatus === 'idle' && lastSaveTime" class="text-gray-400 dark:text-gray-500">草稿已保存（{{ lastSaveTime }}）</span>
         </template>
       </div>
       <!-- 中间拖拽区域 -->
       <div class="flex-1 h-full" />
-      <div class="flex items-center gap-2 text-xs text-gray-600 no-drag">
+      <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-600 no-drag">
         <span v-if="loading.init" class="text-blue-400">初始化中...</span>
         <!-- AI 状态 -->
         <span
-          class="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-gray-500"
-          :class="apiConfig.model.includes('pro') ? 'bg-blue-900/20' : 'bg-gray-800/60'"
+          class="inline-flex items-center px-1.5 py-px rounded font-medium text-gray-500 dark:text-gray-400"
+          :class="apiConfig.model.includes('pro') ? 'bg-blue-400/25' : 'bg-gray-200 dark:bg-gray-800/60'"
         >
           {{ modelLabel }}
         </span>
         <span
-          class="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-gray-500"
-          :class="apiConfig.thinking_enabled ? 'bg-green-900/15' : 'bg-gray-800/40'"
+          class="inline-flex items-center px-1.5 py-px rounded font-medium text-gray-500 dark:text-gray-400"
+          :class="apiConfig.thinking_enabled ? 'bg-emerald-400/25' : 'bg-gray-200 dark:bg-gray-800/60'"
         >
           {{ thinkingLabel }}
         </span>
         <span
           v-if="apiConfig.thinking_enabled"
-          class="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-gray-500"
-          :class="apiConfig.reasoning_effort === 'max' ? 'bg-blue-900/15' : 'bg-gray-800/40'"
+          class="inline-flex items-center px-1.5 py-px rounded font-medium text-gray-500 dark:text-gray-400"
+          :class="apiConfig.reasoning_effort === 'max' ? 'bg-blue-400/25' : 'bg-gray-200 dark:bg-gray-800/60'"
         >
           {{ effortLabel }}
+        </span>
+        <!-- 深浅主题切换 -->
+        <span
+          :title="isDark ? '切换浅色主题' : '切换深色主题'"
+          class="inline-flex items-center px-1.5 py-px rounded font-medium transition-colors cursor-pointer select-none no-drag bg-gray-200 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700"
+          @click="toggleTheme"
+        >
+          <svg v-if="isDark" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+          <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
         </span>
         <!-- 问号图标 -->
         <button
           title="工具使用教程"
-          class="text-gray-500 hover:text-gray-300 transition-colors flex-shrink-0 leading-none no-drag"
+          class="ml-1 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex-shrink-0 leading-none no-drag"
           @click="showTutorial = true"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="11" fill="currentColor" fill-opacity="0.12" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 17h.01" />
           </svg>
         </button>
-        <span class="text-gray-500">大庆油田第七采油厂  |  陈刚 18088793359</span>
+        <span class="text-gray-500 dark:text-gray-400">大庆油田 |  陈刚 18088793359</span>
       </div>
     </footer>
 
@@ -1813,227 +1829,227 @@ async function handleExportWord() {
         @click.self="showTutorial = false"
       >
         <div class="absolute inset-0 bg-black/40 backdrop-blur-md" />
-        <div class="relative w-full max-w-2xl max-h-[85vh] rounded-xl shadow-2xl flex flex-col bg-gray-900 text-gray-200 border border-gray-800">
+        <div class="relative w-full max-w-2xl max-h-[85vh] rounded-xl shadow-2xl flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800">
           <!-- 标题栏 -->
-          <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-800 shrink-0 rounded-t-xl">
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 dark:border-gray-800 shrink-0 rounded-t-xl">
             <h2 class="text-base font-semibold">📖 AiPen 使用教程</h2>
             <button
-              class="h-7 w-7 flex items-center justify-center rounded text-lg leading-none text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors"
+              class="h-7 w-7 flex items-center justify-center rounded text-lg leading-none text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               @click="showTutorial = false"
             >✕</button>
           </div>
           <!-- 内容区 -->
           <div class="px-5 py-4 overflow-y-auto text-sm leading-relaxed space-y-5">
-            <p class="text-gray-500 text-xs border-b border-gray-800 pb-3 mb-1">
+            <p class="text-gray-400 dark:text-gray-500 text-xs border-b border-gray-200 dark:border-gray-800 pb-3 mb-1">
               AiPen 是一款面向公文写作场景的 AI 智能写作桌面工具，基于富文本编辑器（TipTap/ProseMirror），集成版本管理、AI 分析、智能写作流水线、技能库、知识库、素材库与浏览器剪藏等完整工具链。以下按模块详细介绍所有功能和使用方法。
             </p>
             <!-- 1. 基本编辑 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">1. 基本编辑</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                AiPen 采用所见即所得的<b class="text-gray-200">富文本编辑器</b>，基于 TipTap (ProseMirror) 引擎：<br/>
-                • <b class="text-gray-200">文字格式</b> — 粗体（Ctrl+B）、斜体（Ctrl+I）、下划线、删除线、行内代码、上/下标<br/>
-                • <b class="text-gray-200">段落格式</b> — H1~H4 标题、无序/有序列表、引用块、分割线<br/>
-                • <b class="text-gray-200">表格</b> — 插入/编辑表格，支持表头加粗、行列增删、合并单元格<br/>
-                • <b class="text-gray-200">图片</b> — 工具栏按钮选择本地图片，或截图后 <b class="text-gray-200">Ctrl+V</b> 直接粘贴，图片自动保存到本地<br/>
-                • <b class="text-gray-200">字体/字号</b> — 10 种中文字体可选（等线、微软雅黑、宋体、黑体、楷体、仿宋等），Ctrl+滚轮 缩放 10~32px<br/>
-                • <b class="text-gray-200">撤销/重做</b> — Ctrl+Z / Ctrl+Y<br/>
-                • <b class="text-gray-200">主题切换</b> — 工具栏 ☀/🌙 按钮在深色/浅色主题间切换，偏好自动保存
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">1. 基本编辑</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                AiPen 采用所见即所得的<b class="text-gray-800 dark:text-gray-200">富文本编辑器</b>，基于 TipTap (ProseMirror) 引擎：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">文字格式</b> — 粗体（Ctrl+B）、斜体（Ctrl+I）、下划线、删除线、行内代码、上/下标<br/>
+                • <b class="text-gray-800 dark:text-gray-200">段落格式</b> — H1~H4 标题、无序/有序列表、引用块、分割线<br/>
+                • <b class="text-gray-800 dark:text-gray-200">表格</b> — 插入/编辑表格，支持表头加粗、行列增删、合并单元格<br/>
+                • <b class="text-gray-800 dark:text-gray-200">图片</b> — 工具栏按钮选择本地图片，或截图后 <b class="text-gray-800 dark:text-gray-200">Ctrl+V</b> 直接粘贴，图片自动保存到本地<br/>
+                • <b class="text-gray-800 dark:text-gray-200">字体/字号</b> — 10 种中文字体可选（等线、微软雅黑、宋体、黑体、楷体、仿宋等），Ctrl+滚轮 缩放 10~32px<br/>
+                • <b class="text-gray-800 dark:text-gray-200">撤销/重做</b> — Ctrl+Z / Ctrl+Y<br/>
+                • <b class="text-gray-800 dark:text-gray-200">主题切换</b> — 状态栏 ☀/🌙 按钮在深色/浅色主题间切换，偏好自动保存
               </p>
             </div>
             <!-- 2. 文档管理 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">2. 文档管理</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                左侧面板的<b class="text-gray-200">「文档」</b>子标签页管理所有文档：<br/>
-                • <b class="text-gray-200">新建文档</b> — 点击「+ 新建」创建空白文档<br/>
-                • <b class="text-gray-200">重命名</b> — 悬停文档点击 ✎ 图标，或点击顶部标题栏直接重命名<br/>
-                • <b class="text-gray-200">删除</b> — 悬停文档点击 ✕ 图标，确认弹窗确认后不可恢复<br/>
-                • <b class="text-gray-200">移动</b> — 悬停文档点击 ↗ 图标，弹出面板选择目标文件夹或创建新文件夹后移入<br/>
-                • <b class="text-gray-200">自动保存</b> — 编辑内容防抖 1 秒自动保存草稿。状态栏实时显示保存状态：<span class="text-yellow-500">检测到变更…</span> → <span class="text-blue-400">正在保存…</span> → <span class="text-green-600">草稿已自动保存（HH:MM:SS）</span><br/>
-                • <b class="text-gray-200">安全退出</b> — 关闭窗口时自动保存并弹出确认提示，防止误关闭<br/>
-                • <b class="text-gray-200">切换即保</b> — 从文档切换到素材/浏览器时自动保存当前文档<br/><br/>
-                <b class="text-gray-200">📁 文件夹管理</b><br/>
-                • <b class="text-gray-200">筛选文档</b> — 点击「全部 ▼」下拉，选择文件夹名按文件夹筛选文档<br/>
-                • <b class="text-gray-200">创建/重命名/删除</b> — 下拉列表中管理文件夹（删除文件夹前需确认，文档不会被删除只会被移出）<br/>
-                • <b class="text-gray-200">归属显示</b> — 每个文档下方标注所属文件夹名称和最近更新时间
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">2. 文档管理</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                左侧面板的<b class="text-gray-800 dark:text-gray-200">「文档」</b>子标签页管理所有文档：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">新建文档</b> — 点击「+ 新建」创建空白文档<br/>
+                • <b class="text-gray-800 dark:text-gray-200">重命名</b> — 悬停文档点击 ✎ 图标，或点击顶部标题栏直接重命名<br/>
+                • <b class="text-gray-800 dark:text-gray-200">删除</b> — 悬停文档点击 ✕ 图标，确认弹窗确认后不可恢复<br/>
+                • <b class="text-gray-800 dark:text-gray-200">移动</b> — 悬停文档点击 ↗ 图标，弹出面板选择目标文件夹或创建新文件夹后移入<br/>
+                • <b class="text-gray-800 dark:text-gray-200">自动保存</b> — 编辑内容防抖 1 秒自动保存草稿。状态栏实时显示保存状态：<span class="text-yellow-700 dark:text-yellow-500">检测到变更…</span> → <span class="text-blue-400">正在保存…</span> → <span class="text-green-700">草稿已自动保存（HH:MM:SS）</span><br/>
+                • <b class="text-gray-800 dark:text-gray-200">安全退出</b> — 关闭窗口时自动保存并弹出确认提示，防止误关闭<br/>
+                • <b class="text-gray-800 dark:text-gray-200">切换即保</b> — 从文档切换到素材/浏览器时自动保存当前文档<br/><br/>
+                <b class="text-gray-800 dark:text-gray-200">📁 文件夹管理</b><br/>
+                • <b class="text-gray-800 dark:text-gray-200">筛选文档</b> — 点击「全部 ▼」下拉，选择文件夹名按文件夹筛选文档<br/>
+                • <b class="text-gray-800 dark:text-gray-200">创建/重命名/删除</b> — 下拉列表中管理文件夹（删除文件夹前需确认，文档不会被删除只会被移出）<br/>
+                • <b class="text-gray-800 dark:text-gray-200">归属显示</b> — 每个文档下方标注所属文件夹名称和最近更新时间
               </p>
             </div>
             <!-- 3. 版本管理 & Diff -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">3. 版本管理 &amp; Diff 对比</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">3. 版本管理 &amp; Diff 对比</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
                 类似 Git 的文档版本管理系统，让你放心修改、轻松回溯：<br/>
-                • <b class="text-gray-200">提交版本</b> — 在顶部工具栏输入提交信息（可选，默认时间命名），点击「提交版本」保存当前文档快照<br/>
-                • <b class="text-gray-200">「版本」标签页</b> — 浏览所有历史版本，支持<b class="text-gray-200">重命名</b>、<b class="text-gray-200">查看</b>（只读模式，黄色提示条，可选中复制但不能编辑）、<b class="text-gray-200">回滚</b>（覆盖当前草稿）、<b class="text-gray-200">删除</b><br/>
-                • <b class="text-gray-200">「Diff」标签页</b> — 先选旧版，再选新版，点击「开始对比」。新增内容以<span class="text-green-400">绿色</span>高亮，删除内容以<span class="text-amber-400">琥珀色</span>高亮。支持<span class="text-emerald-300">行内词级差异</span>细粒度展示，显示新增/删除行数统计
+                • <b class="text-gray-800 dark:text-gray-200">提交版本</b> — 在顶部工具栏输入提交信息（可选，默认时间命名），点击「提交版本」保存当前文档快照<br/>
+                • <b class="text-gray-800 dark:text-gray-200">「版本」标签页</b> — 浏览所有历史版本，支持<b class="text-gray-800 dark:text-gray-200">重命名</b>、<b class="text-gray-800 dark:text-gray-200">查看</b>（只读模式，黄色提示条，可选中复制但不能编辑）、<b class="text-gray-800 dark:text-gray-200">回滚</b>（覆盖当前草稿）、<b class="text-gray-800 dark:text-gray-200">删除</b><br/>
+                • <b class="text-gray-800 dark:text-gray-200">「Diff」标签页</b> — 先选旧版，再选新版，点击「开始对比」。新增内容以<span class="text-green-600 dark:text-green-400">绿色</span>高亮，删除内容以<span class="text-amber-600 dark:text-amber-400">琥珀色</span>高亮。支持<span class="text-emerald-700 dark:text-emerald-300">行内词级差异</span>细粒度展示，显示新增/删除行数统计
               </p>
             </div>
             <!-- 4. AI 智能分析 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">4. AI 智能分析</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「AI分析」</b>标签页，AI 对两个版本间的修改进行<b class="text-gray-200">多维度结构化评审</b>：<br/>
-                • <b class="text-gray-200">总体评估</b> — 新旧版本评分对比、提升/退步/持平判决、综合分析总结<br/>
-                • <b class="text-gray-200">主旨与思想站位</b> — 立意提升、政治站位、视野深度、风险提示<br/>
-                • <b class="text-gray-200">逻辑分析</b> — 逐条标注<span class="text-green-400">逻辑优点（绿色✓）</span>和<span class="text-red-400">逻辑弱点（红色✗）</span><br/>
-                • <b class="text-gray-200">深度洞察</b> — 新增洞见与空话/套话分类识别<br/>
-                • <b class="text-gray-200">表达分析</b> — 表达亮点与表达问题逐条评审<br/>
-                • <b class="text-gray-200">修改分类</b> — 优化型/退化型/冗余型/调整型，附示例和理由<br/>
-                • <b class="text-gray-200">改进建议</b> — 高/中/低优先级分类，含具体建议和理由<br/>
-                • <b class="text-gray-200">维度对比</b> — 多维度雷达式对比展示<br/>
-                分析结果<b class="text-gray-200">自动缓存</b>，下次打开同版对直接加载无需重复请求，大幅节省 token 消耗。
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">4. AI 智能分析</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「AI分析」</b>标签页，AI 对两个版本间的修改进行<b class="text-gray-800 dark:text-gray-200">多维度结构化评审</b>：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">总体评估</b> — 新旧版本评分对比、提升/退步/持平判决、综合分析总结<br/>
+                • <b class="text-gray-800 dark:text-gray-200">主旨与思想站位</b> — 立意提升、政治站位、视野深度、风险提示<br/>
+                • <b class="text-gray-800 dark:text-gray-200">逻辑分析</b> — 逐条标注<span class="text-green-600 dark:text-green-400">逻辑优点（绿色✓）</span>和<span class="text-red-600 dark:text-red-400">逻辑弱点（红色✗）</span><br/>
+                • <b class="text-gray-800 dark:text-gray-200">深度洞察</b> — 新增洞见与空话/套话分类识别<br/>
+                • <b class="text-gray-800 dark:text-gray-200">表达分析</b> — 表达亮点与表达问题逐条评审<br/>
+                • <b class="text-gray-800 dark:text-gray-200">修改分类</b> — 优化型/退化型/冗余型/调整型，附示例和理由<br/>
+                • <b class="text-gray-800 dark:text-gray-200">改进建议</b> — 高/中/低优先级分类，含具体建议和理由<br/>
+                • <b class="text-gray-800 dark:text-gray-200">维度对比</b> — 多维度雷达式对比展示<br/>
+                分析结果<b class="text-gray-800 dark:text-gray-200">自动缓存</b>，下次打开同版对直接加载无需重复请求，大幅节省 token 消耗。
               </p>
             </div>
             <!-- 5. AI 对话 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">5. AI 对话</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「AI对话」</b>标签页，与 AI 进行多轮自然语言对话：<br/>
-                • <b class="text-gray-200">多对话管理</b> — 创建/切换/重命名/删除多个独立对话，互不干扰<br/>
-                • <b class="text-gray-200">流式输出</b> — AI 回复逐字实时推送，边生成边查看<br/>
-                • <b class="text-gray-200">右键引用全文</b> — 编辑器中右键 →「💬 添加到 AI 对话」，自动将当前文档全文作为上下文<br/>
-                • <b class="text-gray-200">右键引用选中</b> — 选中文字右键引用，仅将选中文本作为上下文<br/>
-                • <b class="text-gray-200">知识库上下文</b> — 可勾选知识库作为对话背景<br/>
-                • <b class="text-gray-200">素材库上下文</b> — 可勾选素材标签，将素材内容作为对话参考<br/>
-                • <b class="text-gray-200">快捷输入</b> — Enter 发送，Shift+Enter 换行
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">5. AI 对话</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「AI对话」</b>标签页，与 AI 进行多轮自然语言对话：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">多对话管理</b> — 创建/切换/重命名/删除多个独立对话，互不干扰<br/>
+                • <b class="text-gray-800 dark:text-gray-200">流式输出</b> — AI 回复逐字实时推送，边生成边查看<br/>
+                • <b class="text-gray-800 dark:text-gray-200">右键引用全文</b> — 编辑器中右键 →「💬 添加到 AI 对话」，自动将当前文档全文作为上下文<br/>
+                • <b class="text-gray-800 dark:text-gray-200">右键引用选中</b> — 选中文字右键引用，仅将选中文本作为上下文<br/>
+                • <b class="text-gray-800 dark:text-gray-200">知识库上下文</b> — 可勾选知识库作为对话背景<br/>
+                • <b class="text-gray-800 dark:text-gray-200">素材库上下文</b> — 可勾选素材标签，将素材内容作为对话参考<br/>
+                • <b class="text-gray-800 dark:text-gray-200">快捷输入</b> — Enter 发送，Shift+Enter 换行
               </p>
             </div>
             <!-- 6. 写作技能 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">6. 写作技能</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「技能」</b>标签页，技能按分类分组：<span class="text-red-400">纠错</span> / <span class="text-yellow-400">润色</span> / <span class="text-purple-400">创意</span> / <span class="text-blue-400">自定义</span>：<br/>
-                • <b class="text-gray-200">智能选区</b> — 在编辑器中选中文本后切换到技能页，对选中文本执行；未选择则对全文执行<br/>
-                • <b class="text-gray-200">内置技能</b> — 语法纠错、病句检查、文体规范、逻辑审查、政治审查、节奏韵律、领导用语评价等专业写作技能<br/>
-                • <b class="text-gray-200">「精神融入」技能</b> — 自动匹配最相关内置知识库作为上下文，将企业文化精神融入文稿<br/>
-                • <b class="text-gray-200">自定义技能</b> — 点击「+ 添加自定义技能」，设置名称、分类、提示词模板和温度参数，可关联知识库和素材标签<br/>
-                • <b class="text-gray-200">技能管道（Pipeline）</b> — 点击「▶ 管道执行」，多技能串行执行。显示步骤进度（呼吸灯动画），完成后 diff 回放逐操作高亮展示改动。适合批量质检：纠错→审校→润色→定稿
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">6. 写作技能</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「技能」</b>标签页，技能按分类分组：<span class="text-red-600 dark:text-red-400">纠错</span> / <span class="text-yellow-600 dark:text-yellow-400">润色</span> / <span class="text-purple-600 dark:text-purple-400">创意</span> / <span class="text-blue-600 dark:text-blue-400">自定义</span>：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">智能选区</b> — 在编辑器中选中文本后切换到技能页，对选中文本执行；未选择则对全文执行<br/>
+                • <b class="text-gray-800 dark:text-gray-200">内置技能</b> — 语法纠错、病句检查、文体规范、逻辑审查、政治审查、节奏韵律、领导用语评价等专业写作技能<br/>
+                • <b class="text-gray-800 dark:text-gray-200">「精神融入」技能</b> — 自动匹配最相关内置知识库作为上下文，将企业文化精神融入文稿<br/>
+                • <b class="text-gray-800 dark:text-gray-200">自定义技能</b> — 点击「+ 添加自定义技能」，设置名称、分类、提示词模板和温度参数，可关联知识库和素材标签<br/>
+                • <b class="text-gray-800 dark:text-gray-200">技能管道（Pipeline）</b> — 点击「▶ 管道执行」，多技能串行执行。显示步骤进度（呼吸灯动画），完成后 diff 回放逐操作高亮展示改动。适合批量质检：纠错→审校→润色→定稿
               </p>
             </div>
             <!-- 7. 智能写作流水线 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">7. ⭐ 智能写作流水线（核心功能）</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「写作」</b>标签页选择菜谱后，进入<b class="text-gray-200">五阶段全流程 AI 写作</b>：<br/><br/>
-                <b class="text-gray-200">阶段一：信息采集（采访）</b><br/>
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">7. ⭐ 智能写作流水线（核心功能）</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「写作」</b>标签页选择菜谱后，进入<b class="text-gray-800 dark:text-gray-200">五阶段全流程 AI 写作</b>：<br/><br/>
+                <b class="text-gray-800 dark:text-gray-200">阶段一：信息采集（采访）</b><br/>
                 AI 逐题提问采集写作素材，支持选项式问题和必选/可选问题。可回退修改、跳过问题、使用常用提示词快捷填充。<br/>
-                <b class="text-gray-200">阶段二：生成提纲</b><br/>
+                <b class="text-gray-800 dark:text-gray-200">阶段二：生成提纲</b><br/>
                 基于六型十四式标题风格库，结合 SCAR 模型。可设置标题风格、内联编辑条目、AI 重生成、细化要求。<br/>
-                <b class="text-gray-200">阶段三：正文撰写</b><br/>
+                <b class="text-gray-800 dark:text-gray-200">阶段三：正文撰写</b><br/>
                 AI 流式生成正文，支持有提纲/无提纲两种模式，逐字推送到编辑器。<br/>
-                <b class="text-gray-200">阶段四：质量审查</b><br/>
+                <b class="text-gray-800 dark:text-gray-200">阶段四：质量审查</b><br/>
                 依次执行逻辑审查、病句检查、文体规范等审查技能。发现问题→自动修复→diff 回放动画展示改动。<br/>
-                <b class="text-gray-200">阶段五：润色定稿</b><br/>
+                <b class="text-gray-800 dark:text-gray-200">阶段五：润色定稿</b><br/>
                 诊断+修复两步流程，diff 动画展示所有改动。完成后输出全文 + 审查记录 + 润色记录。
               </p>
             </div>
             <!-- 8. 写作菜谱 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">8. 写作菜谱</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「写作」</b>标签页管理写作模板：<br/>
-                • <b class="text-gray-200">10 种内置菜谱</b> — 述职报告、领导讲话、工作总结、研讨材料、通讯简报、课题研究、工作通知、规章制度、经验材料、工作汇报<br/>
-                • <b class="text-gray-200">自定义菜谱</b> — 点击「+ 新建模板」，输入名称和描述，AI 自动生成采访问题。支持编辑 systemPrompt、增删改问题、设置必选/可选、编辑选项内容、重新生成问题<br/>
-                • <b class="text-gray-200">知识库预设</b> — 内置菜谱已关联专业知识库，点击即可开始引导式写作
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">8. 写作菜谱</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「写作」</b>标签页管理写作模板：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">10 种内置菜谱</b> — 述职报告、领导讲话、工作总结、研讨材料、通讯简报、课题研究、工作通知、规章制度、经验材料、工作汇报<br/>
+                • <b class="text-gray-800 dark:text-gray-200">自定义菜谱</b> — 点击「+ 新建模板」，输入名称和描述，AI 自动生成采访问题。支持编辑 systemPrompt、增删改问题、设置必选/可选、编辑选项内容、重新生成问题<br/>
+                • <b class="text-gray-800 dark:text-gray-200">知识库预设</b> — 内置菜谱已关联专业知识库，点击即可开始引导式写作
               </p>
             </div>
             <!-- 9. 知识库 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">9. 知识库</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「知识库」</b>标签页管理 AI 参考资料：<br/>
-                • <b class="text-gray-200">新建知识库</b> — 点击「+ 新建知识库」，选择 <b class="text-gray-200">.docx</b>、<b class="text-gray-200">.txt</b> 或 <b class="text-gray-200">.md</b> 文件，系统自动解析文本内容，名称自动规范化<br/>
-                • <b class="text-gray-200">13 个内置知识库</b> — 企业概况、发展历程、经营管理、科技进步、市场开发、党的建设、企业英模、企业故事、文化基地、社会责任、文艺体育、亲切关怀、媒体宣传<br/>
-                • <b class="text-gray-200">自定义知识库</b> — 可展开预览、编辑内容和删除<br/>
-                • <b class="text-gray-200">跨模块引用</b> — 知识库可在 AI 对话、写作技能、写作菜谱中被引用，为 AI 提供专业领域知识
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">9. 知识库</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「知识库」</b>标签页管理 AI 参考资料：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">新建知识库</b> — 点击「+ 新建知识库」，选择 <b class="text-gray-800 dark:text-gray-200">.docx</b>、<b class="text-gray-800 dark:text-gray-200">.txt</b> 或 <b class="text-gray-800 dark:text-gray-200">.md</b> 文件，系统自动解析文本内容，名称自动规范化<br/>
+                • <b class="text-gray-800 dark:text-gray-200">13 个内置知识库</b> — 企业概况、发展历程、经营管理、科技进步、市场开发、党的建设、企业英模、企业故事、文化基地、社会责任、文艺体育、亲切关怀、媒体宣传<br/>
+                • <b class="text-gray-800 dark:text-gray-200">自定义知识库</b> — 可展开预览、编辑内容和删除<br/>
+                • <b class="text-gray-800 dark:text-gray-200">跨模块引用</b> — 知识库可在 AI 对话、写作技能、写作菜谱中被引用，为 AI 提供专业领域知识
               </p>
             </div>
             <!-- 10. 素材库 & 浏览器剪藏 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">10. 素材库 &amp; 浏览器剪藏</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                左侧面板的<b class="text-gray-200">「素材」</b>子标签页管理写作素材和网页剪藏：<br/><br/>
-                <b class="text-gray-200">标签管理</b><br/>
-                • <b class="text-gray-200">创建标签</b> — 输入标签名，回车或点击创建，用于给素材分类<br/>
-                • <b class="text-gray-200">重命名/删除</b> — 悬停标签名出现 ✎ 重命名和 ✕ 删除按钮<br/>
-                • <b class="text-gray-200">未分类</b> — 默认视图，显示所有未绑定标签的素材<br/><br/>
-                <b class="text-gray-200">素材管理</b><br/>
-                • <b class="text-gray-200">存入素材库</b> — 编辑器中选中文字，右键 →「📦 存入素材库」，弹出 AI 自动打标签弹窗<br/>
-                • <b class="text-gray-200">AI 打标签</b> — AI 自动建议匹配已有标签 + 推荐新标签，可快速勾选/输入<br/>
-                • <b class="text-gray-200">编辑素材</b> — 点击素材进入编辑模式，内容自动保存（防抖 1 秒）<br/>
-                • <b class="text-gray-200">标签文档</b> — 按标签将全部素材聚合为只读文档，便于统一浏览<br/><br/>
-                <b class="text-gray-200">浏览器剪藏</b><br/>
-                • <b class="text-gray-200">「浏览器」标签页</b> — 左侧面板第三个 Tab，内嵌 WebView 浏览器<br/>
-                • <b class="text-gray-200">书签管理</b> — 添加/删除常用网址书签<br/>
-                • <b class="text-gray-200">网页剪藏</b> — 浏览器中选中文字右键 →「存入 AiPen 素材库」，自动弹出剪藏弹窗<br/>
-                • <b class="text-gray-200">窗口同步</b> — 浏览器窗口与主窗口联动定位和显示隐藏<br/><br/>
-                <b class="text-gray-200">跨模块引用</b> — 素材库可在 AI 对话和写作技能中按标签引用。
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">10. 素材库 &amp; 浏览器剪藏</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                左侧面板的<b class="text-gray-800 dark:text-gray-200">「素材」</b>子标签页管理写作素材和网页剪藏：<br/><br/>
+                <b class="text-gray-800 dark:text-gray-200">标签管理</b><br/>
+                • <b class="text-gray-800 dark:text-gray-200">创建标签</b> — 输入标签名，回车或点击创建，用于给素材分类<br/>
+                • <b class="text-gray-800 dark:text-gray-200">重命名/删除</b> — 悬停标签名出现 ✎ 重命名和 ✕ 删除按钮<br/>
+                • <b class="text-gray-800 dark:text-gray-200">未分类</b> — 默认视图，显示所有未绑定标签的素材<br/><br/>
+                <b class="text-gray-800 dark:text-gray-200">素材管理</b><br/>
+                • <b class="text-gray-800 dark:text-gray-200">存入素材库</b> — 编辑器中选中文字，右键 →「📦 存入素材库」，弹出 AI 自动打标签弹窗<br/>
+                • <b class="text-gray-800 dark:text-gray-200">AI 打标签</b> — AI 自动建议匹配已有标签 + 推荐新标签，可快速勾选/输入<br/>
+                • <b class="text-gray-800 dark:text-gray-200">编辑素材</b> — 点击素材进入编辑模式，内容自动保存（防抖 1 秒）<br/>
+                • <b class="text-gray-800 dark:text-gray-200">标签文档</b> — 按标签将全部素材聚合为只读文档，便于统一浏览<br/><br/>
+                <b class="text-gray-800 dark:text-gray-200">浏览器剪藏</b><br/>
+                • <b class="text-gray-800 dark:text-gray-200">「浏览器」标签页</b> — 左侧面板第三个 Tab，内嵌 WebView 浏览器<br/>
+                • <b class="text-gray-800 dark:text-gray-200">书签管理</b> — 添加/删除常用网址书签<br/>
+                • <b class="text-gray-800 dark:text-gray-200">网页剪藏</b> — 浏览器中选中文字右键 →「存入 AiPen 素材库」，自动弹出剪藏弹窗<br/>
+                • <b class="text-gray-800 dark:text-gray-200">窗口同步</b> — 浏览器窗口与主窗口联动定位和显示隐藏<br/><br/>
+                <b class="text-gray-800 dark:text-gray-200">跨模块引用</b> — 素材库可在 AI 对话和写作技能中按标签引用。
               </p>
             </div>
             <!-- 11. 导出 Word -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">11. 导出 Word 文档</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                点击顶部工具栏 <b class="text-gray-200">导出 Word</b> 一键导出 .docx。点击 <b class="text-gray-200">⚙ 排版设置</b> 精细化控制：<br/>
-                • <b class="text-gray-200">字体配置</b> — H1~H4 标题、正文、表格分别设置字体与字号（pt），默认方正字体族<br/>
-                • <b class="text-gray-200">页面参数</b> — 上/下/左/右边距（mm），A4 纸标准<br/>
-                • <b class="text-gray-200">文档网格</b> — 每行字数、每页行数（公文标准 28×22）、行间距（pt）、首行缩进（字符）<br/>
-                • <b class="text-gray-200">完整排版</b> — 页脚居中页码、表格宋体五号、代码块 Consolas、图片自适应缩放<br/>
-                • <b class="text-gray-200">XML 后处理</b> — 自动禁用孤行控制、标点溢出、网格对齐等，严格遵循公文排版规范<br/>
-                • <b class="text-gray-200">恢复默认</b> — 一键重置为公文标准排版
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">11. 导出 Word 文档</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                点击顶部工具栏 <b class="text-gray-800 dark:text-gray-200">导出 Word</b> 一键导出 .docx。点击 <b class="text-gray-800 dark:text-gray-200">⚙ 排版设置</b> 精细化控制：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">字体配置</b> — H1~H4 标题、正文、表格分别设置字体与字号（pt），默认方正字体族<br/>
+                • <b class="text-gray-800 dark:text-gray-200">页面参数</b> — 上/下/左/右边距（mm），A4 纸标准<br/>
+                • <b class="text-gray-800 dark:text-gray-200">文档网格</b> — 每行字数、每页行数（公文标准 28×22）、行间距（pt）、首行缩进（字符）<br/>
+                • <b class="text-gray-800 dark:text-gray-200">完整排版</b> — 页脚居中页码、表格宋体五号、代码块 Consolas、图片自适应缩放<br/>
+                • <b class="text-gray-800 dark:text-gray-200">XML 后处理</b> — 自动禁用孤行控制、标点溢出、网格对齐等，严格遵循公文排版规范<br/>
+                • <b class="text-gray-800 dark:text-gray-200">恢复默认</b> — 一键重置为公文标准排版
               </p>
             </div>
             <!-- 12. API 设置 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">12. API 设置</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「设置」</b>标签页配置 AI 服务：<br/>
-                • <b class="text-gray-200">API 密钥</b> — 填写 DeepSeek API Key（格式：<b class="text-gray-200">sk-...</b>），点击 ❓ 查看申请步骤<br/>
-                • <b class="text-gray-200">API 地址</b> — 默认 <b class="text-gray-200">https://api.deepseek.com</b>，兼容 OpenAI 格式，也可填写其他兼容地址<br/>
-                • <b class="text-gray-200">模型选择</b> — <b class="text-gray-200">Flash</b>（轻量快速）或 <b class="text-gray-200">Pro</b>（深度品质）<br/>
-                • <b class="text-gray-200">思考模式</b> — 开启后模型深度推理再回答。强度<b class="text-gray-200"> high</b> 兼顾速度，<b class="text-gray-200">max</b> 推理最充分<br/>
-                • <b class="text-gray-200">测试连接 / 查询余额</b> — 验证 API 可用性和账户余额
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">12. API 设置</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「设置」</b>标签页配置 AI 服务：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">API 密钥</b> — 填写 DeepSeek API Key（格式：<b class="text-gray-800 dark:text-gray-200">sk-...</b>），点击 ❓ 查看申请步骤<br/>
+                • <b class="text-gray-800 dark:text-gray-200">API 地址</b> — 默认 <b class="text-gray-800 dark:text-gray-200">https://api.deepseek.com</b>，兼容 OpenAI 格式，也可填写其他兼容地址<br/>
+                • <b class="text-gray-800 dark:text-gray-200">模型选择</b> — <b class="text-gray-800 dark:text-gray-200">Flash</b>（轻量快速）或 <b class="text-gray-800 dark:text-gray-200">Pro</b>（深度品质）<br/>
+                • <b class="text-gray-800 dark:text-gray-200">思考模式</b> — 开启后模型深度推理再回答。强度<b class="text-gray-800 dark:text-gray-200"> high</b> 兼顾速度，<b class="text-gray-800 dark:text-gray-200">max</b> 推理最充分<br/>
+                • <b class="text-gray-800 dark:text-gray-200">测试连接 / 查询余额</b> — 验证 API 可用性和账户余额
               </p>
             </div>
             <!-- 13. 数据备份与恢复 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">13. 数据备份与恢复</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                在<b class="text-gray-200">「设置」</b>标签页底部管理数据安全：<br/>
-                • <b class="text-gray-200">数据统计</b> — 查看当前文档、文件夹、知识库、素材、技能的数量<br/>
-                • <b class="text-gray-200">按类别导出</b> — 可选文档、知识库、素材、技能等类别，打包为 <b class="text-gray-200">.aipen</b> 备份文件<br/>
-                • <b class="text-gray-200">导入恢复</b> — 从备份文件恢复，自动去重（同名文档合并版本、同名文件夹跳过）<br/>
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">13. 数据备份与恢复</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                在<b class="text-gray-800 dark:text-gray-200">「设置」</b>标签页底部管理数据安全：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">数据统计</b> — 查看当前文档、文件夹、知识库、素材、技能的数量<br/>
+                • <b class="text-gray-800 dark:text-gray-200">按类别导出</b> — 可选文档、知识库、素材、技能等类别，打包为 <b class="text-gray-800 dark:text-gray-200">.aipen</b> 备份文件<br/>
+                • <b class="text-gray-800 dark:text-gray-200">导入恢复</b> — 从备份文件恢复，自动去重（同名文档合并版本、同名文件夹跳过）<br/>
                 建议定期导出备份，防止数据丢失。
               </p>
             </div>
             <!-- 14. 文档评分 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">14. 文档综合评分</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                标题栏旁点击 <b class="text-gray-200">⭐ 评分</b> 按钮，AI 对当前文档进行综合质量评分：<br/>
-                • <b class="text-gray-200">综合评分</b> — 0~100 分，五星评级，附带鼓励语<br/>
-                • <b class="text-gray-200">多维度评析</b> — 内容质量、逻辑结构、语言表达、规范合规等维度分别评分（带进度条）<br/>
-                • <b class="text-gray-200">优先建议</b> — AI 给出的首要改进方向和具体建议<br/>
-                • <b class="text-gray-200">自动缓存</b> — 评分结果自动保存，打开文档直接显示，可手动刷新重新评分<br/>
-                • <b class="text-gray-200">版本独立评分</b> — 每个历史版本也可单独评分，评分与版本绑定
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">14. 文档综合评分</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                标题栏旁点击 <b class="text-gray-800 dark:text-gray-200">⭐ 评分</b> 按钮，AI 对当前文档进行综合质量评分：<br/>
+                • <b class="text-gray-800 dark:text-gray-200">综合评分</b> — 0~100 分，五星评级，附带鼓励语<br/>
+                • <b class="text-gray-800 dark:text-gray-200">多维度评析</b> — 内容质量、逻辑结构、语言表达、规范合规等维度分别评分（带进度条）<br/>
+                • <b class="text-gray-800 dark:text-gray-200">优先建议</b> — AI 给出的首要改进方向和具体建议<br/>
+                • <b class="text-gray-800 dark:text-gray-200">自动缓存</b> — 评分结果自动保存，打开文档直接显示，可手动刷新重新评分<br/>
+                • <b class="text-gray-800 dark:text-gray-200">版本独立评分</b> — 每个历史版本也可单独评分，评分与版本绑定
               </p>
             </div>
             <!-- 15. 编辑器高级功能 -->
             <div>
-              <h3 class="font-semibold mb-1.5 text-gray-400">15. 编辑器高级功能</h3>
-              <p class="text-gray-400 text-xs leading-relaxed">
-                <b class="text-gray-200">查找替换</b> — Ctrl+F 打开，支持大小写、正则表达式、全词匹配、逐个替换和全部替换<br/>
-                <b class="text-gray-200">右键菜单</b> — 剪切/复制/粘贴 + 「📦 存入素材库」 + 「💬 添加到 AI 对话」<br/>
-                <b class="text-gray-200">标题/段落折叠</b> — 点击行号左侧箭头折叠标题及其子内容，当前行号高亮<br/>
-                <b class="text-gray-200">Diff 回放动画</b> — 技能管道执行 / 审查 / 润色完成后，逐操作高亮展示改动的动画效果<br/>
-                <b class="text-gray-200">侧栏折叠</b> — 左侧文档列表和右侧工具面板分别通过 ◀/▶ 按钮折叠，最大化编辑空间<br/>
-                <b class="text-gray-200">纯文本提纯优化</b> — 所有 AI 调用（diff、分析、评分、对话、技能）自动从 ProseMirror JSON 提取纯文本，节省 2~3 倍 token 消耗
+              <h3 class="font-semibold mb-1.5 text-gray-600 dark:text-gray-400">15. 编辑器高级功能</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+                <b class="text-gray-800 dark:text-gray-200">查找替换</b> — Ctrl+F 打开，支持大小写、正则表达式、全词匹配、逐个替换和全部替换<br/>
+                <b class="text-gray-800 dark:text-gray-200">右键菜单</b> — 剪切/复制/粘贴 + 「📦 存入素材库」 + 「💬 添加到 AI 对话」<br/>
+                <b class="text-gray-800 dark:text-gray-200">标题/段落折叠</b> — 点击行号左侧箭头折叠标题及其子内容，当前行号高亮<br/>
+                <b class="text-gray-800 dark:text-gray-200">Diff 回放动画</b> — 技能管道执行 / 审查 / 润色完成后，逐操作高亮展示改动的动画效果<br/>
+                <b class="text-gray-800 dark:text-gray-200">侧栏折叠</b> — 左侧文档列表和右侧工具面板分别通过 ◀/▶ 按钮折叠，最大化编辑空间<br/>
+                <b class="text-gray-800 dark:text-gray-200">纯文本提纯优化</b> — 所有 AI 调用（diff、分析、评分、对话、技能）自动从 ProseMirror JSON 提取纯文本，节省 2~3 倍 token 消耗
               </p>
             </div>
           </div>
           <!-- 底部版权（固定） -->
-          <div class="px-5 py-3 border-t border-gray-800 shrink-0 rounded-b-xl text-center text-xs text-gray-600">
+          <div class="px-5 py-3 border-t border-gray-200 dark:border-gray-800 shrink-0 rounded-b-xl text-center text-xs text-gray-500 dark:text-gray-600">
             大庆油田第七采油厂  |  陈刚 18088793359<br/>
             © 2026 AiPen. All rights reserved.
           </div>
@@ -2049,20 +2065,20 @@ async function handleExportWord() {
         @click.self="scorePopoverShow = false"
       >
         <div
-          class="absolute w-[380px] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden"
+          class="absolute w-[380px] bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden"
           :style="{ left: '50%', top: '48px', transform: 'translateX(-50%)' }"
         >
           <!-- Header -->
-          <div class="px-4 py-3 flex items-center justify-between border-b border-gray-800">
+          <div class="px-4 py-3 flex items-center justify-between border-b border-gray-200 dark:border-gray-800">
             <div class="flex items-center gap-2">
               <span class="text-lg">📊</span>
-              <span class="text-sm font-semibold text-gray-200">
+              <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">
                 综合评分
               </span>
             </div>
             <div class="flex items-center gap-1">
               <button
-                class="h-6 w-6 flex items-center justify-center rounded text-xs text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors"
+                class="h-6 w-6 flex items-center justify-center rounded text-xs text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 :class="{ 'animate-spin': scoreLoading }"
                 :disabled="scoreLoading"
                 title="刷新评分"
@@ -2071,7 +2087,7 @@ async function handleExportWord() {
                 {{ scoreLoading ? '⏳' : '↻' }}
               </button>
               <button
-                class="h-6 w-6 flex items-center justify-center rounded text-sm text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors"
+                class="h-6 w-6 flex items-center justify-center rounded text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 @click="scorePopoverShow = false"
               >✕</button>
             </div>
@@ -2085,10 +2101,10 @@ async function handleExportWord() {
                 <span class="text-3xl font-bold" :class="scoreTextColor(documentScore.total_score)">
                   {{ documentScore.total_score }}
                 </span>
-                <span class="text-xs text-gray-500">/ 100</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">/ 100</span>
               </div>
               <p class="text-sm font-medium" :class="scoreTextColor(documentScore.total_score)">{{ scoreTagline(documentScore.total_score) }}</p>
-              <p class="text-sm text-gray-300 italic">"{{ documentScore.encouragement }}"</p>
+              <p class="text-sm text-gray-700 dark:text-gray-300 italic">"{{ documentScore.encouragement }}"</p>
             </div>
             <!-- 各维度 -->
             <div class="space-y-2.5">
@@ -2098,23 +2114,23 @@ async function handleExportWord() {
                 class="space-y-1"
               >
                 <div class="flex items-center justify-between text-xs">
-                  <span class="text-gray-300 font-medium">{{ dim.name }}</span>
-                  <span class="text-gray-500">{{ dim.score }}</span>
+                  <span class="text-gray-700 dark:text-gray-300 font-medium">{{ dim.name }}</span>
+                  <span class="text-gray-400 dark:text-gray-500">{{ dim.score }}</span>
                 </div>
-                <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                <div class="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                   <div
                     class="h-full rounded-full transition-all duration-500"
                     :class="scoreBarColor(dim.score)"
                     :style="{ width: dim.score + '%' }"
                   />
                 </div>
-                <p class="text-[11px] text-gray-500 leading-relaxed">{{ dim.comment }}</p>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed">{{ dim.comment }}</p>
               </div>
             </div>
             <!-- 优先建议 -->
-            <div class="bg-blue-950/30 border border-blue-800/30 rounded-lg px-3 py-2 flex items-start gap-2">
+            <div class="bg-blue-400/15 dark:bg-blue-950/30 border border-blue-300/40 dark:border-blue-800/30 rounded-lg px-3 py-2 flex items-start gap-2">
               <span class="text-blue-400 text-xs mt-0.5">💡</span>
-              <p class="text-xs text-blue-300">{{ documentScore.top_suggestion }}</p>
+              <p class="text-xs text-blue-700 dark:text-blue-300">{{ documentScore.top_suggestion }}</p>
             </div>
           </div>
         </div>
@@ -2130,24 +2146,24 @@ async function handleExportWord() {
         @contextmenu.prevent="onClickAwayContextMenu"
       >
         <div
-          class="absolute w-32 bg-gray-900 border border-gray-700 rounded-lg shadow-xl py-1"
+          class="absolute w-32 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-xl py-1"
           :style="{ left: ctxMenu.x + 'px', top: ctxMenu.y + 'px' }"
         >
           <button
-            class="w-full px-3 py-1.5 text-xs text-left text-gray-300 hover:bg-gray-700 hover:text-gray-100 transition-colors flex items-center gap-2"
+            class="w-full px-3 py-1.5 text-xs text-left text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center gap-2"
             @click="handleReload"
           >
             <span>🔄</span> 刷新
           </button>
-          <div class="h-px bg-gray-800 mx-2 my-1" />
+          <div class="h-px bg-gray-100 dark:bg-gray-800 mx-2 my-1" />
           <button
-            class="w-full px-3 py-1.5 text-xs text-left text-gray-300 hover:bg-gray-700 hover:text-gray-100 transition-colors flex items-center gap-2"
+            class="w-full px-3 py-1.5 text-xs text-left text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center gap-2"
             @click="handleShowAbout"
           >
             <span>ℹ️</span> 关于软件
           </button>
-          <div class="h-px bg-gray-800 mx-2 my-1" />
-          <p class="px-3 py-1.5 text-xs text-gray-500 text-center select-none">当前版本：v{{ appVersion }}</p>
+          <div class="h-px bg-gray-100 dark:bg-gray-800 mx-2 my-1" />
+          <p class="px-3 py-1.5 text-xs text-gray-400 dark:text-gray-500 text-center select-none">当前版本：v{{ appVersion }}</p>
         </div>
       </div>
     </Teleport>
@@ -2160,7 +2176,7 @@ async function handleExportWord() {
         @click.self="showAbout = false"
       >
         <div class="absolute inset-0 bg-black/50 backdrop-blur-md" />
-        <div class="relative w-[420px] rounded-2xl shadow-2xl overflow-hidden bg-gray-900 border border-gray-700">
+        <div class="relative w-[420px] rounded-2xl shadow-2xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
           <!-- 星空画布 -->
           <div class="relative h-48 overflow-hidden">
             <canvas
@@ -2170,28 +2186,28 @@ async function handleExportWord() {
             <div class="absolute inset-0 flex flex-col items-center justify-center">
               <div class="text-5xl mb-2">✒️</div>
               <h2 class="text-2xl font-bold text-white tracking-wider">AiPen</h2>
-              <p class="text-sm text-blue-300 mt-1 font-mono">v{{ appVersion }}</p>
+              <p class="text-sm text-blue-700 dark:text-blue-300 mt-1 font-mono">v{{ appVersion }}</p>
             </div>
           </div>
           <!-- 信息区 -->
           <div class="px-6 py-5 space-y-3">
-            <p class="text-sm text-gray-400 text-center leading-relaxed">
+            <p class="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed">
               智能写作助手 — 基于大语言模型的<br/>全流程 AI 辅助写作工具
             </p>
-            <div class="flex items-center justify-center gap-4 text-xs text-gray-500 pt-2">
+            <div class="flex items-center justify-center gap-4 text-xs text-gray-400 dark:text-gray-500 pt-2">
               <span>⚡ 内置 DeepSeek</span>
               <span>📝 管道式写作</span>
               <span>🔍 Diff 审查</span>
             </div>
           </div>
           <!-- 底部 -->
-          <div class="px-6 py-3 border-t border-gray-800 text-center text-xs text-gray-600">
+          <div class="px-6 py-3 border-t border-gray-200 dark:border-gray-800 text-center text-xs text-gray-500 dark:text-gray-600">
             大庆油田第七采油厂 ｜ 陈刚 18088793359<br/>
             © 2026 AiPen. All rights reserved.
           </div>
           <!-- 关闭按钮 -->
           <button
-            class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-colors no-drag"
+            class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full bg-gray-100/70 dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 transition-colors no-drag"
             @click="showAbout = false"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

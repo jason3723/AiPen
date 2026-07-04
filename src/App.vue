@@ -5,6 +5,11 @@ import { relaunch } from "@tauri-apps/plugin-process";
 import EditorView from "./views/EditorView.vue";
 import ConfirmDialog from "./components/ConfirmDialog.vue";
 import { registerConfirmDialog } from "./composables/useConfirm";
+import { useTheme } from "./stores/theme";
+
+// 激活全局主题（模块级初始化）并暴露给子组件
+const theme = useTheme();
+provide("theme", theme);
 
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null);
 
@@ -137,47 +142,47 @@ onMounted(() => {
       <!-- 遮罩 -->
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
       <!-- 弹窗 -->
-      <div class="relative w-[420px] max-w-[92vw] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl">
+      <div class="relative w-[420px] max-w-[92vw] bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl">
         <!-- 标题栏 -->
-        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-800">
-          <h2 class="text-base font-semibold text-gray-200">软件更新</h2>
+        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-gray-800">
+          <h2 class="text-base font-semibold text-gray-800 dark:text-gray-200">软件更新</h2>
         </div>
         <!-- 内容 -->
         <div class="px-5 py-4 space-y-4">
           <div class="flex items-center gap-2">
             <span class="text-2xl">🎉</span>
-            <span class="text-sm text-gray-300">
+            <span class="text-sm text-gray-700 dark:text-gray-300">
               发现新版本 <span class="font-semibold text-blue-400">v{{ updateState.updateInfo?.version }}</span>
             </span>
           </div>
 
           <div
             v-if="updateState.updateInfo?.body"
-            class="text-xs text-gray-500 whitespace-pre-wrap leading-relaxed max-h-24 overflow-y-auto bg-gray-950/50 rounded-lg p-2 border border-gray-800"
+            class="text-xs text-gray-400 dark:text-gray-500 whitespace-pre-wrap leading-relaxed max-h-24 overflow-y-auto bg-white/80 dark:bg-gray-950/50 rounded-lg p-2 border border-gray-200 dark:border-gray-800"
           >
             {{ updateState.updateInfo.body }}
           </div>
 
           <!-- 下载进度 -->
           <div v-if="downloadingUpdate" class="space-y-1">
-            <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+            <div class="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
               <div
                 class="h-full bg-blue-500 rounded-full transition-all duration-300"
                 :style="{ width: downloadProgress + '%' }"
               />
             </div>
-            <p class="text-xs text-gray-500 text-right">{{ downloadProgress }}%</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 text-right">{{ downloadProgress }}%</p>
           </div>
 
           <!-- 错误 -->
-          <div v-if="updateError" class="text-xs text-red-400 bg-red-950/30 border border-red-900/30 rounded-lg px-3 py-2 break-all">
+          <div v-if="updateError" class="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded-lg px-3 py-2 break-all">
             {{ updateError }}
           </div>
         </div>
         <!-- 底部按钮 -->
-        <div class="border-t border-gray-800 px-5 py-3 flex gap-2 justify-end">
+        <div class="border-t border-gray-200 dark:border-gray-800 px-5 py-3 flex gap-2 justify-end">
           <button
-            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg transition-colors"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg transition-colors"
             @click="dismissedGlobalUpdate = true"
           >
             {{ downloadingUpdate ? "后台更新" : "稍后更新" }}

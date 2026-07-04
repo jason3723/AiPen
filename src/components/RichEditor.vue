@@ -227,12 +227,10 @@ const previewH4Style = computed(() => ({
   fontWeight: h4FontWeight.value,
 }))
 
-// ── 主题 ──
-const isLight = ref(localStorage.getItem('editor-theme') === 'light')
-function toggleTheme() {
-  isLight.value = !isLight.value
-  localStorage.setItem('editor-theme', isLight.value ? 'light' : 'dark')
-}
+// ── 主题（接入全局 theme store）──
+import { useTheme } from '../stores/theme'
+const { isDark } = useTheme()
+const isLight = computed(() => !isDark.value)
 
 // ── 字体（与排版设置对齐：各样式独立字体） ──
 const fontOptions = [
@@ -1490,15 +1488,6 @@ function btnClass(active: boolean) {
         <button title="放大字号" class="rich-btn text-xs" @mousedown.prevent="zoomIn">A⁺</button>
       </div>
 
-      <span class="rich-sep" :style="{ backgroundColor: tbSep }" />
-
-      <!-- 主题 -->
-      <button
-        :title="isLight ? '切换深色主题' : '切换浅色主题'"
-        class="rich-btn"
-        @mousedown.prevent="toggleTheme"
-        v-html="isLight ? svg.moon : svg.sun"
-      />
     </div>
 
     <!-- 查找替换面板 -->
@@ -1619,6 +1608,54 @@ function btnClass(active: boolean) {
 </template>
 
 <style>
+/* ── 主题自适应色彩变量 ── */
+:root {
+  --ae-placeholder: #9ca3af;
+  --ae-blockquote-text: #4b5563;
+  --ae-pre-bg: rgba(0,0,0,0.05);
+  --ae-code-bg: rgba(0,0,0,0.04);
+  --ae-img-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  --ae-dropdown-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --ae-ctxmenu-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  --ae-ctxmenu-danger-hover: rgba(239,68,68,0.06);
+  --ae-swatch-border: rgba(0,0,0,0.08);
+  --ae-mark-bg: rgba(251,191,36,0.35);
+  --ae-search-bg: rgba(255,193,7,0.3);
+  --ae-search-shadow: 0 0 0 1px rgba(255,193,7,0.22);
+
+  /* 以下在浅/深主题中表现一致 */
+  --ae-blockquote-border: #3b82f6;
+  --ae-link: #3b82f6;
+  --ae-img-sel-outline: rgba(59,130,246,0.7);
+  --ae-img-sel-shadow: 0 0 0 4px rgba(59,130,246,0.15), 0 2px 8px rgba(0,0,0,0.1);
+  --ae-cell-sel-bg: rgba(59,130,246,0.18);
+  --ae-cell-sel-outline: rgba(59,130,246,0.45);
+  --ae-cell-sel-after: rgba(59,130,246,0.06);
+  --ae-diff-bg: linear-gradient(180deg, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0.25) 100%);
+  --ae-diff-border: rgba(59,130,246,0.5);
+  --ae-swatch-hover: 0 0 0 2px rgba(59,130,246,0.35);
+  --ae-ctxmenu-danger: #ef4444;
+  --ae-search-focus-border: #3b82f6;
+  --ae-table-cell-active-bg: rgba(59,130,246,0.25);
+  --ae-table-cell-active-border: rgba(59,130,246,0.5);
+  --ae-table-cell-header-bg: rgba(59,130,246,0.15);
+  --ae-column-resize: rgba(59,130,246,0.4);
+}
+.dark {
+  --ae-placeholder: #6b7280;
+  --ae-blockquote-text: #9ca3af;
+  --ae-pre-bg: rgba(0,0,0,0.1);
+  --ae-code-bg: rgba(0,0,0,0.08);
+  --ae-img-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  --ae-dropdown-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  --ae-ctxmenu-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  --ae-ctxmenu-danger-hover: rgba(239,68,68,0.15);
+  --ae-swatch-border: rgba(0,0,0,0.12);
+  --ae-mark-bg: rgba(251,191,36,0.3);
+  --ae-search-bg: rgba(255,193,7,0.4);
+  --ae-search-shadow: 0 0 0 1px rgba(255,193,7,0.3);
+}
+
 /* ── 编辑器内容区 ── */
 .rich-content .ProseMirror {
   min-height: 100%;
@@ -1632,7 +1669,7 @@ function btnClass(active: boolean) {
 .rich-content .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: #6b7280;
+  color: var(--ae-placeholder);
   pointer-events: none;
   height: 0;
 }
@@ -1641,13 +1678,13 @@ function btnClass(active: boolean) {
 .rich-content .ProseMirror h3 { font-family: v-bind(h3FontFamily); font-size: calc(v-bind(h3FontSizePt) * 1pt * v-bind(pageZoom)); line-height: v-bind(h3LineHeight); font-weight: v-bind(h3FontWeight); margin: 0.5em 0; }
 .rich-content .ProseMirror h4 { font-family: v-bind(h4FontFamily); font-size: calc(v-bind(h4FontSizePt) * 1pt * v-bind(pageZoom)); line-height: v-bind(h4LineHeight); font-weight: v-bind(h4FontWeight); margin: 0.4em 0; }
 .rich-content .ProseMirror blockquote {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--ae-blockquote-border);
   padding-left: 1em;
   margin: 0.5em 0;
-  color: #6b7280;
+  color: var(--ae-blockquote-text);
 }
 .rich-content .ProseMirror pre {
-  background: rgba(0,0,0,0.1);
+  background: var(--ae-pre-bg);
   padding: 0.75em 1em;
   border-radius: 4px;
   font-family: 'Consolas', 'Courier New', monospace;
@@ -1655,7 +1692,7 @@ function btnClass(active: boolean) {
   overflow-x: auto;
 }
 .rich-content .ProseMirror code {
-  background: rgba(0,0,0,0.08);
+  background: var(--ae-code-bg);
   padding: 0.1em 0.3em;
   border-radius: 3px;
   font-family: 'Consolas', 'Courier New', monospace;
@@ -1672,7 +1709,7 @@ function btnClass(active: boolean) {
   height: auto;
   border-radius: 4px;
   margin: 0.75em auto;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: var(--ae-img-shadow);
   cursor: pointer;
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1681,8 +1718,8 @@ function btnClass(active: boolean) {
 /* 图片被选中时（点击选中）的蓝色高亮 */
 .rich-content .ProseMirror img.ProseMirror-selectednode,
 .rich-content .ProseMirror .ProseMirror-selectednode img {
-  outline-color: rgba(59, 130, 246, 0.7);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 2px 8px rgba(0,0,0,0.1);
+  outline-color: var(--ae-img-sel-outline);
+  box-shadow: var(--ae-img-sel-shadow);
   border-radius: 4px;
 }
 .rich-content .ProseMirror table { border-collapse: collapse; margin: 0.5em 0; width: 100%; table-layout: fixed; }
@@ -1691,8 +1728,8 @@ function btnClass(active: boolean) {
 .rich-content .ProseMirror th { font-weight: 600; }
 /* 表格单元格选中高亮（Ctrl/Cmd+点击选中单元格时） */
 .rich-content .ProseMirror .selectedCell {
-  background: rgba(59, 130, 246, 0.18);
-  outline: 2px solid rgba(59, 130, 246, 0.45);
+  background: var(--ae-cell-sel-bg);
+  outline: 2px solid var(--ae-cell-sel-outline);
   outline-offset: -1px;
   position: relative;
 }
@@ -1700,12 +1737,12 @@ function btnClass(active: boolean) {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(59, 130, 246, 0.06);
+  background: var(--ae-cell-sel-after);
   pointer-events: none;
 }
-.rich-content .ProseMirror a { color: #3b82f6; text-decoration: underline; cursor: pointer; }
+.rich-content .ProseMirror a { color: var(--ae-link); text-decoration: underline; cursor: pointer; }
 .rich-content .ProseMirror s { text-decoration: line-through; opacity: 0.7; }
-.rich-content .ProseMirror mark { background: rgba(251, 191, 36, 0.3); padding: 0 2px; border-radius: 2px; }
+.rich-content .ProseMirror mark { background: var(--ae-mark-bg); padding: 0 2px; border-radius: 2px; }
 .rich-content .ProseMirror p { margin: 0.3em 0; }
 
 /* ── 素材卡片视图 ── */
@@ -1753,8 +1790,8 @@ function btnClass(active: boolean) {
 
 /* ── Diff 回放高亮 ── */
 .rich-content .ProseMirror .diff-change-highlight {
-  background: linear-gradient(180deg, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0.25) 100%);
-  border-bottom: 2px solid rgba(59,130,246,0.5);
+  background: var(--ae-diff-bg);
+  border-bottom: 2px solid var(--ae-diff-border);
   padding: 1px 2px;
   border-radius: 2px;
 }
@@ -1765,9 +1802,9 @@ function btnClass(active: boolean) {
 
 /* ── 搜索高亮 ── */
 .rich-content .ProseMirror .search-highlight {
-  background: rgba(255, 193, 7, 0.4);
+  background: var(--ae-search-bg);
   border-radius: 2px;
-  box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.3);
+  box-shadow: var(--ae-search-shadow);
 }
 
 /* ── 工具栏按钮 ── */
@@ -1841,7 +1878,7 @@ function btnClass(active: boolean) {
 }
 .rich-color-swatch:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+  box-shadow: var(--ae-swatch-hover);
   z-index: 1;
 }
 
@@ -1849,12 +1886,12 @@ function btnClass(active: boolean) {
 .ctx-menu {
   position: fixed;
   z-index: 10000;
-  background: #1e1e2e;
-  border: 1px solid #3b3b5c;
+  background: v-bind(ddBg);
+  border: 1px solid v-bind(ddBorder);
   border-radius: 6px;
   padding: 4px 0;
   min-width: 200px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  box-shadow: var(--ae-ctxmenu-shadow);
   font-size: 12px;
 }
 .ctx-menu-item {
@@ -1863,26 +1900,26 @@ function btnClass(active: boolean) {
   justify-content: space-between;
   padding: 5px 12px;
   cursor: pointer;
-  color: #c0caf5;
+  color: v-bind(dropdownItemColor);
   transition: background 0.1s;
 }
 .ctx-menu-item:hover {
-  background: #29293d;
+  background: v-bind(ddHoverBg);
 }
 .ctx-menu-item-danger {
-  color: #ef4444 !important;
+  color: var(--ae-ctxmenu-danger) !important;
 }
 .ctx-menu-item-danger:hover {
-  background: rgba(239, 68, 68, 0.15) !important;
+  background: var(--ae-ctxmenu-danger-hover) !important;
 }
 .ctx-shortcut {
-  color: #565f89;
+  color: v-bind(cardMetaColor);
   font-size: 11px;
   margin-left: 16px;
 }
 .ctx-separator {
   height: 1px;
-  background: #3b3b5c;
+  background: v-bind(tbBorder);
   margin: 3px 0;
 }
 .ctx-overlay {
@@ -1895,7 +1932,7 @@ function btnClass(active: boolean) {
 .rich-table-picker {
   border: 1px solid;
   border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  box-shadow: var(--ae-dropdown-shadow);
 }
 .rich-table-grid {
   display: grid;
@@ -1912,11 +1949,11 @@ function btnClass(active: boolean) {
   transition: background 0.1s;
 }
 .rich-table-cell-active {
-  background: rgba(59, 130, 246, 0.25);
-  border-color: rgba(59, 130, 246, 0.5);
+  background: var(--ae-table-cell-active-bg);
+  border-color: var(--ae-table-cell-active-border);
 }
 .rich-table-cell-header {
-  background: rgba(59, 130, 246, 0.15);
+  background: var(--ae-table-cell-header-bg);
 }
 
 /* ── 表格列控手柄 ── */
@@ -1926,7 +1963,7 @@ function btnClass(active: boolean) {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: rgba(59, 130, 246, 0.4);
+  background: var(--ae-column-resize);
   cursor: col-resize;
   z-index: 1;
   pointer-events: auto;
@@ -1940,7 +1977,7 @@ function btnClass(active: boolean) {
   border: 1px solid;
 }
 .rich-search-input:focus {
-  border-color: #3b82f6 !important;
+  border-color: var(--ae-search-focus-border) !important;
 }
 .rich-search-btn {
   height: 24px;

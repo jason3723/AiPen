@@ -276,12 +276,12 @@ const progressPhaseColor = computed(() => {
 const progressBgClass = computed(() => {
   const c = progressPhaseColor.value
   return {
-    'bg-blue-950/15': c === 'blue',
+    'bg-blue-100 dark:bg-blue-950/15': c === 'blue',
     'bg-violet-950/15': c === 'violet',
     'bg-emerald-950/15': c === 'emerald',
     'bg-amber-950/15': c === 'amber',
-    'bg-purple-950/15': c === 'purple',
-    'bg-green-950/15': c === 'green',
+    'bg-purple-100 dark:bg-purple-950/15': c === 'purple',
+    'bg-green-100 dark:bg-green-950/15': c === 'green',
     'bg-gray-900/20': c === 'gray',
   }
 })
@@ -289,10 +289,10 @@ const progressBgClass = computed(() => {
 const progressTrackClass = computed(() => {
   const c = progressPhaseColor.value
   return {
-    'bg-blue-950/40': c === 'blue', 'bg-violet-950/40': c === 'violet',
+    'bg-blue-100 dark:bg-blue-950/40': c === 'blue', 'bg-violet-950/40': c === 'violet',
     'bg-emerald-950/40': c === 'emerald',
-    'bg-amber-950/40': c === 'amber', 'bg-purple-950/40': c === 'purple',
-    'bg-green-950/40': c === 'green', 'bg-gray-800/60': c === 'gray',
+    'bg-amber-950/40': c === 'amber', 'bg-purple-100 dark:bg-purple-950/40': c === 'purple',
+    'bg-green-100 dark:bg-green-950/40': c === 'green', 'bg-gray-100/70 dark:bg-gray-800/60': c === 'gray',
   }
 })
 
@@ -305,7 +305,7 @@ const marqueeBarClass = computed(() => {
     'bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 bg-[length:200%_100%] animate-shimmer': c === 'amber',
     'bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 bg-[length:200%_100%] animate-shimmer': c === 'purple',
     'bg-gradient-to-r from-green-500 via-green-400 to-green-500 bg-[length:200%_100%] animate-shimmer': c === 'green',
-    'bg-gray-600': c === 'gray',
+    'bg-gray-300 dark:bg-gray-600': c === 'gray',
   }
 })
 
@@ -351,7 +351,7 @@ const progressHint = computed(() => {
   <div class="flex flex-col h-full">
     <!-- 标题栏 -->
     <div class="flex items-center justify-between mb-3">
-      <h3 class="text-sm font-semibold text-gray-300">智能写作</h3>
+      <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">智能写作</h3>
       <button
         class="text-xs text-blue-400 hover:text-blue-300 transition-colors"
         @click="showForm = !showForm"
@@ -362,19 +362,19 @@ const progressHint = computed(() => {
 
     <!-- 新建表单 -->
     <Transition name="fade-up">
-      <div v-if="showForm && !showReviewPanel" class="mb-3 p-3 rounded-lg bg-gray-800/50 border border-gray-700/50 space-y-2">
+      <div v-if="showForm && !showReviewPanel" class="mb-3 p-3 rounded-lg bg-gray-100/60 dark:bg-gray-800/50 border border-gray-300/50 dark:border-gray-700/50 space-y-2">
         <input
           v-model="newRecipe.name"
           type="text"
           placeholder="模板名称（如：专题研讨发言）"
-          class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-blue-500"
+          class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500"
           @keyup.enter="handleCreate"
         />
         <input
           v-model="newRecipe.description"
           type="text"
           placeholder="简要描述（AI 将根据描述自动生成问题采集）"
-          class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-blue-500"
+          class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500"
           @keyup.enter="handleCreate"
         />
         <!-- 创建状态提示 -->
@@ -400,30 +400,30 @@ const progressHint = computed(() => {
     </Transition>
 
     <!-- ═══ 问题确认编辑面板 ═══ -->
-    <div v-if="showReviewPanel" class="mb-3 p-3 rounded-lg bg-gray-800/50 border border-blue-700/40 space-y-2.5 max-h-[60vh] flex flex-col">
+    <div v-if="showReviewPanel" class="mb-3 p-3 rounded-lg bg-gray-100/60 dark:bg-gray-800/50 border border-blue-700/40 space-y-2.5 max-h-[60vh] flex flex-col">
       <!-- 标题 -->
       <div class="flex items-center justify-between shrink-0">
         <div class="flex items-center gap-1.5">
           <span class="text-xs">📋</span>
-          <span class="text-xs font-semibold text-gray-200">{{ pendingName }}</span>
-          <span class="text-[10px] px-1 py-0.5 rounded-full bg-blue-950/50 text-blue-400 border border-blue-800/30">确认修改</span>
+          <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">{{ pendingName }}</span>
+          <span class="text-[10px] px-1 py-0.5 rounded-full bg-blue-400/25 text-gray-800 dark:text-gray-200">确认修改</span>
         </div>
-        <span class="text-[10px] text-gray-500">{{ pendingQuestions.length }} 个问题</span>
+        <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ pendingQuestions.length }} 个问题</span>
       </div>
 
       <!-- 系统提示词 -->
       <div class="shrink-0">
-        <label class="text-[10px] text-gray-500 block mb-1">AI 角色设定（systemPrompt）</label>
+        <label class="text-[10px] text-gray-400 dark:text-gray-500 block mb-1">AI 角色设定（systemPrompt）</label>
         <textarea
           v-model="pendingSystemPrompt"
           rows="2"
-          class="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1.5 text-[11px] text-gray-300 placeholder-gray-600 outline-none focus:border-blue-500 transition-colors resize-none"
+          class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded px-2 py-1.5 text-[11px] text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500 transition-colors resize-none"
         ></textarea>
       </div>
 
       <!-- 问题列表（可滚动） -->
       <div class="flex-1 overflow-y-auto space-y-2 min-h-0">
-        <label class="text-[10px] text-gray-500 block">采集问题列表</label>
+        <label class="text-[10px] text-gray-400 dark:text-gray-500 block">采集问题列表</label>
         <div
           v-for="(q, idx) in pendingQuestions"
           :key="idx"
@@ -431,26 +431,26 @@ const progressHint = computed(() => {
         >
           <!-- 标题行 -->
           <div class="flex items-center gap-1.5">
-            <span class="text-[10px] text-gray-600 shrink-0 w-4">{{ idx + 1 }}</span>
+            <span class="text-[10px] text-gray-500 dark:text-gray-600 shrink-0 w-4">{{ idx + 1 }}</span>
             <input
               v-model="q.question"
               type="text"
               placeholder="问题文本"
-              class="flex-1 bg-transparent text-[11px] text-gray-200 placeholder-gray-600 outline-none border-b border-transparent focus:border-gray-600 transition-colors"
+              class="flex-1 bg-transparent text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none border-b border-transparent focus:border-gray-600 transition-colors"
             />
             <!-- required 切换 -->
             <button
               class="h-5 px-1.5 text-[9px] rounded border transition-all shrink-0"
               :class="q.required
-                ? 'bg-red-950/30 border-red-800/50 text-red-400'
-                : 'bg-gray-800 border-gray-700 text-gray-600 hover:text-gray-400'"
+                ? 'bg-red-100 dark:bg-red-950/30 border-red-300 dark:border-red-800/50 text-red-600 dark:text-red-400'
+                : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-600 hover:text-gray-400'"
               @click="toggleRequired(idx)"
               :title="q.required ? '必填' : '选填'"
             >
               {{ q.required ? '必填' : '选填' }}
             </button>
             <button
-              class="h-5 w-5 flex items-center justify-center rounded text-gray-600 hover:text-red-400 hover:bg-red-950/20 transition-all shrink-0"
+              class="h-5 w-5 flex items-center justify-center rounded text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-950/20 transition-all shrink-0"
               @click="removeQuestion(idx)"
               title="删除"
             >
@@ -462,14 +462,14 @@ const progressHint = computed(() => {
             v-model="q.hint"
             type="text"
             placeholder="输入框提示（可为空）"
-            class="w-full bg-gray-950/50 border border-gray-800 rounded px-1.5 py-1 text-[10px] text-gray-400 placeholder-gray-700 outline-none focus:border-gray-600 transition-colors"
+            class="w-full bg-white/80 dark:bg-gray-950/50 border border-gray-200 dark:border-gray-800 rounded px-1.5 py-1 text-[10px] text-gray-600 dark:text-gray-400 placeholder-gray-700 outline-none focus:border-gray-600 transition-colors"
           />
           <!-- options（逗号分隔） -->
           <input
             v-model="q._optionsText"
             type="text"
             placeholder="选项（逗号分隔，如：选项A，选项B）"
-            class="w-full bg-gray-950/50 border border-gray-800 rounded px-1.5 py-1 text-[10px] text-amber-400/70 placeholder-gray-700 outline-none focus:border-amber-800/50 transition-colors"
+            class="w-full bg-white/80 dark:bg-gray-950/50 border border-gray-200 dark:border-gray-800 rounded px-1.5 py-1 text-[10px] text-amber-600 dark:text-amber-400/70 placeholder-gray-700 outline-none focus:border-amber-800/50 transition-colors"
             @input="() => {}"
           />
         </div>
@@ -479,7 +479,7 @@ const progressHint = computed(() => {
       <div class="space-y-2 shrink-0">
         <!-- 添加问题 -->
         <button
-          class="w-full h-7 flex items-center justify-center gap-1 text-[11px] text-gray-500 hover:text-blue-400 border border-dashed border-gray-700/50 hover:border-blue-700/50 rounded-lg transition-all"
+          class="w-full h-7 flex items-center justify-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 hover:text-blue-400 border border-dashed border-gray-300/50 dark:border-gray-700/50 hover:border-blue-700/50 rounded-lg transition-all"
           @click="addQuestion"
         >
           <span>＋</span> 添加问题
@@ -488,13 +488,13 @@ const progressHint = computed(() => {
         <!-- 底部操作 -->
         <div class="flex items-center gap-2">
           <button
-            class="h-7 px-3 text-[11px] text-gray-500 hover:text-gray-300 hover:bg-gray-700/30 rounded-lg transition-colors shrink-0"
+            class="h-7 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-700/30 rounded-lg transition-colors shrink-0"
             @click="handleCancelReview"
           >
             取消
           </button>
           <button
-            class="h-7 px-3 text-[11px] text-blue-400 hover:text-blue-300 border border-blue-800/40 hover:border-blue-600/60 rounded-lg transition-all shrink-0 flex items-center gap-1"
+            class="h-7 px-3 text-[11px] text-blue-400 hover:text-blue-300 border border-blue-300 dark:border-blue-800/40 hover:border-blue-600/60 rounded-lg transition-all shrink-0 flex items-center gap-1"
             :disabled="regenerating"
             @click="handleRegenerate"
           >
@@ -520,7 +520,7 @@ const progressHint = computed(() => {
     <div class="flex-1 overflow-y-auto space-y-4">
       <div v-for="(recipes, genre) in groupedRecipes" :key="genre">
         <!-- 分组标题 -->
-        <div class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <div class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
           {{ genre }}
         </div>
 
@@ -531,8 +531,8 @@ const progressHint = computed(() => {
           class="mb-2 rounded-lg border transition-all group overflow-hidden"
           :class="[
             recipe.isBuiltin
-              ? 'bg-gray-800/40 border-gray-700/50 hover:border-blue-500/50 hover:bg-gray-800/70'
-              : 'bg-gray-800/20 border-dashed border-gray-700/30 hover:border-purple-500/50 hover:bg-gray-800/50',
+              ? 'bg-white dark:bg-gray-800/40 border-gray-200 dark:border-gray-700/50 hover:border-blue-400 dark:hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-gray-800/70'
+              : 'bg-gray-50 dark:bg-gray-800/20 border-dashed border-gray-200 dark:border-gray-700/30 hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50 dark:hover:bg-gray-800/50',
             isActiveRecipe(recipe) ? 'border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : '',
           ]"
           @click="emit('start', recipe)"
@@ -542,20 +542,20 @@ const progressHint = computed(() => {
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 mb-1">
                   <span class="text-sm">{{ recipe.icon }}</span>
-                  <span class="text-xs font-medium text-gray-200 truncate">{{ recipe.name }}</span>
+                  <span class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">{{ recipe.name }}</span>
                   <span
                     v-if="!recipe.isBuiltin"
-                    class="text-[10px] px-1 py-0.5 rounded bg-purple-900/50 text-purple-400"
+                    class="text-[10px] px-1 py-0.5 rounded bg-purple-50/50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400"
                   >自定义</span>
                 </div>
-                <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-2">
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 leading-relaxed line-clamp-2">
                   {{ recipe.description }}
                 </p>
               </div>
               <!-- 删除（仅自定义） -->
               <button
                 v-if="!recipe.isBuiltin"
-                class="hidden group-hover:block text-xs text-gray-600 hover:text-red-400 transition-colors ml-2 shrink-0"
+                class="hidden group-hover:block text-xs text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 transition-colors ml-2 shrink-0"
                 title="删除"
                 @click.stop="handleDelete(recipe)"
               >
@@ -575,9 +575,9 @@ const progressHint = computed(() => {
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-1.5 min-w-0">
                   <span class="w-1.5 h-1.5 rounded-full" :class="progressDotClass"></span>
-                  <span class="text-[11px] font-medium text-gray-300 truncate">{{ phaseLabelMap[props.activeProgress!.phase] }}</span>
+                  <span class="text-[11px] font-medium text-gray-700 dark:text-gray-300 truncate">{{ phaseLabelMap[props.activeProgress!.phase] }}</span>
                 </div>
-                <span class="text-[10px] tabular-nums shrink-0 ml-2 text-gray-500">
+                <span class="text-[10px] tabular-nums shrink-0 ml-2 text-gray-400 dark:text-gray-500">
                   {{ props.activeProgress!.currentStep }}/{{ props.activeProgress!.totalSteps }}
                 </span>
               </div>
@@ -598,14 +598,14 @@ const progressHint = computed(() => {
               </div>
 
               <!-- 阶段说明 -->
-              <p class="text-[10px] text-gray-500 mt-1.5">{{ progressHint }}</p>
+              <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1.5">{{ progressHint }}</p>
             </div>
           </Transition>
         </div>
       </div>
 
       <!-- 空状态 -->
-      <div v-if="Object.keys(groupedRecipes).length === 0" class="text-center py-8 text-gray-600 text-xs">
+      <div v-if="Object.keys(groupedRecipes).length === 0" class="text-center py-8 text-gray-500 dark:text-gray-600 text-xs">
         <p>暂无写作模板</p>
         <p class="text-blue-500 cursor-pointer hover:underline mt-1" @click="showForm = true">
           创建第一个

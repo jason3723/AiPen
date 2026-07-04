@@ -211,10 +211,10 @@ function handleOpenBookmark(url: string) {
 <template>
   <!-- 素材 Tab：按标签文档展示（与文档面板操作逻辑一致） -->
   <div v-if="subTab === 'materials'" class="flex flex-col h-full">
-    <div class="flex items-center justify-between px-3 py-2 border-b border-gray-800">
-      <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">素材</span>
+    <div class="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-800">
+      <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">素材</span>
       <button
-        class="text-xs text-gray-500 hover:text-blue-400 transition-colors"
+        class="text-xs text-gray-400 dark:text-gray-500 hover:text-blue-400 transition-colors"
         title="新建标签"
         @click="handleCreateTag"
       >
@@ -227,8 +227,8 @@ function handleOpenBookmark(url: string) {
         :key="item.tag?.id ?? '__uncategorized__'"
         class="group flex items-center gap-1 px-2 py-2 cursor-pointer transition-colors"
         :class="(store.currentTagDocumentId === (item.tag?.id ?? '__uncategorized__'))
-          ? 'bg-blue-900/30 border-l-2 border-blue-500 text-blue-300'
-          : 'border-l-2 border-transparent text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'"
+          ? 'bg-blue-100 dark:bg-blue-900/30 border-l-2 border-blue-500 text-blue-700 dark:text-blue-300'
+          : 'border-l-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 hover:text-gray-800 dark:hover:text-gray-200'"
         @click="handleTagItemClick(item)"
       >
         <div class="flex-1 min-w-0">
@@ -237,7 +237,7 @@ function handleOpenBookmark(url: string) {
             v-if="item.isUncategorized && editingUncategorized"
             v-model="editingUncategorizedName"
             type="text"
-            class="w-full bg-gray-800 border border-blue-500 rounded px-1.5 py-0.5 text-xs text-gray-200 outline-none"
+            class="w-full bg-gray-100 dark:bg-gray-800 border border-blue-500 rounded px-1.5 py-0.5 text-xs text-gray-800 dark:text-gray-200 outline-none"
             @keyup.enter="confirmRenameUncategorized()"
             @keyup.escape="cancelRenameUncategorized()"
             @blur="confirmRenameUncategorized()"
@@ -247,24 +247,24 @@ function handleOpenBookmark(url: string) {
             v-else-if="item.tag && editingTagId === item.tag.id"
             v-model="editingTagName"
             type="text"
-            class="w-full bg-gray-800 border border-blue-500 rounded px-1.5 py-0.5 text-xs text-gray-200 outline-none"
+            class="w-full bg-gray-100 dark:bg-gray-800 border border-blue-500 rounded px-1.5 py-0.5 text-xs text-gray-800 dark:text-gray-200 outline-none"
             @keyup.enter="confirmRenameTag()"
             @keyup.escape="cancelRenameTag()"
             @blur="confirmRenameTag()"
             @click.stop
           />
           <p v-else class="text-xs truncate">{{ item.isUncategorized ? uncategorizedLabel : (item.tag?.name ?? uncategorizedLabel) }}</p>
-          <p class="text-[10px] text-gray-600 truncate">{{ item.materialCount }} 条素材</p>
+          <p class="text-[10px] text-gray-500 dark:text-gray-600 truncate">{{ item.materialCount }} 条素材</p>
         </div>
         <!-- 操作按钮，悬停时显示 -->
         <div class="hidden group-hover:flex items-center gap-0.5 shrink-0">
           <button
-            class="h-5 w-5 flex items-center justify-center text-xs text-gray-500 hover:text-yellow-400 hover:bg-gray-700 rounded transition-colors"
+            class="h-5 w-5 flex items-center justify-center text-xs text-gray-400 dark:text-gray-500 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
             :title="item.isUncategorized ? `重命名「${uncategorizedLabel}」` : '重命名'"
             @click.stop="item.isUncategorized ? startRenameUncategorized() : startRenameTag(item.tag!)"
           >✎</button>
           <button
-            class="h-5 w-5 flex items-center justify-center text-xs text-gray-500 hover:text-red-400 hover:bg-gray-700 rounded transition-colors"
+            class="h-5 w-5 flex items-center justify-center text-xs text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
             :title="item.isUncategorized ? `删除全部${uncategorizedLabel}素材` : '删除'"
             @click.stop="item.isUncategorized ? handleDeleteUncategorized() : handleDeleteTag(item.tag!.id)"
           >✕</button>
@@ -273,7 +273,7 @@ function handleOpenBookmark(url: string) {
       <!-- 空状态 -->
       <div
         v-if="tagListItems.length === 0"
-        class="text-center py-8 text-xs text-gray-600"
+        class="text-center py-8 text-xs text-gray-500 dark:text-gray-600"
       >
         <p>暂无素材</p>
         <p class="mt-1">在编辑器中选中文字，右键「存入素材库」</p>
@@ -284,19 +284,19 @@ function handleOpenBookmark(url: string) {
   <!-- 浏览器 Tab -->
   <div v-if="subTab === 'browser'" class="flex flex-col h-full">
     <!-- 添加书签 -->
-    <div class="px-2 py-2 border-b border-gray-800 space-y-1.5">
+    <div class="px-2 py-2 border-b border-gray-200 dark:border-gray-800 space-y-1.5">
       <input
         v-model="newBookmarkUrl"
         type="text"
         placeholder="输入网址 URL..."
-        class="w-full h-7 px-2 bg-gray-800 border border-gray-700 rounded text-[11px] text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+        class="w-full h-7 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
         @keyup.enter="handleAddBookmark"
       />
       <input
         v-model="newBookmarkTitle"
         type="text"
         placeholder="书签名称（可选）"
-        class="w-full h-7 px-2 bg-gray-800 border border-gray-700 rounded text-[11px] text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+        class="w-full h-7 px-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
         @keyup.enter="handleAddBookmark"
       />
       <button
@@ -309,7 +309,7 @@ function handleOpenBookmark(url: string) {
     <div class="flex-1 overflow-y-auto">
       <div
         v-if="store.bookmarks.length === 0"
-        class="text-center py-8 text-xs text-gray-600"
+        class="text-center py-8 text-xs text-gray-500 dark:text-gray-600"
       >
         <p>暂无书签</p>
         <p class="mt-1">输入网址添加常用参考页面</p>
@@ -317,16 +317,16 @@ function handleOpenBookmark(url: string) {
       <div
         v-for="bm in store.bookmarks"
         :key="bm.id"
-        class="group flex items-center gap-2 px-2 py-2 cursor-pointer transition-colors text-gray-400 hover:bg-gray-800/50 hover:text-gray-200"
+        class="group flex items-center gap-2 px-2 py-2 cursor-pointer transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 hover:text-gray-800 dark:hover:text-gray-200"
         @click="handleOpenBookmark(bm.url)"
       >
         <span class="text-[10px] shrink-0">🔗</span>
         <div class="flex-1 min-w-0">
           <p class="text-xs truncate">{{ bm.title || bm.url }}</p>
-          <p class="text-[10px] text-gray-600 truncate">{{ bm.url }}</p>
+          <p class="text-[10px] text-gray-500 dark:text-gray-600 truncate">{{ bm.url }}</p>
         </div>
         <button
-          class="h-5 w-5 flex items-center justify-center text-[10px] text-gray-600 hover:text-red-400 hover:bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-all shrink-0"
+          class="h-5 w-5 flex items-center justify-center text-[10px] text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-all shrink-0"
           title="删除书签"
           @click.stop="handleDeleteBookmark(bm)"
         >✕</button>

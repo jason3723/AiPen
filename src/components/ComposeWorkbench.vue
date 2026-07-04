@@ -1658,25 +1658,25 @@ defineExpose({ onPlaybackComplete })
 
       <!-- 弹窗主体：固定高度，避免窗口跳动；内容超出时聊天区独立滚动 -->
       <div
-        class="relative w-full max-w-lg h-[65vh] max-h-[85vh] min-h-[420px] rounded-xl shadow-2xl flex flex-col bg-gray-900 border border-gray-700/50 overflow-hidden"
+        class="relative w-full max-w-lg h-[65vh] max-h-[85vh] min-h-[420px] rounded-xl shadow-2xl flex flex-col bg-gray-50 dark:bg-gray-900 border border-gray-300/50 dark:border-gray-700/50 overflow-hidden"
       >
         <!-- 标题栏（紧凑） -->
         <header
-          class="flex items-center justify-between px-3 py-2 border-b border-gray-800 shrink-0 bg-gray-900/80 backdrop-blur-sm"
+          class="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-800 shrink-0 bg-gray-900/80 backdrop-blur-sm"
         >
           <div class="flex items-center gap-1.5">
             <span class="text-sm">{{ state.recipe?.icon }}</span>
-            <span class="text-xs font-semibold text-gray-200">{{ state.recipe?.name }}</span>
+            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">{{ state.recipe?.name }}</span>
             <span
-              class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-950/50 text-blue-400 border border-blue-800/30"
+              class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-400 border border-blue-300 dark:border-blue-800/30"
             >
               {{ showSummary ? '信息确认' : showSupplementaryQuestion ? '补充说明' : phaseLabels[state.phase] }}
             </span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] text-gray-600 tabular-nums">{{ formatTime(state.elapsedSeconds) }}</span>
+            <span class="text-[10px] text-gray-500 dark:text-gray-600 tabular-nums">{{ formatTime(state.elapsedSeconds) }}</span>
             <button
-              class="h-6 px-2.5 text-[11px] text-red-400/70 bg-red-950/20 border border-red-900/30 hover:text-red-300 hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors"
+              class="h-6 px-2.5 text-[11px] text-red-600 dark:text-red-400/70 bg-red-100 dark:bg-red-950/20 border border-red-300 dark:border-red-900/30 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors"
               @click="handleEndTask"
             >
               结束
@@ -1696,13 +1696,13 @@ defineExpose({ onPlaybackComplete })
               </div>
               <div class="flex-1">
                 <div
-                  class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-200 leading-relaxed border border-gray-700/30"
+                  class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-800 dark:text-gray-200 leading-relaxed border border-gray-700/30"
                 >
                   <p>
                     好的，我来帮你撰写一篇<strong class="text-blue-400">{{ state.recipe?.name }}</strong
                     >。
                   </p>
-                  <p class="mt-1.5 text-gray-400">我先了解一下关键信息，不清楚的地方我会自己判断。</p>
+                  <p class="mt-1.5 text-gray-600 dark:text-gray-400">我先了解一下关键信息，不清楚的地方我会自己判断。</p>
                 </div>
               </div>
             </div>
@@ -1719,7 +1719,7 @@ defineExpose({ onPlaybackComplete })
                 </div>
                 <div class="flex-1">
                   <div
-                    class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-300 border border-gray-700/30"
+                    class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-700 dark:text-gray-300 border border-gray-700/30"
                   >
                     {{ interviewStage?.questions[qi - 1]?.question }}
                   </div>
@@ -1728,7 +1728,7 @@ defineExpose({ onPlaybackComplete })
               <div class="flex gap-2.5 ml-auto justify-end max-w-[80%]">
                 <div class="flex-1">
                   <div
-                    class="bg-blue-950/30 border border-blue-800/30 rounded-2xl rounded-tr-sm px-4 py-2.5 text-xs text-gray-200"
+                    class="bg-blue-100 dark:bg-blue-950/30 border border-blue-300 dark:border-blue-800/30 rounded-2xl rounded-tr-sm px-4 py-2.5 text-xs text-gray-800 dark:text-gray-200"
                   >
                     {{ state.interviewAnswers[interviewStage?.questions[qi - 1]?.id || ''] || '...' }}
                   </div>
@@ -1746,7 +1746,7 @@ defineExpose({ onPlaybackComplete })
             </div>
             <div class="flex-1">
               <div
-                class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-200 border border-blue-800/20"
+                class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-800 dark:text-gray-200 border border-blue-300 dark:border-blue-800/20"
               >
                 <p class="mb-2.5">{{ currentQuestion.question }}</p>
                 <!-- 选项按钮 -->
@@ -1757,8 +1757,8 @@ defineExpose({ onPlaybackComplete })
                     class="px-3 py-1.5 text-[11px] rounded-full border transition-all duration-300 hover:scale-105"
                     :class="
                       state.interviewAnswers[currentQuestion.id] === opt
-                        ? 'bg-blue-600/30 border-blue-500 text-blue-300 shadow-[0_0_8px_rgba(59,130,246,0.3)]'
-                        : 'bg-gray-800/80 border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200'
+                        ? 'bg-blue-600/30 border-blue-500 text-blue-700 dark:text-blue-300 shadow-[0_0_8px_rgba(59,130,246,0.3)]'
+                        : 'bg-gray-100/90 dark:bg-gray-800/80 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
                     "
                     @click="handleSelectOption(opt)"
                   >
@@ -1778,37 +1778,37 @@ defineExpose({ onPlaybackComplete })
             </div>
             <div class="flex-1">
               <div
-                class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-200 border border-purple-800/20"
+                class="bg-gray-800/70 rounded-2xl rounded-tl-sm px-4 py-2.5 text-xs text-gray-800 dark:text-gray-200 border border-purple-800/20"
               >
                 <p>采访内容已经收集完毕。</p>
-                <p class="mt-1.5 text-purple-400 font-medium">📝 你还有什么补充说明吗？</p>
-                <p class="mt-1 text-gray-500">（任何额外的背景、要求、想法等，没有可直接跳过）</p>
+                <p class="mt-1.5 text-purple-600 dark:text-purple-400 font-medium">📝 你还有什么补充说明吗？</p>
+                <p class="mt-1 text-gray-400 dark:text-gray-500">（任何额外的背景、要求、想法等，没有可直接跳过）</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 输入区 -->
-        <div class="px-3 py-2.5 border-t border-gray-800/50 bg-gray-900/50 shrink-0">
+        <div class="px-3 py-2.5 border-t border-gray-200/50 dark:border-gray-800/50 bg-gray-100/80 dark:bg-gray-900/50 shrink-0">
           <!-- 选项式问题：简洁提示 + 标准按钮栏 -->
           <div v-if="currentQuestion?.options && !showSupplementaryQuestion" class="space-y-2">
-            <p class="text-[10px] text-gray-600 text-center">请从上方选择一个选项；不选择则跳过</p>
+            <p class="text-[10px] text-gray-500 dark:text-gray-600 text-center">请从上方选择一个选项；不选择则跳过</p>
             <div class="flex items-center gap-2">
               <button
                 v-if="state.currentQuestionIndex > 0"
-                class="h-7 px-3 text-[11px] text-gray-500 hover:text-blue-400 hover:bg-blue-950/30 rounded-lg transition-colors shrink-0"
+                class="h-7 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/30 rounded-lg transition-colors shrink-0"
                 @click="goPreviousQuestion"
               >
                 ← 上一步
               </button>
               <div class="flex-1" />
               <button
-                class="h-7 px-4 text-[11px] text-gray-400 hover:text-gray-300 hover:bg-gray-700/30 border border-gray-700/50 rounded-lg transition-colors shrink-0"
+                class="h-7 px-4 text-[11px] text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-700/30 border border-gray-300/50 dark:border-gray-700/50 rounded-lg transition-colors shrink-0"
                 @click="handleSkip"
               >
                 跳过
               </button>
-              <span class="text-[11px] text-gray-600 shrink-0 tabular-nums">
+              <span class="text-[11px] text-gray-500 dark:text-gray-600 shrink-0 tabular-nums">
                 {{ state.currentQuestionIndex + 1 }}/{{ interviewStage?.questions.length || 0 }}
               </span>
             </div>
@@ -1820,41 +1820,41 @@ defineExpose({ onPlaybackComplete })
               v-model="userInput"
               rows="3"
               placeholder="输入补充说明（可选）..."
-              class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-purple-500 focus:bg-gray-800 transition-all resize-none"
+              class="w-full bg-gray-100/90 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-purple-500 focus:bg-gray-100 dark:bg-gray-800 transition-all resize-none"
               @keydown.enter.exact.prevent="submitSupplementary"
             ></textarea>
             <!-- 提示词 chips（仅 __supplementary__ 专用提示词） -->
             <div class="flex items-center gap-1.5 flex-wrap">
-              <button class="h-6 px-1.5 text-[10px] text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 rounded transition-colors flex items-center gap-0.5 shrink-0" @click="startAddPrompt" title="新增常用提示词">
+              <button class="h-6 px-1.5 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/50 rounded transition-colors flex items-center gap-0.5 shrink-0" @click="startAddPrompt" title="新增常用提示词">
                 <span class="text-[11px]">+</span> 添加快捷提示
               </button>
-              <div v-for="prompt in supplementaryPrompts" :key="prompt.id" class="h-6 px-2 text-[10px] bg-gray-800/80 border border-gray-700/50 hover:border-purple-600/50 hover:bg-purple-950/20 rounded-full transition-all shrink-0 cursor-pointer group flex items-center gap-0.5" :title="prompt.content" @click="applyPrompt(prompt.content)">
-                <span class="text-gray-300 group-hover:text-purple-300 transition-colors">{{ prompt.label }}</span>
-                <span class="text-[9px] text-gray-600 hover:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop="startEditPrompt(prompt)" title="编辑">✎</span>
-                <span class="text-[9px] text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop="deletePrompt(prompt.id)" title="删除">×</span>
+              <div v-for="prompt in supplementaryPrompts" :key="prompt.id" class="h-6 px-2 text-[10px] bg-gray-100/90 dark:bg-gray-800/80 border border-gray-300/50 dark:border-gray-700/50 hover:border-purple-600/50 hover:bg-purple-950/20 rounded-full transition-all shrink-0 cursor-pointer group flex items-center gap-0.5" :title="prompt.content" @click="applyPrompt(prompt.content)">
+                <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">{{ prompt.label }}</span>
+                <span class="text-[9px] text-gray-500 dark:text-gray-600 hover:text-amber-600 dark:hover:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop="startEditPrompt(prompt)" title="编辑">✎</span>
+                <span class="text-[9px] text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop="deletePrompt(prompt.id)" title="删除">×</span>
               </div>
             </div>
             <!-- 提示词编辑器 -->
             <Transition name="expand">
-              <div v-if="showPromptEditor" class="p-2 rounded-lg border border-purple-800/30 bg-purple-950/10 space-y-1.5">
+              <div v-if="showPromptEditor" class="p-2 rounded-lg border border-purple-800/30 bg-purple-100 dark:bg-purple-950/10 space-y-1.5">
                 <div class="flex items-center gap-2">
-                  <input v-model="editingPrompt.label" placeholder="快捷名称" class="flex-1 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-[11px] text-gray-200 placeholder-gray-600 outline-none focus:border-purple-500" maxlength="20" />
+                  <input v-model="editingPrompt.label" placeholder="快捷名称" class="flex-1 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-purple-500" maxlength="20" />
                   <button class="h-6 px-2.5 text-[10px] bg-purple-600/80 hover:bg-purple-500/80 text-white rounded transition-all shrink-0" @click="savePrompt">保存</button>
-                  <button class="h-6 px-2 text-[10px] text-gray-500 hover:text-gray-300 rounded transition-colors shrink-0" @click="cancelEditPrompt">取消</button>
+                  <button class="h-6 px-2 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded transition-colors shrink-0" @click="cancelEditPrompt">取消</button>
                 </div>
-                <textarea v-model="editingPrompt.content" rows="2" placeholder="提示词内容…" class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-[11px] text-gray-200 placeholder-gray-600 outline-none focus:border-purple-500 transition-colors resize-none"></textarea>
+                <textarea v-model="editingPrompt.content" rows="2" placeholder="提示词内容…" class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded px-2 py-1.5 text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-purple-500 transition-colors resize-none"></textarea>
               </div>
             </Transition>
             <!-- 按钮行 -->
             <div class="flex items-center gap-2">
-              <button class="h-7 px-3 text-[11px] text-gray-500 hover:text-blue-400 hover:bg-blue-950/30 rounded-lg transition-colors shrink-0" @click="goBackFromSupplementary">
+              <button class="h-7 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/30 rounded-lg transition-colors shrink-0" @click="goBackFromSupplementary">
                 ← 上一步
               </button>
               <div class="flex-1" />
               <button class="h-7 px-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white text-xs font-medium rounded-lg transition-all shadow-[0_0_8px_rgba(139,92,246,0.25)] hover:shadow-[0_0_12px_rgba(139,92,246,0.4)] active:scale-95" @click="submitSupplementary">
                 确认 →
               </button>
-              <button class="h-7 px-3 text-[11px] text-gray-500 hover:text-gray-400 hover:bg-gray-700/30 rounded-lg transition-colors shrink-0" @click="skipSupplementary">
+              <button class="h-7 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-400 hover:bg-gray-700/30 rounded-lg transition-colors shrink-0" @click="skipSupplementary">
                 跳过
               </button>
             </div>
@@ -1868,7 +1868,7 @@ defineExpose({ onPlaybackComplete })
                 v-model="userInput"
                 rows="2"
                 :placeholder="currentQuestion?.hint || '输入回答...'"
-                class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-blue-500 focus:bg-gray-800 transition-all resize-none"
+                class="w-full bg-gray-100/90 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500 focus:bg-gray-100 dark:bg-gray-800 transition-all resize-none"
                 :disabled="loading"
                 @keydown.enter.exact.prevent="handleSubmit"
               ></textarea>
@@ -1877,7 +1877,7 @@ defineExpose({ onPlaybackComplete })
             <!-- 常用提示词 chips -->
             <div class="flex items-center gap-1.5 flex-wrap">
               <button
-                class="h-6 px-1.5 text-[10px] text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 rounded transition-colors flex items-center gap-0.5 shrink-0"
+                class="h-6 px-1.5 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/50 rounded transition-colors flex items-center gap-0.5 shrink-0"
                 @click="startAddPrompt"
                 title="新增常用提示词"
               >
@@ -1886,18 +1886,18 @@ defineExpose({ onPlaybackComplete })
               <div
                 v-for="prompt in interviewPrompts"
                 :key="prompt.id"
-                class="h-6 px-2 text-[10px] bg-gray-800/80 border border-gray-700/50 hover:border-blue-600/50 hover:bg-blue-950/20 rounded-full transition-all shrink-0 cursor-pointer group flex items-center gap-0.5"
+                class="h-6 px-2 text-[10px] bg-gray-100/90 dark:bg-gray-800/80 border border-gray-300/50 dark:border-gray-700/50 hover:border-blue-600/50 hover:bg-blue-100 dark:hover:bg-blue-950/20 rounded-full transition-all shrink-0 cursor-pointer group flex items-center gap-0.5"
                 :title="prompt.content"
                 @click="applyPrompt(prompt.content)"
               >
-                <span class="text-gray-300 group-hover:text-blue-300 transition-colors">{{ prompt.label }}</span>
+                <span class="text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">{{ prompt.label }}</span>
                 <span
-                  class="text-[9px] text-gray-600 hover:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  class="text-[9px] text-gray-500 dark:text-gray-600 hover:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity"
                   @click.stop="startEditPrompt(prompt)"
                   title="编辑"
                 >✎</span>
                 <span
-                  class="text-[9px] text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  class="text-[9px] text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
                   @click.stop="deletePrompt(prompt.id)"
                   title="删除"
                 >×</span>
@@ -1906,12 +1906,12 @@ defineExpose({ onPlaybackComplete })
 
             <!-- 提示词编辑器（展开式） -->
             <Transition name="expand">
-              <div v-if="showPromptEditor" class="p-2 rounded-lg border border-blue-800/30 bg-blue-950/10 space-y-1.5">
+              <div v-if="showPromptEditor" class="p-2 rounded-lg border border-blue-300 dark:border-blue-800/30 bg-blue-100 dark:bg-blue-950/10 space-y-1.5">
                 <div class="flex items-center gap-2">
                   <input
                     v-model="editingPrompt.label"
                     placeholder="快捷名称（如：标准回复）"
-                    class="flex-1 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-[11px] text-gray-200 placeholder-gray-600 outline-none focus:border-blue-500"
+                    class="flex-1 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500"
                     maxlength="20"
                   />
                   <button
@@ -1921,7 +1921,7 @@ defineExpose({ onPlaybackComplete })
                     保存
                   </button>
                   <button
-                    class="h-6 px-2 text-[10px] text-gray-500 hover:text-gray-300 rounded transition-colors shrink-0"
+                    class="h-6 px-2 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded transition-colors shrink-0"
                     @click="cancelEditPrompt"
                   >
                     取消
@@ -1931,7 +1931,7 @@ defineExpose({ onPlaybackComplete })
                   v-model="editingPrompt.content"
                   rows="2"
                   placeholder="提示词内容…"
-                  class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-[11px] text-gray-200 placeholder-gray-600 outline-none focus:border-blue-500 transition-colors resize-none"
+                  class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded px-2 py-1.5 text-[11px] text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500 transition-colors resize-none"
                 ></textarea>
               </div>
             </Transition>
@@ -1940,7 +1940,7 @@ defineExpose({ onPlaybackComplete })
             <div class="flex items-center gap-2">
               <button
                 v-if="state.currentQuestionIndex > 0"
-                class="h-7 px-3 text-[11px] text-gray-500 hover:text-blue-400 hover:bg-blue-950/30 rounded-lg transition-colors shrink-0"
+                class="h-7 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/30 rounded-lg transition-colors shrink-0"
                 @click="goPreviousQuestion"
               >
                 ← 上一步
@@ -1954,28 +1954,28 @@ defineExpose({ onPlaybackComplete })
                 提交
               </button>
               <button
-                class="h-7 px-3 text-[11px] text-gray-500 hover:text-gray-400 hover:bg-gray-800/50 rounded-lg transition-colors shrink-0"
+                class="h-7 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded-lg transition-colors shrink-0"
                 :disabled="loading"
                 @click="handleSkip"
                 title="跳过此题，由AI自行判断"
               >
                 跳过
               </button>
-              <span class="text-[11px] text-gray-600 shrink-0 tabular-nums">
+              <span class="text-[11px] text-gray-500 dark:text-gray-600 shrink-0 tabular-nums">
                 {{ state.currentQuestionIndex + 1 }}/{{ interviewStage?.questions.length || 0 }}
               </span>
             </div>
           </div>
-          <p class="text-[10px] text-gray-600 mt-1.5 text-center">Enter 发送 · Shift+Enter 换行 · 跳过则由 AI 自行判断</p>
+          <p class="text-[10px] text-gray-500 dark:text-gray-600 mt-1.5 text-center">Enter 发送 · Shift+Enter 换行 · 跳过则由 AI 自行判断</p>
         </div>
 
         <!-- 错误提示 -->
         <div v-if="error" class="px-5 pb-3 shrink-0">
           <div
-            class="text-xs text-red-400 bg-red-950/30 border border-red-900/30 rounded-lg px-3 py-2"
+            class="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded-lg px-3 py-2"
           >
             {{ error }}
-            <button class="ml-2 underline hover:text-red-300" @click="error = ''">关闭</button>
+            <button class="ml-2 underline hover:text-red-600 dark:hover:text-red-300" @click="error = ''">关闭</button>
           </div>
         </div>
       </div>
@@ -1990,62 +1990,62 @@ defineExpose({ onPlaybackComplete })
     >
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        class="relative w-full max-w-lg max-h-[85vh] rounded-xl shadow-2xl flex flex-col bg-gray-900 border border-gray-700/50 overflow-hidden"
+        class="relative w-full max-w-lg max-h-[85vh] rounded-xl shadow-2xl flex flex-col bg-gray-50 dark:bg-gray-900 border border-gray-300/50 dark:border-gray-700/50 overflow-hidden"
       >
         <!-- 标题栏 -->
-        <header class="flex items-center justify-between px-3 py-2.5 border-b border-gray-800 shrink-0 bg-gray-900/80 backdrop-blur-sm">
+        <header class="flex items-center justify-between px-3 py-2.5 border-b border-gray-200 dark:border-gray-800 shrink-0 bg-gray-900/80 backdrop-blur-sm">
           <div class="flex items-center gap-1.5">
             <span class="text-sm">{{ state.recipe?.icon }}</span>
-            <span class="text-xs font-semibold text-gray-200">{{ state.recipe?.name }}</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-950/50 text-purple-400 border border-purple-800/30">信息确认</span>
+            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">{{ state.recipe?.name }}</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-800/30">信息确认</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] text-gray-600 tabular-nums">{{ formatTime(state.elapsedSeconds) }}</span>
-            <button class="h-6 px-2.5 text-[11px] text-red-400/70 bg-red-950/20 border border-red-900/30 hover:text-red-300 hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors" @click="handleEndTask">结束</button>
+            <span class="text-[10px] text-gray-500 dark:text-gray-600 tabular-nums">{{ formatTime(state.elapsedSeconds) }}</span>
+            <button class="h-6 px-2.5 text-[11px] text-red-600 dark:text-red-400/70 bg-red-100 dark:bg-red-950/20 border border-red-300 dark:border-red-900/30 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors" @click="handleEndTask">结束</button>
           </div>
         </header>
 
         <!-- 可滚动内容 -->
         <div class="flex-1 overflow-y-auto px-3 py-2.5 space-y-2">
-          <p class="text-[11px] text-gray-400">请确认以下信息：</p>
+          <p class="text-[11px] text-gray-600 dark:text-gray-400">请确认以下信息：</p>
 
           <!-- 问答对 -->
-          <div v-for="(ea, i) in editableAnswers" :key="ea.id" class="p-2 rounded-lg bg-gray-800/50 border border-gray-700/30 space-y-1">
+          <div v-for="(ea, i) in editableAnswers" :key="ea.id" class="p-2 rounded-lg bg-gray-100/60 dark:bg-gray-800/50 border border-gray-700/30 space-y-1">
             <label class="text-[11px] text-blue-400 font-medium block">{{ i + 1 }}. {{ qaSummary[i]?.question || ea.id }}</label>
-            <textarea v-model="ea.answer" rows="2" class="w-full bg-gray-900 border border-gray-700 rounded-md px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-blue-500 transition-colors resize-none" placeholder="输入答案..."></textarea>
+            <textarea v-model="ea.answer" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1.5 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-blue-500 transition-colors resize-none" placeholder="输入答案..."></textarea>
           </div>
 
           <!-- 补充说明摘要 -->
-          <div class="p-2 rounded-lg bg-gray-800/30 border border-dashed border-purple-800/30 space-y-1">
-            <label class="text-[11px] text-purple-400 font-medium block">📝 补充说明</label>
-            <p class="text-[11px] text-gray-400 italic">{{ supplementaryText || '（无补充）' }}</p>
+          <div class="p-2 rounded-lg bg-gray-100/50 dark:bg-gray-800/30 border border-dashed border-purple-800/30 space-y-1">
+            <label class="text-[11px] text-purple-600 dark:text-purple-400 font-medium block">📝 补充说明</label>
+            <p class="text-[11px] text-gray-600 dark:text-gray-400 italic">{{ supplementaryText || '（无补充）' }}</p>
           </div>
         </div>
 
         <!-- 知识库与素材库选择（固定，不随滚动） -->
-        <div v-if="availableKbs.length > 0 || materialStore.tagWithCounts.length > 0" class="shrink-0 px-3 py-2 border-t border-gray-800/50 bg-gray-900/50">
-          <label class="text-[11px] text-amber-400 font-medium block mb-1.5">📚 引用知识库与素材库（勾选后注入 AI 上下文）</label>
+        <div v-if="availableKbs.length > 0 || materialStore.tagWithCounts.length > 0" class="shrink-0 px-3 py-2 border-t border-gray-200/50 dark:border-gray-800/50 bg-gray-100/80 dark:bg-gray-900/50">
+          <label class="text-[11px] text-amber-600 dark:text-amber-400 font-medium block mb-1.5">📚 引用知识库与素材库（勾选后注入 AI 上下文）</label>
           <!-- 知识库 -->
           <div v-if="availableKbs.length > 0" class="flex flex-wrap gap-1.5 mb-2">
             <button v-for="kb in availableKbs" :key="kb.id"
               class="text-[10px] px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
               :class="selectedKbIds.includes(kb.id)
-                ? 'bg-amber-900/40 border-amber-500/60 text-amber-300 shadow-[0_0_4px_rgba(245,158,11,0.15)]'
-                : 'bg-gray-900/50 border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                ? 'bg-amber-100 dark:bg-amber-900/40 border-amber-300 dark:border-amber-500/60 text-amber-700 dark:text-amber-300 shadow-[0_0_4px_rgba(245,158,11,0.15)]'
+                : 'bg-gray-100/80 dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-500 hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
               @click="toggleKb(kb.id)"
             >
               {{ kb.name }}
             </button>
           </div>
           <!-- 分隔符 -->
-          <div v-if="availableKbs.length > 0 && materialStore.tagWithCounts.length > 0" class="border-t border-gray-700/50 mb-2"></div>
+          <div v-if="availableKbs.length > 0 && materialStore.tagWithCounts.length > 0" class="border-t border-gray-300/50 dark:border-gray-700/50 mb-2"></div>
           <!-- 素材库标签 -->
           <div v-if="materialStore.tagWithCounts.length > 0" class="flex flex-wrap gap-1.5">
             <button v-for="tag in materialStore.tagWithCounts" :key="tag.id"
               class="text-[10px] px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
               :class="materialStore.selectedMaterialTagIds.includes(tag.id)
-                ? 'bg-emerald-900/40 border-emerald-500/60 text-emerald-300 shadow-[0_0_4px_rgba(16,185,129,0.15)]'
-                : 'bg-gray-900/50 border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                ? 'bg-emerald-50/40 dark:bg-emerald-900/40 border-emerald-300 dark:border-emerald-500/60 text-emerald-700 dark:text-emerald-300 shadow-[0_0_4px_rgba(16,185,129,0.15)]'
+                : 'bg-gray-100/80 dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-500 hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
               @click="materialStore.toggleMaterialTag(tag.id)"
             >
               {{ tag.name }}
@@ -2055,17 +2055,17 @@ defineExpose({ onPlaybackComplete })
         </div>
 
         <!-- 固定底部操作栏 -->
-        <div class="shrink-0 px-3 py-2.5 border-t border-gray-800/50 bg-gray-900/80 backdrop-blur-sm">
+        <div class="shrink-0 px-3 py-2.5 border-t border-gray-200/50 dark:border-gray-800/50 bg-gray-900/80 backdrop-blur-sm">
           <div class="flex items-center gap-3">
             <!-- 左：返回修改（弱按钮） -->
-            <button class="h-8 px-3 text-[11px] text-gray-500 hover:text-blue-400 hover:bg-blue-950/20 border border-gray-700/50 hover:border-blue-600/40 rounded-lg transition-all shrink-0" @click="goBackToQuestions">
+            <button class="h-8 px-3 text-[11px] text-gray-400 dark:text-gray-500 hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/20 border border-gray-300/50 dark:border-gray-700/50 hover:border-blue-600/40 rounded-lg transition-all shrink-0" @click="goBackToQuestions">
               ← 返回修改
             </button>
             <!-- 中间弹性空间 -->
             <div class="flex-1" />
             <!-- 右：直接生成正文（次要操作） -->
             <button
-              class="h-8 px-3 text-[11px] text-gray-400 hover:text-gray-200 hover:bg-gray-700/30 border border-gray-700/50 hover:border-gray-500 rounded-lg transition-all shrink-0"
+              class="h-8 px-3 text-[11px] text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-700/30 border border-gray-300/50 dark:border-gray-700/50 hover:border-gray-500 rounded-lg transition-all shrink-0"
               :disabled="loading"
               @click="confirmDirectGenerate"
             >
@@ -2097,20 +2097,20 @@ defineExpose({ onPlaybackComplete })
 
         <!-- 弹窗主体（紧凑） -->
         <div
-          class="relative w-full max-w-2xl max-h-[84vh] rounded-xl shadow-2xl flex flex-col bg-gray-900 border border-purple-800/30 overflow-hidden"
+          class="relative w-full max-w-2xl max-h-[84vh] rounded-xl shadow-2xl flex flex-col bg-gray-50 dark:bg-gray-900 border border-purple-800/30 overflow-hidden"
         >
           <!-- 标题栏（紧凑） -->
           <header
-            class="flex items-center justify-between px-4 py-2.5 border-b border-gray-800 shrink-0 bg-gray-900/80 backdrop-blur-sm"
+            class="flex items-center justify-between px-4 py-2.5 border-b border-gray-200 dark:border-gray-800 shrink-0 bg-gray-900/80 backdrop-blur-sm"
           >
             <div class="flex items-center gap-1.5">
               <span class="text-lg">📋</span>
-              <span class="text-xs font-semibold text-gray-200">生成提纲</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-950/50 text-purple-400 border border-purple-800/40 breathing-text">思考中</span>
+              <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">生成提纲</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-800/40 breathing-text">思考中</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-[10px] text-gray-600 tabular-nums">{{ formatTime(state.elapsedSeconds) }}</span>
-              <button class="h-6 px-2.5 text-[11px] text-red-400/70 bg-red-950/20 border border-red-900/30 hover:text-red-300 hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors" @click="handleEndTask">结束</button>
+              <span class="text-[10px] text-gray-500 dark:text-gray-600 tabular-nums">{{ formatTime(state.elapsedSeconds) }}</span>
+              <button class="h-6 px-2.5 text-[11px] text-red-600 dark:text-red-400/70 bg-red-100 dark:bg-red-950/20 border border-red-300 dark:border-red-900/30 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:border-red-800/50 rounded transition-colors" @click="handleEndTask">结束</button>
             </div>
           </header>
 
@@ -2119,7 +2119,7 @@ defineExpose({ onPlaybackComplete })
             <!-- ═══ 可折叠：风格配置 ═══ -->
             <div>
               <button
-                class="flex items-center gap-1.5 text-[11px] text-gray-500 hover:text-purple-400 transition-colors w-full text-left mb-2"
+                class="flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-gray-500 hover:text-purple-400 transition-colors w-full text-left mb-2"
                 @click="toggleOutlineConfig"
               >
                 <span class="transition-transform text-[10px]" :class="outlineConfigExpanded ? 'rotate-90' : ''">▶</span>
@@ -2127,43 +2127,43 @@ defineExpose({ onPlaybackComplete })
               </button>
 
               <Transition name="expand">
-                <div v-if="outlineConfigExpanded" class="space-y-2.5 p-3 rounded-lg border border-gray-800/50 bg-gray-900/30">
+                <div v-if="outlineConfigExpanded" class="space-y-2.5 p-3 rounded-lg border border-gray-200/50 dark:border-gray-800/50 bg-gray-100/60 dark:bg-gray-900/30">
                   <!-- 文章结构输入 -->
                   <div>
-                    <label class="text-[11px] font-semibold text-purple-400 block mb-1.5">
+                    <label class="text-[11px] font-semibold text-purple-600 dark:text-purple-400 block mb-1.5">
                       📐 {{ (state.recipe?.stages.find(s => s.type === 'outline') as any)?.structurePrompt || '你想把文章分成哪几个部分？' }}
                     </label>
                     <textarea
                       v-model="outlineStructure"
                       rows="2"
-                      class="w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-purple-500 transition-colors resize-none"
+                      class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-purple-500 transition-colors resize-none"
                       :placeholder="(state.recipe?.stages.find(s => s.type === 'outline') as any)?.structureHint || '例如：第一部分回顾成绩、第二部分分析形势…'"
                     ></textarea>
                   </div>
 
                   <!-- 二级标题风格 --><div class="mb-3">
                     <div class="flex items-center gap-2 mb-1.5">
-                      <label class="text-xs font-semibold text-purple-400">二级标题</label>
-                      <button class="text-[11px] text-orange-400 hover:text-orange-300 px-1.5 py-0.5 rounded hover:bg-orange-950/20 transition-colors" @click="randomizeStyle(true)" title="随机选一种">🎲</button>
+                      <label class="text-xs font-semibold text-purple-600 dark:text-purple-400">二级标题</label>
+                      <button class="text-[11px] text-orange-600 dark:text-orange-400 hover:text-orange-300 px-1.5 py-0.5 rounded hover:bg-orange-950/20 transition-colors" @click="randomizeStyle(true)" title="随机选一种">🎲</button>
                       <button
                         v-for="opt in specialStyleOptions" :key="'l2s_' + opt.value"
                         class="text-[11px] px-2 py-0.5 rounded border transition-all duration-200"
                         :class="outlineL2Style === opt.value
-                          ? opt.value === '随机类型' ? 'border-orange-500/50 bg-orange-950/30 text-orange-300 shadow-[0_0_6px_rgba(249,115,22,0.15)]' : 'border-gray-400/50 bg-gray-700/30 text-gray-300 shadow-[0_0_6px_rgba(156,163,175,0.15)]'
-                          : 'border-gray-700/50 bg-gray-800/30 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                          ? opt.value === '随机类型' ? 'border-orange-500/50 bg-orange-50/30 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 shadow-[0_0_6px_rgba(249,115,22,0.15)]' : 'border-gray-400/50 bg-gray-700/30 text-gray-700 dark:text-gray-300 shadow-[0_0_6px_rgba(156,163,175,0.15)]'
+                          : 'border-gray-300/50 dark:border-gray-700/50 bg-gray-100/50 dark:bg-gray-800/30 text-gray-400 dark:text-gray-500 hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
                         @click="outlineL2Style = opt.value"
                       >{{ opt.icon }} {{ opt.label }}</button>
                     </div>
                     <div class="flex flex-wrap gap-x-3 gap-y-1">
                       <div v-for="group in headingStyleGroups" :key="'l2g_' + group.group" class="flex items-center gap-1">
-                        <span class="text-[9px] text-gray-600 whitespace-nowrap">{{ group.group.slice(0,2) }}</span>
+                        <span class="text-[9px] text-gray-500 dark:text-gray-600 whitespace-nowrap">{{ group.group.slice(0,2) }}</span>
                         <button
                           v-for="hs in group.styles"
                           :key="'l2_' + hs.value"
                           class="px-1.5 py-0.5 rounded border text-[11px] leading-tight transition-all duration-200"
                           :class="outlineL2Style === hs.value
-                            ? 'border-purple-500/60 bg-purple-950/30 text-purple-300 shadow-[0_0_8px_rgba(139,92,246,0.15)]'
-                            : 'border-gray-700/50 bg-gray-800/30 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                            ? 'border-purple-500/60 bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 shadow-[0_0_8px_rgba(139,92,246,0.15)]'
+                            : 'border-gray-300/50 dark:border-gray-700/50 bg-gray-100/50 dark:bg-gray-800/30 text-gray-400 dark:text-gray-500 hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
                           @click="outlineL2Style = hs.value"
                         >{{ hs.label }}</button>
                       </div>
@@ -2172,27 +2172,27 @@ defineExpose({ onPlaybackComplete })
 
                   <!-- 三级标题风格 --><div>
                     <div class="flex items-center gap-2 mb-1.5">
-                      <label class="text-xs font-semibold text-emerald-400">三级标题</label>
-                      <button class="text-[11px] text-orange-400 hover:text-orange-300 px-1.5 py-0.5 rounded hover:bg-orange-950/20 transition-colors" @click="randomizeStyle(false)" title="随机选一种">🎲</button>
+                      <label class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">三级标题</label>
+                      <button class="text-[11px] text-orange-600 dark:text-orange-400 hover:text-orange-300 px-1.5 py-0.5 rounded hover:bg-orange-950/20 transition-colors" @click="randomizeStyle(false)" title="随机选一种">🎲</button>
                       <button
                         v-for="opt in specialStyleOptions" :key="'l3s_' + opt.value"
                         class="text-[11px] px-2 py-0.5 rounded border transition-all duration-200"
                         :class="outlineL3Style === opt.value
-                          ? opt.value === '随机类型' ? 'border-orange-500/50 bg-orange-950/30 text-orange-300 shadow-[0_0_6px_rgba(249,115,22,0.15)]' : 'border-gray-400/50 bg-gray-700/30 text-gray-300 shadow-[0_0_6px_rgba(156,163,175,0.15)]'
-                          : 'border-gray-700/50 bg-gray-800/30 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                          ? opt.value === '随机类型' ? 'border-orange-500/50 bg-orange-50/30 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 shadow-[0_0_6px_rgba(249,115,22,0.15)]' : 'border-gray-400/50 bg-gray-700/30 text-gray-700 dark:text-gray-300 shadow-[0_0_6px_rgba(156,163,175,0.15)]'
+                          : 'border-gray-300/50 dark:border-gray-700/50 bg-gray-100/50 dark:bg-gray-800/30 text-gray-400 dark:text-gray-500 hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
                         @click="outlineL3Style = opt.value"
                       >{{ opt.icon }} {{ opt.label }}</button>
                     </div>
                     <div class="flex flex-wrap gap-x-3 gap-y-1">
                       <div v-for="group in headingStyleGroups" :key="'l3g_' + group.group" class="flex items-center gap-1">
-                        <span class="text-[9px] text-gray-600 whitespace-nowrap">{{ group.group.slice(0,2) }}</span>
+                        <span class="text-[9px] text-gray-500 dark:text-gray-600 whitespace-nowrap">{{ group.group.slice(0,2) }}</span>
                         <button
                           v-for="hs in group.styles"
                           :key="'l3_' + hs.value"
                           class="px-1.5 py-0.5 rounded border text-[11px] leading-tight transition-all duration-200"
                           :class="outlineL3Style === hs.value
-                            ? 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
-                            : 'border-gray-700/50 bg-gray-800/30 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                            ? 'border-emerald-300 dark:border-emerald-500/60 bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
+                            : 'border-gray-300/50 dark:border-gray-700/50 bg-gray-100/50 dark:bg-gray-800/30 text-gray-400 dark:text-gray-500 hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300'"
                           @click="outlineL3Style = hs.value"
                         >{{ hs.label }}</button>
                       </div>
@@ -2220,21 +2220,21 @@ defineExpose({ onPlaybackComplete })
 
             <!-- ═══ 思考过程 ═══ -->
             <Transition name="expand">
-              <div v-if="outlineThinking" class="rounded-lg border overflow-hidden" :class="outlineThinkingDone ? 'border-purple-800/30 bg-purple-950/10' : 'border-blue-800/30 bg-blue-950/10'">
+              <div v-if="outlineThinking" class="rounded-lg border overflow-hidden" :class="outlineThinkingDone ? 'border-purple-800/30 bg-purple-100 dark:bg-purple-950/10' : 'border-blue-300 dark:border-blue-800/30 bg-blue-100 dark:bg-blue-950/10'">
                 <button v-if="outlineThinkingDone" class="w-full flex items-center justify-between px-3 py-2 hover:bg-purple-950/20 transition-colors" @click="outlineThinkingExpanded = !outlineThinkingExpanded">
                   <div class="flex items-center gap-1.5">
                     <span class="text-xs">🧠</span>
                     <span class="text-[11px] font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">AI 思考过程</span>
-                    <span class="text-[10px] text-purple-500/70 bg-purple-950/40 px-1 py-0.5 rounded-full border border-purple-800/30">{{ outlineThinkingExpanded ? '收起' : '查看' }}</span>
+                    <span class="text-[10px] text-purple-500/70 bg-purple-100 dark:bg-purple-950/40 px-1 py-0.5 rounded-full border border-purple-800/30">{{ outlineThinkingExpanded ? '收起' : '查看' }}</span>
                   </div>
-                  <span class="text-[10px] text-purple-400 transition-transform" :class="outlineThinkingExpanded ? 'rotate-180' : ''">▼</span>
+                  <span class="text-[10px] text-purple-600 dark:text-purple-400 transition-transform" :class="outlineThinkingExpanded ? 'rotate-180' : ''">▼</span>
                 </button>
                 <div v-else class="flex items-center gap-1.5 px-3 py-2">
                   <span class="text-xs animate-pulse">🧠</span>
                   <span class="text-[11px] font-semibold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">AI 正在思考...</span>
                 </div>
                 <div v-if="outlineThinkingExpanded || !outlineThinkingDone" ref="outlineThinkingEl" class="px-3 pb-3 max-h-40 overflow-y-auto">
-                  <pre class="text-[11px] whitespace-pre-wrap font-mono leading-relaxed" :class="outlineThinkingDone ? 'text-purple-300/80' : 'text-blue-300/80'">{{ outlineThinking }}</pre>
+                  <pre class="text-[11px] whitespace-pre-wrap font-mono leading-relaxed" :class="outlineThinkingDone ? 'text-purple-800/80 dark:text-purple-300/80' : 'text-blue-800/80 dark:text-blue-300/80'">{{ outlineThinking }}</pre>
                 </div>
               </div>
             </Transition>
@@ -2244,7 +2244,7 @@ defineExpose({ onPlaybackComplete })
               v-if="outlineThinkingReady && !outlineThinkingDone && outlineItems.length === 0 && outlineGenerating"
               class="flex items-center justify-center gap-2 py-3"
             >
-              <svg class="animate-spin w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
@@ -2256,11 +2256,11 @@ defineExpose({ onPlaybackComplete })
               <template v-for="item in outlineItems" :key="item.id">
                 <div
                   class="rounded-lg border overflow-hidden transition-all duration-300"
-                  :class="item.level === 2 ? 'border-purple-800/30 bg-purple-950/10' : 'border-emerald-800/20 bg-emerald-950/5 ml-5'"
+                  :class="item.level === 2 ? 'border-purple-800/30 bg-purple-100 dark:bg-purple-950/10' : 'border-emerald-800/20 bg-emerald-950/5 ml-5'"
                 >
                   <div class="flex items-start gap-2 px-3 py-2">
                     <span class="shrink-0 w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold mt-px select-none"
-                      :class="item.level === 2 ? 'bg-purple-900/50 text-purple-400 border border-purple-700/30' : 'bg-emerald-900/50 text-emerald-400 border border-emerald-700/30'"
+                      :class="item.level === 2 ? 'bg-purple-50/50 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 border border-purple-700/30' : 'bg-emerald-50/50 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-700/30'"
                     >{{ item.level === 2 ? 'H2' : 'H3' }}</span>
 
                     <!-- 内联编辑 / 显示切换 -->
@@ -2268,23 +2268,23 @@ defineExpose({ onPlaybackComplete })
                       <input
                         v-if="editingItemId === item.id"
                         v-model="editingItemText"
-                        class="w-full bg-gray-800 border border-purple-600 rounded px-2 py-0.5 text-xs text-gray-100 outline-none"
-                        :class="item.level === 2 ? 'font-semibold text-purple-200' : 'text-emerald-200'"
+                        class="w-full bg-gray-100 dark:bg-gray-800 border border-purple-600 rounded px-2 py-0.5 text-xs text-gray-900 dark:text-gray-100 outline-none"
+                        :class="item.level === 2 ? 'font-semibold text-purple-700 dark:text-purple-200' : 'text-emerald-700 dark:text-emerald-200'"
                         @keydown.enter="confirmEditItem"
                         @keydown.escape="cancelEditItem"
                         @blur="confirmEditItem"
                       />
                       <p v-else class="text-xs leading-snug cursor-text hover:bg-white/5 rounded px-1 -mx-1 py-0.5 transition-colors"
-                        :class="item.level === 2 ? 'text-purple-200 font-semibold' : 'text-emerald-200'"
+                        :class="item.level === 2 ? 'text-purple-700 dark:text-purple-200 font-semibold' : 'text-emerald-700 dark:text-emerald-200'"
                         :title="'双击编辑标题'"
                       >{{ item.text }}</p>
                     </div>
 
                     <!-- 操作按钮 -->
                     <div class="flex items-center gap-0.5 shrink-0" :class="editingItemId === item.id ? 'invisible' : ''">
-                      <button class="h-6 w-6 flex items-center justify-center rounded text-[11px] text-gray-500 hover:text-purple-400 hover:bg-purple-950/30 transition-all active:scale-95" title="AI重新生成此标题" @click="regenerateOutlineItem(item.id)">🔄</button>
-                      <button v-if="item.level === 2" class="h-6 w-6 flex items-center justify-center rounded text-[11px] text-gray-500 hover:text-emerald-400 hover:bg-emerald-950/30 transition-all active:scale-95" title="添加子标题" @click="addOutlineItem(3, item.id)">➕</button>
-                      <button class="h-6 w-6 flex items-center justify-center rounded text-[11px] text-gray-500 hover:text-red-400 hover:bg-red-950/30 transition-all active:scale-95" title="删除此标题" @click="deleteOutlineItem(item.id)">🗑️</button>
+                      <button class="h-6 w-6 flex items-center justify-center rounded text-[11px] text-gray-400 dark:text-gray-500 hover:text-purple-400 hover:bg-purple-950/30 transition-all active:scale-95" title="AI重新生成此标题" @click="regenerateOutlineItem(item.id)">🔄</button>
+                      <button v-if="item.level === 2" class="h-6 w-6 flex items-center justify-center rounded text-[11px] text-gray-400 dark:text-gray-500 hover:text-emerald-400 hover:bg-emerald-950/30 transition-all active:scale-95" title="添加子标题" @click="addOutlineItem(3, item.id)">➕</button>
+                      <button class="h-6 w-6 flex items-center justify-center rounded text-[11px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-950/30 transition-all active:scale-95" title="删除此标题" @click="deleteOutlineItem(item.id)">🗑️</button>
                     </div>
                   </div>
                   <!-- 标题补充要求 -->
@@ -2292,7 +2292,7 @@ defineExpose({ onPlaybackComplete })
                     <textarea
                       v-model="item.userRequirement"
                       rows="1"
-                      class="flex-1 bg-gray-800/80 border border-gray-700 rounded-md px-2.5 py-1 text-[10px] text-gray-300 placeholder-gray-600 outline-none focus:border-purple-500 transition-colors resize-none"
+                      class="flex-1 bg-gray-100/90 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-md px-2.5 py-1 text-[10px] text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-purple-500 transition-colors resize-none"
                       :placeholder="'可对此标题提出细化要求，如：用数据案例支撑…'"
                       @keydown.enter.exact.prevent="refineOutlineItem(item.id)"
                     ></textarea>
@@ -2301,32 +2301,32 @@ defineExpose({ onPlaybackComplete })
                 </div>
               </template>
               <!-- 添加大标题 -->
-              <button class="w-full h-8 flex items-center justify-center gap-1 text-[11px] text-gray-500 hover:text-purple-400 border border-dashed border-gray-700/50 hover:border-purple-700/50 rounded-lg transition-all" @click="addOutlineItem(2)">
+              <button class="w-full h-8 flex items-center justify-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 hover:text-purple-400 border border-dashed border-gray-300/50 dark:border-gray-700/50 hover:border-purple-700/50 rounded-lg transition-all" @click="addOutlineItem(2)">
                 <span>＋</span> 添加大标题
               </button>
             </div>
           </div>
 
           <!-- ═══ 底部：反馈 + 重新生成 / 确认 ═══ -->
-          <div v-if="outlineItems.length > 0" class="px-4 py-2.5 space-y-2 border-t border-gray-800/50 bg-gray-900/50 shrink-0">
+          <div v-if="outlineItems.length > 0" class="px-4 py-2.5 space-y-2 border-t border-gray-200/50 dark:border-gray-800/50 bg-gray-100/80 dark:bg-gray-900/50 shrink-0">
             <div class="flex items-start gap-2">
               <textarea
                 v-model="outlineFeedback" rows="1"
-                class="flex-1 bg-gray-800/80 border border-gray-700 rounded-md px-3 py-1.5 text-xs text-gray-300 placeholder-gray-600 outline-none focus:border-orange-500/70 transition-colors resize-none"
+                class="flex-1 bg-gray-100/90 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-orange-500/70 transition-colors resize-none"
                 placeholder="📝 对整体提纲不满意？写出改进要求（Enter 提交）"
                 @keydown.enter.exact.prevent="generateOutline"
               ></textarea>
               <button class="h-7 px-3 text-[11px] bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white rounded-md transition-all active:scale-95 shrink-0 font-medium" :disabled="outlineGenerating" @click="generateOutline">🔄 重新生成</button>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-[10px] text-gray-500">共 {{ outlineItems.filter(o => o.level === 2).length }} 个大标题，{{ outlineItems.filter(o => o.level === 3).length }} 个子标题</span>
+              <span class="text-[10px] text-gray-400 dark:text-gray-500">共 {{ outlineItems.filter(o => o.level === 2).length }} 个大标题，{{ outlineItems.filter(o => o.level === 3).length }} 个子标题</span>
               <button class="h-8 px-5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs font-bold rounded-lg transition-all shadow-[0_0_12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95" @click="confirmOutline">✓ 确认提纲，开始创作</button>
             </div>
           </div>
 
           <!-- 错误提示 -->
           <div v-if="error" class="px-4 pb-2 shrink-0">
-            <div class="text-[11px] text-red-400 bg-red-950/30 border border-red-900/30 rounded-lg px-3 py-1.5">{{ error }} <button class="ml-2 underline hover:text-red-300" @click="error = ''">关闭</button></div>
+            <div class="text-[11px] text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-900/30 rounded-lg px-3 py-1.5">{{ error }} <button class="ml-2 underline hover:text-red-600 dark:hover:text-red-300" @click="error = ''">关闭</button></div>
           </div>
         </div>
       </div>
