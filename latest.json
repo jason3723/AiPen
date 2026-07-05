@@ -1,9 +1,9 @@
 {
   "version": "3.0.2",
-  "pub_date": "2026-07-05T00:59:27Z",
+  "pub_date": "2026-07-05T02:33:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTc0ZtdEhaUzlNVkF2M0hzRHJ2VkZQL25yVnRzY3QyeEJvZjJyOG1GSTB1Mkd4bmVpcWNNQ3hKMWs5cG1vU3ZGY3R0eTVuOXZENEcxYThhamJ6dnNXdGd3c05iY005L0FnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMjEzMTMzCWZpbGU6QWlQZW5fMy4wLjJfeDY0LXNldHVwLmV4ZQpHWFVLVU9oem92M1ozanhaTXdGTDBSMVAxOEdQdklpSWxLQnlYSzNaem1EVDRIZVU5YXlHUTZOdWlyRVgzbjRmTXRRSVpic01jb1R6dEJhQW5nMDhCdz09Cg==",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTc0ZtdEhaUzlNVkIvOXZXV3R5R2RxckhnVTJCWGNEaERrcDRaTm1rNjUzVXZGWU5xekF4VVRjNkpqWE56TWlxd3FuUGpxVllyRWhuVldKOTcvWnJ6ZDBkTHVLR25obkFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMjE4Nzg4CWZpbGU6QWlQZW5fMy4wLjJfeDY0LXNldHVwLmV4ZQpTaDFpbE05ZDdLQ3V3d212cnk4eS9QWHJkd3FIR1hBNWpmYU40RlBTb2ZlK1VhV2JweDBiSUx3R0Fzb2FjSmFaWVo4STg0K2ZrMmFVK2hnaU54dEpCUT09Cg==",
       "url": "https://github.com/jason3723/AiPen/releases/latest/download/AiPen_3.0.2_x64-setup.exe"
     }
   },
