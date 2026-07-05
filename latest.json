@@ -1,11 +1,11 @@
 {
-  "version": "3.0.2",
-  "pub_date": "2026-07-05T02:33:00Z",
+  "version": "3.0.3",
+  "notes": "🔧 UI 优化与细节改进\n• 状态栏精简：主题滑动开关、图标配色统一、高度优化\n• 侧栏折叠改为悬浮圆形按钮\n• 编辑器右键菜单智能定位防溢出\n• 多处暗色模式适配修复\n• 版本号升至 3.0.3",
+  "pub_date": "2026-07-05T14:41:29Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTc0ZtdEhaUzlNVkIvOXZXV3R5R2RxckhnVTJCWGNEaERrcDRaTm1rNjUzVXZGWU5xekF4VVRjNkpqWE56TWlxd3FuUGpxVllyRWhuVldKOTcvWnJ6ZDBkTHVLR25obkFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMjE4Nzg4CWZpbGU6QWlQZW5fMy4wLjJfeDY0LXNldHVwLmV4ZQpTaDFpbE05ZDdLQ3V3d212cnk4eS9QWHJkd3FIR1hBNWpmYU40RlBTb2ZlK1VhV2JweDBiSUx3R0Fzb2FjSmFaWVo4STg0K2ZrMmFVK2hnaU54dEpCUT09Cg==",
-      "url": "https://github.com/jason3723/AiPen/releases/latest/download/AiPen_3.0.2_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTc0ZtdEhaUzlNVklsRCtvNkJJY2FVREg3MGF6d0NUbVhqb25kZ2ZNR2N4U3YxV01vbTY4NXJBWkhCdDN4ZTExZElUczkyOEFUNE1SbUJHSktYb1Z2dXFZRkRILzlneVE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMjYyNDcyCWZpbGU6QWlQZW5fMy4wLjNfeDY0LXNldHVwLmV4ZQp2QWxONUFGc1g1VEtIbkV0UzlKdEFqOHo3d2tTWlo4bFA2WTMxeFZlVDVERk9yektxR2lSZ1JjWUxWZ3NMRXk1bGRhQ1dPUDl2RnZGTTFOZ2JHRFBBZz09Cg==",
+      "url": "https://github.com/jason3723/AiPen/releases/latest/download/AiPen_3.0.3_x64-setup.exe"
     }
-  },
-  "notes": "📖 添加使用手册\n• 首次启动自动创建「📖 AiPen 使用手册」文档，覆盖全部功能说明\n\n🔧 优化其他细节\n• 多项 UI 交互与稳定性改进"
+  }
 }
