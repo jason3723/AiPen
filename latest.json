@@ -1,11 +1,11 @@
 {
-  "version": "3.0.3",
-  "notes": "🔧 UI 优化与细节改进\n• 状态栏精简：主题滑动开关、图标配色统一、高度优化\n• 侧栏折叠改为悬浮圆形按钮\n• 编辑器右键菜单智能定位防溢出\n• 多处暗色模式适配修复\n• 版本号升至 3.0.3",
-  "pub_date": "2026-07-05T14:41:29Z",
+  "version": "3.0.5",
+  "notes": "🏗️ 浏览器窗口底层重构\n• 使用 OS 级别 Owned Window 替代 always_on_top，一次性修复 4 类窗口管理 bug：最小化跟随、Win+D 隐藏、任务栏恢复、销毁跟随\n• removed 失焦监听手动 hide 逻辑（OS 自动管理 z-order）\n• resize/close/show 命令增强 owner 关系保护\n• 前端 handleMinimize / onFocusChanged 逻辑简化",
+  "pub_date": "2026-07-06T13:11:54Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTc0ZtdEhaUzlNVklsRCtvNkJJY2FVREg3MGF6d0NUbVhqb25kZ2ZNR2N4U3YxV01vbTY4NXJBWkhCdDN4ZTExZElUczkyOEFUNE1SbUJHSktYb1Z2dXFZRkRILzlneVE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMjYyNDcyCWZpbGU6QWlQZW5fMy4wLjNfeDY0LXNldHVwLmV4ZQp2QWxONUFGc1g1VEtIbkV0UzlKdEFqOHo3d2tTWlo4bFA2WTMxeFZlVDVERk9yektxR2lSZ1JjWUxWZ3NMRXk1bGRhQ1dPUDl2RnZGTTFOZ2JHRFBBZz09Cg==",
-      "url": "https://github.com/jason3723/AiPen/releases/latest/download/AiPen_3.0.3_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTc0ZtdEhaUzlNVkZCRWgyNDZPOHQ2Qyt6UzBrRDRGVHRmcDQ1QVhCVTJBTTVDR3ZDU1RiU1NqSlBEaGlQck01R0F3OEZiWmt1VFQ5NndiZDBVc1Z3Mnl3ZWlWV1k4Wnd3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzMzQzNDc1CWZpbGU6QWlQZW5fMy4wLjVfeDY0LXNldHVwLmV4ZQpzQ3pWT1ZtdmhxNWdXTE5INXJQZUxHcVkrSDlld0FTOTFqcU43SU54RWtYRUpPbWhIK1JMdGY3czdmZWFrWk5HNWRZTFcrTGR5U21UaFdkcTNNRzJDUT09Cg==",
+      "url": "https://github.com/jason3723/AiPen/releases/latest/download/AiPen_3.0.5_x64-setup.exe"
     }
   }
 }
